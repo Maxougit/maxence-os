@@ -8,18 +8,15 @@ import Window from '@/components/Windows/Windows';
 export default function Home() {
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [windows, setWindows] = useState([]); 
+  const [nextId, setNextId] = useState(0); // Ajout d'un compteur pour les identifiants
 
   const toggleStartMenu = () => {
     setShowStartMenu(!showStartMenu);
   };
 
   const openWindow = (title, content) => {
-    const newWindow = {
-      id: Math.random().toString(), // Donne un ID unique à chaque fenêtre
-      title: title,
-      content: content,
-    };
-    setWindows([...windows, newWindow]);
+    setWindows([...windows, { id: `window-${nextId}`, title, content }]);
+    setNextId(nextId + 1);
   };
 
   return (
