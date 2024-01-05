@@ -1,0 +1,25 @@
+.windowsNavBar {
+    display: flex;
+    align-items: center;
+    background-color: #202020;
+    padding: 0 10px;
+  }
+  
+  .startMenuButton {
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .icon {
+    margin-left: 20px;
+    cursor: pointer;
+  }
+
+  .appIcon{
+    cursor: pointer;
+    margin-right: 3px;
+    border: 1px solid #cccccc4e; 
+    border-radius: 4px;
+    background-color: #2020206c;
+  }
+  

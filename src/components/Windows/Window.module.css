@@ -1,0 +1,36 @@
+.window {
+  position: absolute;
+  background-color: rgb(89, 92, 94);
+  border: 1px solid black;
+  z-index: 100;
+  border-radius: 5px;
+  overflow: hidden;
+  resize: both;
+}
+
+.titleBar {
+  padding: 2px;
+  background-color: #000000;
+  display: flex;
+  justify-content: space-between;
+  cursor: grab;
+}
+
+.titleBar:active {
+  cursor: grabbing;
+}
+
+.content {
+  padding: 1px;
+  overflow: auto; /* Add scroll for overflow content */
+}
+
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background-color: #666;
+  cursor: nwse-resize;
+}

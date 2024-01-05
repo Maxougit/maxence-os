@@ -1,0 +1,91 @@
+.terminal {
+    background-color: black;
+    color: limegreen;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 20px;
+    border-radius: 5px;
+    overflow: auto;
+    height: 300px;
+    /* Adjust as needed */
+    width: 100%;
+}
+
+.output {
+    white-space: pre-wrap;
+}
+
+.commandLine {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    color: #00ff00;
+    /* Green */
+}
+
+.commandInput {
+    flex-grow: 1; /* L'input prendra l'espace restant après le prompt */
+    background: transparent;
+    border: none;
+    color: limegreen;
+    outline: none;
+    caret-color: limegreen; /* Couleur du curseur de saisie */
+    margin-left: 5px; 
+    padding-right: 5px; /* Ajouter du padding pour éviter que le texte ne colle au bord */
+  }
+
+/* Blinking animation */
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Styles for different types of output */
+.userNameHost {
+    color: #00ff00;
+    /* Green */
+}
+
+.command {
+    color: #00ffff;
+    /* Cyan */
+}
+
+.result {
+    color: #ffffff;
+    /* White */
+}
+
+.name {
+    color: #ff00ff;
+    /* Magenta */
+}
+
+.age {
+    color: #ffff00;
+    /* Yellow */
+}
+
+.job {
+    color: #0000ff;
+    /* Blue */
+}
+
+.linkText {
+    color: #0000ff;
+    /* Bleu */
+}
+
+/* Ajoute des classes pour les mots clés */
+.keyword {
+    color: #00ff00;
+    /* Vert, ou une autre couleur que tu choisis */
+}

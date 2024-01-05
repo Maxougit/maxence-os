@@ -1,0 +1,37 @@
+.startMenu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    width: 300px; /* Ajuste selon tes préférences */
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 1000;
+    overflow: hidden;
+  }
+  
+  .userSection {
+    padding: 10px;
+    /* Style pour la section utilisateur */
+  }
+  
+  .appSection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    gap: 10px;
+    padding: 10px;
+    /* Style pour la section des applications */
+  }
+  
+  .app {
+    height: 70px;
+    background-color: #569199;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    /* Style pour chaque case d'application */
+  }
+  
