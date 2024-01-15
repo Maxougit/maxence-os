@@ -20,10 +20,14 @@ FROM node:latest
 
 WORKDIR /app
 
+# Copier les fichiers nécessaires depuis l'étape de construction
+COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/next.config.js ./
-#COPY --from=builder /app/public ./public #pas de public dans le projet pour l'instant
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
+
+# Si le dossier public est utilisé, décommentez la ligne suivante
+# COPY --from=builder /app/public ./public
 
 # Exposer le port (par défaut 3000 pour Next.js)
 EXPOSE 3000
