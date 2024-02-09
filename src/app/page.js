@@ -8,15 +8,19 @@ import Window from "@/components/Windows/Windows";
 export default function Home() {
   const [showStartMenu, setShowStartMenu] = useState(false);
   const [windows, setWindows] = useState([]);
-  const [nextId, setNextId] = useState(0); // Ajout d'un compteur pour les identifiants
 
   const toggleStartMenu = () => {
     setShowStartMenu(!showStartMenu);
   };
 
-  const openWindow = (title, content) => {
-    setWindows([...windows, { id: `window-${nextId}`, title, content }]);
-    setNextId(nextId + 1);
+  const openWindow = (contentId, title, content) => {
+    const existingWindowIndex = windows.findIndex(w => w.contentId === contentId);
+
+    if (existingWindowIndex >= 0) {
+      setWindows(windows => windows.filter((_, index) => index !== existingWindowIndex));
+    }
+
+    setWindows(windows => [...windows, { contentId, title, content }]);
   };
 
   return (
@@ -25,12 +29,12 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center">Maxence OS</h1>
         <p className="text-center">Site en construction</p>
       </main>
-      {windows.map((window) => (
+      {windows.map((window, index) => (
         <Window
-          key={window.id}
+          key={window.contentId}
           title={window.title}
           onClose={() => {
-            setWindows(windows.filter((w) => w.id !== window.id));
+            setWindows(windows => windows.filter((w) => w.contentId !== window.contentId));
           }}
         >
           {window.content}

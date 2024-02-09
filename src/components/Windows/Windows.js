@@ -35,7 +35,7 @@ const Window = ({ title, children, onClose }) => {
     return () => {
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging]); 
+  }, [isDragging]);
 
   return (
     <div

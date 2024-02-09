@@ -8,6 +8,7 @@ import {
   mdiDatabase,
 } from "@mdi/js";
 import Terminal from "../Application/Terminal";
+import Explorer from "../Application/Explorer";
 
 const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
   return (
@@ -24,7 +25,7 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         path={mdiConsole}
         size={1.5}
         color="white"
-        onClick={() => openWindow("Terminal", <Terminal />)}
+        onClick={() => openWindow(1, "Terminal", <Terminal />)}
       />
       <Icon
         className={styles.appIcon}
@@ -32,7 +33,7 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         size={1.5}
         color="white"
         onClick={() =>
-          openWindow("Explorateur", "Contenu de l'explorateur ici...")
+          openWindow(2, "Explorer", <Explorer />)
         }
       />
       <Icon
@@ -41,7 +42,7 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         size={1.5}
         color="white"
         onClick={() =>
-          openWindow("Base de Données", "Contenu de la base de données ici...")
+          openWindow(3, "Base de Données", "Contenu de la base de données ici...")
         }
       />
     </nav>

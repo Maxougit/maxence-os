@@ -5,13 +5,12 @@
     padding: 20px;
     border-radius: 5px;
     overflow: auto;
-    height: 300px;
-    /* Adjust as needed */
-    width: 100%;
+    height: 100%;
 }
 
 .output {
     white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .commandLine {
@@ -21,19 +20,17 @@
 
 .prompt {
     color: #00ff00;
-    /* Green */
 }
 
 .commandInput {
-    flex-grow: 1; /* L'input prendra l'espace restant après le prompt */
     background: transparent;
     border: none;
     color: limegreen;
     outline: none;
-    caret-color: limegreen; /* Couleur du curseur de saisie */
-    margin-left: 5px; 
-    padding-right: 5px; /* Ajouter du padding pour éviter que le texte ne colle au bord */
-  }
+    caret-color: limegreen;
+    margin-left: 5px;
+    padding-right: 5px;
+}
 
 /* Blinking animation */
 @keyframes blink {
@@ -48,44 +45,19 @@
     }
 }
 
-/* Styles for different types of output */
-.userNameHost {
-    color: #00ff00;
-    /* Green */
-}
+@media (max-width: 600px) {
+    .terminal {
+        padding: 2px;
+        overflow: auto;
+    }
 
-.command {
-    color: #00ffff;
-    /* Cyan */
-}
+    .commandLine {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-.result {
-    color: #ffffff;
-    /* White */
-}
-
-.name {
-    color: #ff00ff;
-    /* Magenta */
-}
-
-.age {
-    color: #ffff00;
-    /* Yellow */
-}
-
-.job {
-    color: #0000ff;
-    /* Blue */
-}
-
-.linkText {
-    color: #0000ff;
-    /* Bleu */
-}
-
-/* Ajoute des classes pour les mots clés */
-.keyword {
-    color: #00ff00;
-    /* Vert, ou une autre couleur que tu choisis */
+    .commandInput {
+        margin-top: 5px;
+        padding-right: 0;
+    }
 }

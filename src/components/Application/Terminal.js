@@ -1,19 +1,57 @@
+"use strict"
 import React from "react";
 import styles from "./Terminal.module.css";
 
 class Terminal extends React.Component {
   constructor(props) {
     super(props);
+
+    const initialWhoAmIOutput = this.getInitialWhoAmIOutput();
+
     this.state = {
       command: "",
-      output: [
-        "maxence@maxOS:~$ who-am-i",
-        "Name: Maxence ",
-        "Age: 21",
-        "Job: Student at CESI engineer school https://www.cesi.fr/",
-      ],
+      output: initialWhoAmIOutput,
     };
+
+    this.commands = {
+      'whoami': this.whoAmI,
+      'ls': this.listDirectory,
+      'help': this.showHelp,
+      'about': this.aboutMe,
+      'easter_egg': this.easterEgg,
+    };
+
   }
+
+  getInitialWhoAmIOutput = () => {
+    return [`maxence@maxOS:~$ whoami`, this.whoAmI()];
+  }
+
+  executeCommand = (command) => {
+    const execute = this.commands[command.toLowerCase()];
+
+    if (!execute) {
+      this.setState(prevState => ({
+        output: [...prevState.output, `maxence@maxOS:~$ ${command}`, "Command not found. Try 'help' for more information."],
+        command: "",
+      }));
+      return;
+    }
+
+    let result = execute.call(this);
+
+    this.setState(prevState => ({
+      output: [...prevState.output, `maxence@maxOS:~$ ${command}`, result],
+      command: "",
+    }));
+  };
+
+
+  whoAmI = () => "Name: Maxence\nAge: 21\nJob: Student at CESI engineer school";
+  listDirectory = () => "file1.txt  file2.txt  folder1  folder2";
+  showHelp = () => "Commands: whoami, ls, help, about, easter_egg";
+  aboutMe = () => "I am Maxence, a software engineering student with a passion for AI and development.";
+  easterEgg = () => "You found an easter egg! 🥚";
 
   handleCommandChange = (event) => {
     this.setState({ command: event.target.value });
@@ -21,34 +59,10 @@ class Terminal extends React.Component {
 
   handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      this.executeCommand();
+      this.executeCommand(this.state.command);
     }
   };
 
-  executeCommand = () => {
-    const { command, output } = this.state;
-    let result = "";
-    switch (command.toLowerCase()) {
-      case "ls":
-        result = "file1.txt  file2.txt  folder1  folder2";
-        break;
-      case "pwd":
-        result = "/home/user";
-        break;
-      case "contact":
-        result = "contact@maxenceleroux.fr";
-        break;
-      case "help":
-        result = "contact, ls, pwd";
-        break;
-      default:
-        result = "Command not found try help for more information";
-    }
-    this.setState({
-      output: [...output, `maxence@maxOS:~$ ${command}`, result],
-      command: "",
-    });
-  };
 
   render() {
     const { command, output } = this.state;
@@ -57,36 +71,7 @@ class Terminal extends React.Component {
       <div className={styles.terminal}>
         <div className={styles.output}>
           {output.map((line, index) => (
-            <pre key={index}>
-              {/* Traite les lignes spécifiques et applique le style aux mots clés */}
-              <span>
-                {line.split(" ").map((word, wordIndex) => {
-                  if (["Name:", "Age:", "Job:"].includes(word)) {
-                    // Si le mot est un mot clé, applique la classe keyword
-                    return (
-                      <span key={wordIndex} className={styles.keyword}>
-                        {word}{" "}
-                      </span>
-                    );
-                  } else if (word.startsWith("http")) {
-                    // Si le mot est un lien, applique la classe linkText et ouvre dans un nouvel onglet
-                    return (
-                      <a
-                        href={word}
-                        key={wordIndex}
-                        className={styles.linkText}
-                        target="_blank"
-                      >
-                        {word}{" "}
-                      </a>
-                    );
-                  } else {
-                    // Sinon, retourne le mot sans style supplémentaire
-                    return word + " ";
-                  }
-                })}
-              </span>
-            </pre>
+            <p key={index}>{line}</p>
           ))}
         </div>
         <div className={styles.commandLine}>
@@ -97,7 +82,7 @@ class Terminal extends React.Component {
             onChange={this.handleCommandChange}
             onKeyDown={this.handleKeyDown}
             className={styles.commandInput}
-            autoFocus // Automatically focus this input
+            autoFocus
           />
         </div>
       </div>

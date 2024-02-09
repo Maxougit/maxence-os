@@ -1,0 +1,73 @@
+.explorer {
+    width: 40vh;
+    /* height: 80vh; */
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #333;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.toolbar {
+    padding: 10px;
+    background-color: #252526;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+.toolbar button {
+    background-color: #3a3d41;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.toolbar button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.toolbar span {
+    margin-left: 10px;
+}
+
+.content {
+    flex-grow: 1;
+    overflow: auto;
+    padding: 10px;
+}
+
+.item {
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    transition: background-color 0.2s;
+}
+
+.item:hover {
+    background-color: #3a3d41;
+}
+
+.folder,
+.file {
+    display: flex;
+    align-items: center;
+}
+
+.folder:before,
+.file:before {
+    margin-right: 10px;
+    font-size: 1.5em;
+}
+
+.folder:before {
+    content: '📁';
+}
+
+.file:before {
+    content: '📄';
+}
