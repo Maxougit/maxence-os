@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Window.module.css';
 
-const Window = ({ title, children, onClose }) => {
+const Window = ({ title, children, onClose, onFocus }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 10, y: 10 });
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
+    onFocus(); // Déplacer cette fenêtre au premier plan lorsqu'elle est focus
   };
 
   const handleMouseMove = (e) => {
