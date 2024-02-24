@@ -30,3 +30,37 @@
 .titleBar:active {
   cursor: grabbing;
 }
+
+.closeButton {
+  position: relative;
+  width: 25px; /* Taille du bouton */
+  height: 25px;
+  border-radius: 5px;
+  background-color: transparent; /* Fond transparent */
+  border: none; /* Supprime la bordure par défaut */
+  cursor: pointer; /* Curseur en forme de main au survol */
+  outline: none; /* Supprime le contour lors du focus */
+}
+
+.closeButton:hover {
+  background-color: #f2f2f2; /* Léger changement de couleur au survol */
+}
+
+.closeButton::before, .closeButton::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 15px; /* Longueur des bandes */
+  height: 2px; /* Épaisseur des bandes */
+
+  background-color: #333; /* Couleur des bandes */
+}
+
+.closeButton::before {
+  transform: translate(-50%, -50%) rotate(45deg); /* Tourne une bande pour former la croix */
+}
+
+.closeButton::after {
+  transform: translate(-50%, -50%) rotate(-45deg); /* Tourne l'autre bande dans la direction opposée */
+}

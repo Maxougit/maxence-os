@@ -1,53 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import styles from './Window.module.css';
+import React, { useState, useEffect, useRef } from "react";
+import styles from "./Window.module.css";
 
 const Window = ({ title, children, onClose, onFocus }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 10, y: 10 });
+  const dragStartPos = useRef({ startX: 0, startY: 0 }); // Stocke les positions de départ du drag
+  const windowRef = useRef(null);
 
-  const handleMouseDown = (e) => {
+  const startDrag = (x, y) => {
     setIsDragging(true);
-    onFocus(); // Déplacer cette fenêtre au premier plan lorsqu'elle est focus
+    dragStartPos.current = { startX: x - position.x, startY: y - position.y }; // Mémorise la position initiale de la souris par rapport à l'élément
+    onFocus();
   };
 
-  const handleMouseMove = (e) => {
+  const moveDrag = (x, y) => {
     if (isDragging) {
+      // Calcule le nouveau positionnement en soustrayant la position de départ
       setPosition({
-        x: position.x + e.movementX,
-        y: position.y + e.movementY,
+        x: x - dragStartPos.current.startX,
+        y: y - dragStartPos.current.startY,
       });
     }
   };
 
-  const handleMouseUp = () => {
+  const stopDrag = () => {
     setIsDragging(false);
   };
 
   useEffect(() => {
-    const handleMouseUp = () => {
-      setIsDragging(false);
+    const handleTouchMove = (e) => {
+      if (isDragging) {
+        const touch = e.touches[0];
+        moveDrag(touch.clientX, touch.clientY);
+        e.preventDefault();
+      }
     };
 
-    if (isDragging) {
-      window.addEventListener('mouseup', handleMouseUp);
+    const element = windowRef.current;
+    if (element) {
+      element.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
 
-    // Nettoie l'événement lorsque le composant est démonté ou le dragging est terminé
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
+      if (element) {
+        element.removeEventListener("touchmove", handleTouchMove, {
+          passive: false,
+        });
+      }
     };
   }, [isDragging]);
 
   return (
     <div
+      ref={windowRef}
       className={styles.window}
       style={{ left: `${position.x}px`, top: `${position.y}px` }}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
+      onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
+      onTouchStart={(e) => {
+        const touch = e.touches[0];
+        startDrag(touch.clientX, touch.clientY);
+      }}
+      onMouseMove={(e) => {
+        if (isDragging) {
+          moveDrag(e.clientX, e.clientY);
+        }
+      }}
+      onTouchMove={(e) => {
+        if (isDragging) {
+          const touch = e.touches[0];
+          moveDrag(touch.clientX, touch.clientY);
+        }
+      }}
+      onMouseUp={stopDrag}
+      onTouchEnd={stopDrag}
     >
-      <div className={styles.titleBar} onMouseDown={handleMouseDown}>
+      <div className={styles.titleBar}>
         <span>{title}</span>
-        <button onClick={onClose}>X</button>
+        <button onClick={onClose} className={styles.closeButton}></button>
       </div>
       <div className={styles.content}>{children}</div>
     </div>

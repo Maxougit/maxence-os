@@ -9,6 +9,7 @@ import {
 } from "@mdi/js";
 import Terminal from "../Application/Terminal";
 import Explorer from "../Application/Explorer";
+import Viewer from "../Application/Viewer";
 
 const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
   return (
@@ -33,7 +34,15 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         size={1.5}
         color="white"
         onClick={() =>
-          openWindow(2, "Explorer", <Explorer />)
+          openWindow(
+            2,
+            "Explorer",
+            <Explorer
+              openFile={(file) =>
+                openWindow(file.id, file.name, <Viewer file={file} />)
+              }
+            />
+          )
         }
       />
       <Icon
@@ -42,7 +51,11 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         size={1.5}
         color="white"
         onClick={() =>
-          openWindow(3, "Base de Données", "Contenu de la base de données ici...")
+          openWindow(
+            3,
+            "Base de Données",
+            "Contenu de la base de données ici..."
+          )
         }
       />
     </nav>
