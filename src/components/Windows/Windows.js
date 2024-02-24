@@ -55,20 +55,41 @@ const Window = ({ title, children, onClose, onFocus }) => {
     [handleMouseUp, isDragging, isResizing, position, size, startCoords]
   );
 
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    startDrag(touch.clientX, touch.clientY);
+  };
+
+  const handleTouchMove = useCallback((e) => {
+    const touch = e.touches[0];
+    if (isDragging) {
+      const dx = touch.clientX - startCoords.x;
+      const dy = touch.clientY - startCoords.y;
+      setPosition({ x: position.x + dx, y: position.y + dy });
+      setStartCoords({ x: touch.clientX, y: touch.clientY });
+    }
+  }, [isDragging, position, startCoords]);
+
   useEffect(() => {
     if (isDragging || isResizing) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchend", handleMouseUp);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleMouseUp);
     };
-  }, [handleMouseMove, handleMouseUp, isDragging, isResizing]);
+  }, [handleMouseMove, handleMouseUp, handleTouchMove, isDragging, isResizing]);
 
   return (
     <div
@@ -80,15 +101,21 @@ const Window = ({ title, children, onClose, onFocus }) => {
         width: `${size.width}px`,
         height: `${size.height}px`,
       }}
+      onTouchStart={handleTouchStart}
     >
       <div
         className={styles.titleBar}
         onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
+        onTouchStart={handleTouchStart}
       >
         <span>{title}</span>
         <button onClick={onClose} className={styles.closeButton}></button>
       </div>
-      <div className={styles.resizableHandle} onMouseDown={startResize}></div>
+      <div
+        className={styles.resizableHandle}
+        onMouseDown={startResize}
+        onTouchStart={startResize}
+      ></div>
       <div className={styles.content}>{children}</div>
     </div>
   );
