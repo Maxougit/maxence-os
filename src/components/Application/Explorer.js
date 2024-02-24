@@ -1,61 +1,109 @@
-import React, { useState } from 'react';
-import styles from './Explorer.module.css';
+import React, { useState } from "react";
+import styles from "./Explorer.module.css";
+import Window from "../Windows/Windows";
 
 const initialData = {
-    '/': [
-        { type: 'folder', name: 'Documents' },
-        { type: 'folder', name: 'Images' },
-        { type: 'file', name: 'Todo.txt' },
-    ],
-    '/Documents': [
-        { type: 'file', name: 'CV.pdf' },
-        { type: 'file', name: 'Budget.xlsx' },
-    ],
-    '/Images': [
-        { type: 'file', name: 'Vacances.jpg' },
-        { type: 'file', name: 'Famille.png' },
-    ],
+  type: "folder",
+  name: "/",
+  children: {
+    Documents: {
+      type: "folder",
+      name: "Documents",
+      children: {
+        "CV.pdf": {
+          id: 101,
+          type: "file",
+          extension: "pdf",
+          name: "CV Leroux Maxence.pdf",
+          path: "/files/CV Leroux Maxence FR.pdf",
+        },
+      },
+    },
+    Images: {
+      type: "folder",
+      name: "Images",
+      children: {
+        "profile.jpg": {
+          id: 102,
+          type: "file",
+          extension: "jpg",
+          name: "profil.jpg",
+          path: "/images/profil.jpg",
+        },
+      },
+    },
+    "Todo.txt": {
+      id: 103,
+      type: "file",
+      extension: "txt",
+      name: "Todo.txt",
+      path: "/files/Todo.txt",
+    },
+  },
 };
 
-const Explorer = () => {
-    const [currentPath, setCurrentPath] = useState('/');
-    const [history, setHistory] = useState(['/']);
+const Item = ({ item, onNavigate, level = 0 }) => {
+  const handleClick = () => {
+    onNavigate(item);
+  };
 
-    const navigateTo = (path) => {
-        const newPath = currentPath === '/' ? `/${path}` : `${currentPath}/${path}`;
-        setCurrentPath(newPath);
-        setHistory(prev => [...prev, newPath]);
-    };
+  return (
+    <div
+      className={`${styles.item} ${
+        item.type === "folder" ? styles.folder : styles.file
+      }`}
+      style={{ paddingLeft: `${level * 20}px` }}
+      onClick={handleClick}
+    >
+      {item.name}
+    </div>
+  );
+};
 
-    const goBack = () => {
-        setHistory(prev => {
-            const newHistory = prev.slice(0, prev.length - 1);
-            setCurrentPath(newHistory[newHistory.length - 1] || '/');
-            return newHistory;
-        });
-    };
+const Explorer = ({ openFile }) => {
+  const [currentItem, setCurrentItem] = useState(initialData);
+  const [history, setHistory] = useState([initialData]);
 
-    const items = initialData[currentPath] || [];
+  const navigateTo = (item) => {
+    if (item.type === "file") {
+      // Use the openFile function passed from the parent component (WindowsNavBar) to open the file
+      openFile(item);
+    } else {
+      setCurrentItem(item);
+      setHistory((prev) => [...prev, item]);
+    }
+  };
 
-    return (
-        <div className={styles.explorer}>
-            <div className={styles.toolbar}>
-                <button onClick={goBack} disabled={history.length <= 1}>Retour</button>
-                <span>{currentPath}</span>
-            </div>
-            <div className={styles.content}>
-                {items.map((item, index) => (
-                    <div
-                        key={index}
-                        className={`${styles.item} ${item.type === 'folder' ? styles.folder : styles.file}`}
-                        onClick={() => item.type === 'folder' && navigateTo(item.name)}
-                    >
-                        {item.name}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+  const goBack = () => {
+    setHistory((prev) => {
+      const newHistory = prev.slice(0, prev.length - 1);
+      setCurrentItem(newHistory[newHistory.length - 1] || initialData);
+      return newHistory;
+    });
+  };
+
+  const renderItems = (item, level = 0) => {
+    return Object.values(item.children || {}).map((child) => (
+      <Item
+        key={child.name}
+        item={child}
+        onNavigate={navigateTo}
+        level={level}
+      />
+    ));
+  };
+
+  return (
+    <div className={styles.explorer}>
+      <div className={styles.toolbar}>
+        <button onClick={goBack} disabled={history.length <= 1}>
+          Retour
+        </button>
+        <span>{currentItem.name}</span>
+      </div>
+      <div className={styles.content}>{renderItems(currentItem)}</div>
+    </div>
+  );
 };
 
 export default Explorer;

@@ -14,19 +14,23 @@ export default function Home() {
   };
 
   const openWindow = (contentId, title, content) => {
-    const existingWindowIndex = windows.findIndex(w => w.contentId === contentId);
+    const existingWindowIndex = windows.findIndex(
+      (w) => w.contentId === contentId
+    );
 
     if (existingWindowIndex >= 0) {
       // Si la fenêtre est déjà ouverte, on la retire pour la réouvrir au premier plan
-      setWindows(windows => windows.filter((_, index) => index !== existingWindowIndex));
+      setWindows((windows) =>
+        windows.filter((_, index) => index !== existingWindowIndex)
+      );
     }
 
     // On ajoute la nouvelle fenêtre à la fin du tableau
-    setWindows(windows => [...windows, { contentId, title, content }]);
+    setWindows((windows) => [...windows, { contentId, title, content }]);
   };
 
   const bringToFront = (contentId) => {
-    const windowIndex = windows.findIndex(w => w.contentId === contentId);
+    const windowIndex = windows.findIndex((w) => w.contentId === contentId);
     const newWindows = [...windows];
     const [window] = newWindows.splice(windowIndex, 1);
     setWindows([...newWindows, window]); // On déplace la fenêtre au dernier indice pour la mettre au premier plan
@@ -43,7 +47,9 @@ export default function Home() {
           key={window.contentId}
           title={window.title}
           onClose={() => {
-            setWindows(windows => windows.filter((w) => w.contentId !== window.contentId));
+            setWindows((windows) =>
+              windows.filter((w) => w.contentId !== window.contentId)
+            );
           }}
           onFocus={() => bringToFront(window.contentId)}
         >
