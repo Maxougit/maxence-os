@@ -5,5 +5,5 @@ docker build -t maxence-os .
 # and
 
 ```bash
-docker run -d -p 3000:3000 --restart always maxence-os
+sudo docker run -d -p 3001:3000 --restart always --name maxenceOS maxence-os
 ```
