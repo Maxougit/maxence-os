@@ -1,85 +1,94 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./Window.module.css";
 
 const Window = ({ title, children, onClose, onFocus }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
   const [position, setPosition] = useState({ x: 10, y: 10 });
-  const dragStartPos = useRef({ startX: 0, startY: 0 }); // Stocke les positions de départ du drag
+  const [size, setSize] = useState({ width: "auto", height: "auto" });
+  const [startCoords, setStartCoords] = useState({ x: 0, y: 0 });
   const windowRef = useRef(null);
 
   const startDrag = (x, y) => {
     setIsDragging(true);
-    dragStartPos.current = { startX: x - position.x, startY: y - position.y }; // Mémorise la position initiale de la souris par rapport à l'élément
+    setStartCoords({ x, y });
     onFocus();
   };
 
-  const moveDrag = (x, y) => {
-    if (isDragging) {
-      // Calcule le nouveau positionnement en soustrayant la position de départ
-      setPosition({
-        x: x - dragStartPos.current.startX,
-        y: y - dragStartPos.current.startY,
-      });
-    }
+  const startResize = (e) => {
+    setIsResizing(true);
+    setStartCoords({ x: e.clientX, y: e.clientY });
   };
 
-  const stopDrag = () => {
+  const handleMouseUp = useCallback(() => {
     setIsDragging(false);
-  };
+    setIsResizing(false);
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (e) => {
+      if (isDragging) {
+        const dx = e.clientX - startCoords.x;
+        const dy = e.clientY - startCoords.y;
+        setPosition({ x: position.x + dx, y: position.y + dy });
+        setStartCoords({ x: e.clientX, y: e.clientY });
+      } else if (isResizing) {
+        const dx = e.clientX - startCoords.x;
+        const dy = e.clientY - startCoords.y;
+        setSize({ width: size.width + dx, height: size.height + dy });
+        setStartCoords({ x: e.clientX, y: e.clientY });
+      }
+
+      if (isDragging || isResizing) {
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+      } else {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      }
+
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("mouseup", handleMouseUp);
+      };
+    },
+    [handleMouseUp, isDragging, isResizing, position, size, startCoords]
+  );
 
   useEffect(() => {
-    const handleTouchMove = (e) => {
-      if (isDragging) {
-        const touch = e.touches[0];
-        moveDrag(touch.clientX, touch.clientY);
-        e.preventDefault();
-      }
-    };
-
-    const element = windowRef.current;
-    if (element) {
-      element.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
+    if (isDragging || isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    } else {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      if (element) {
-        element.removeEventListener("touchmove", handleTouchMove, {
-          passive: false,
-        });
-      }
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging]);
+  }, [handleMouseMove, handleMouseUp, isDragging, isResizing]);
 
   return (
     <div
       ref={windowRef}
       className={styles.window}
-      style={{ left: `${position.x}px`, top: `${position.y}px` }}
-      onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
-      onTouchStart={(e) => {
-        const touch = e.touches[0];
-        startDrag(touch.clientX, touch.clientY);
+      style={{
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
       }}
-      onMouseMove={(e) => {
-        if (isDragging) {
-          moveDrag(e.clientX, e.clientY);
-        }
-      }}
-      onTouchMove={(e) => {
-        if (isDragging) {
-          const touch = e.touches[0];
-          moveDrag(touch.clientX, touch.clientY);
-        }
-      }}
-      onMouseUp={stopDrag}
-      onTouchEnd={stopDrag}
     >
-      <div className={styles.titleBar}>
+      <div
+        className={styles.titleBar}
+        onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
+      >
         <span>{title}</span>
         <button onClick={onClose} className={styles.closeButton}></button>
       </div>
+      <div className={styles.resizableHandle} onMouseDown={startResize}></div>
       <div className={styles.content}>{children}</div>
     </div>
   );
