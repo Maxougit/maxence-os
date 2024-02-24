@@ -1,2 +1,3 @@
 --> DataBase - compétence
 --> Jeux / Système d'avancements avec les expériences
+--> Optimiser l'utilsiation en mode tactile/smartphone
