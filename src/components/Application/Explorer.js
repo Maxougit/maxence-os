@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styles from "./Explorer.module.css";
-import Window from "../Windows/Windows";
 
 const initialData = {
   type: "folder",

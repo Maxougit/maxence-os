@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import styles from "./Window.module.css";
 
-const Window = ({ title, children, onClose, onFocus }) => {
+const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [position, setPosition] = useState({ x: 10, y: 10 });
@@ -14,6 +14,15 @@ const Window = ({ title, children, onClose, onFocus }) => {
     setStartCoords({ x, y });
     onFocus();
   };
+
+  useEffect(() => {
+    if (forceDefaultSize) {
+      setSize({
+        width: forceDefaultSize.width || "auto",
+        height: forceDefaultSize.height || "auto",
+      });
+    }
+  }, [forceDefaultSize]);
 
   const startResize = (e) => {
     setIsResizing(true);
@@ -60,15 +69,18 @@ const Window = ({ title, children, onClose, onFocus }) => {
     startDrag(touch.clientX, touch.clientY);
   };
 
-  const handleTouchMove = useCallback((e) => {
-    const touch = e.touches[0];
-    if (isDragging) {
-      const dx = touch.clientX - startCoords.x;
-      const dy = touch.clientY - startCoords.y;
-      setPosition({ x: position.x + dx, y: position.y + dy });
-      setStartCoords({ x: touch.clientX, y: touch.clientY });
-    }
-  }, [isDragging, position, startCoords]);
+  const handleTouchMove = useCallback(
+    (e) => {
+      const touch = e.touches[0];
+      if (isDragging) {
+        const dx = touch.clientX - startCoords.x;
+        const dy = touch.clientY - startCoords.y;
+        setPosition({ x: position.x + dx, y: position.y + dy });
+        setStartCoords({ x: touch.clientX, y: touch.clientY });
+      }
+    },
+    [isDragging, position, startCoords]
+  );
 
   useEffect(() => {
     if (isDragging || isResizing) {
@@ -98,8 +110,9 @@ const Window = ({ title, children, onClose, onFocus }) => {
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        width: `${size.width}px`,
-        height: `${size.height}px`,
+        width: typeof size.width === "number" ? `${size.width}px` : size.width,
+        height:
+          typeof size.height === "number" ? `${size.height}px` : size.height,
       }}
       onTouchStart={handleTouchStart}
     >

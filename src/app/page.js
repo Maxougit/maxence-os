@@ -13,7 +13,7 @@ export default function Home() {
     setShowStartMenu(!showStartMenu);
   };
 
-  const openWindow = (contentId, title, content) => {
+  const openWindow = (contentId, title, content, size) => {
     const existingWindowIndex = windows.findIndex(
       (w) => w.contentId === contentId
     );
@@ -26,7 +26,7 @@ export default function Home() {
     }
 
     // On ajoute la nouvelle fenêtre à la fin du tableau
-    setWindows((windows) => [...windows, { contentId, title, content }]);
+    setWindows((windows) => [...windows, { contentId, title, content, size }]);
   };
 
   const bringToFront = (contentId) => {
@@ -52,6 +52,7 @@ export default function Home() {
             );
           }}
           onFocus={() => bringToFront(window.contentId)}
+          forceDefaultSize={window.size}
         >
           {window.content}
         </Window>

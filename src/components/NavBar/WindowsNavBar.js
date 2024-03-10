@@ -11,6 +11,10 @@ import Terminal from "../Application/Terminal";
 import Explorer from "../Application/Explorer";
 import Viewer from "../Application/Viewer";
 
+const isMobileDevice = () => {
+  return window.innerWidth <= 768;
+};
+
 const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
   return (
     <nav className={styles.windowsNavBar}>
@@ -33,17 +37,27 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         path={mdiFolder}
         size={1.5}
         color="white"
-        onClick={() =>
+        onClick={() => {
+          // Déterminer la taille de la fenêtre en fonction de l'appareil
+          const sizeProps = isMobileDevice()
+            ? null
+            : { width: "500px", height: "800px" };
+
           openWindow(
             2,
             "Explorer",
             <Explorer
               openFile={(file) =>
-                openWindow(file.id, file.name, <Viewer file={file} />)
+                openWindow(
+                  file.id,
+                  file.name,
+                  <Viewer file={file} />,
+                  sizeProps
+                )
               }
             />
-          )
-        }
+          );
+        }}
       />
       <Icon
         className={styles.appIcon}
