@@ -38,23 +38,25 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         size={1.5}
         color="white"
         onClick={() => {
-          // Déterminer la taille de la fenêtre en fonction de l'appareil
-          const sizeProps = isMobileDevice()
-            ? null
-            : { width: "500px", height: "800px" };
-
           openWindow(
             2,
             "Explorer",
             <Explorer
-              openFile={(file) =>
+              openFile={(file) => {
+                const sizeProps = isMobileDevice()
+                  ? null
+                  : file === undefined
+                  ? null
+                  : file.extension === "pdf"
+                  ? { width: "500px", height: "800px" }
+                  : null;
                 openWindow(
                   file.id,
                   file.name,
                   <Viewer file={file} />,
                   sizeProps
-                )
-              }
+                );
+              }}
             />
           );
         }}
