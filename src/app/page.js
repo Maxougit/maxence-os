@@ -19,7 +19,8 @@ export default function Home() {
     );
 
     if (existingWindowIndex >= 0) {
-      // Si la fenêtre est déjà ouverte, on la retire pour la réouvrir au premier plan
+      // Si la fenêtre est déjà ouverte, on la retire pour la réouvrir au premier plan 
+      
       setWindows((windows) =>
         windows.filter((_, index) => index !== existingWindowIndex)
       );
