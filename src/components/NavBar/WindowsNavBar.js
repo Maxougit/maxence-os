@@ -10,6 +10,7 @@ import {
 import Terminal from "../Application/Terminal";
 import Explorer from "../Application/Explorer";
 import Viewer from "../Application/Viewer";
+import Database from "../Application/Database";
 
 const isMobileDevice = () => {
   return window.innerWidth <= 768;
@@ -66,13 +67,7 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
         path={mdiDatabase}
         size={1.5}
         color="white"
-        onClick={() =>
-          openWindow(
-            3,
-            "Base de Données",
-            "Contenu de la base de données ici..."
-          )
-        }
+        onClick={() => openWindow(3, "Base de Données", <Database />)}
       />
     </nav>
   );
