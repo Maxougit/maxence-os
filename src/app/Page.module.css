@@ -15,3 +15,26 @@
     box-sizing: border-box; /* Inclut le padding dans le calcul de la hauteur */
   }
   
+  .iconContainer {
+    position: absolute; /* Positionnement absolu par rapport à son parent relatif */
+    top: 0;
+    left: 0;
+    border: 1px solid black;
+    border-radius: 5px; /* Rend l'élément circulaire */
+    padding: 2px;
+    transition: all 0.3s ease-in-out; /* Applique une transition fluide pour toutes les propriétés changées */
+    margin: 16px; /* Ajustez selon le besoin */
+    cursor: pointer; /* Change le curseur pour indiquer la cliquabilité */
+  }
+
+  .icon{
+    align-items: center;
+    justify-content: center; 
+    display: flex;  
+    flex-direction: column;
+  }
+
+  .iconContainer:hover {
+    transform: scale(1.1); /* Agrandit l'icône */
+    background-color: #10101011; /* Change la couleur de fond */
+  }
