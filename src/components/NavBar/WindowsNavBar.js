@@ -11,10 +11,7 @@ import Terminal from "../Application/Terminal";
 import Explorer from "../Application/Explorer";
 import Viewer from "../Application/Viewer";
 import Database from "../Application/Database";
-
-const isMobileDevice = () => {
-  return window.innerWidth <= 768;
-};
+import { isMobileDevice } from "@/utils/device";
 
 const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
   return (
