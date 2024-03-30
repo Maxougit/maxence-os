@@ -1,0 +1,65 @@
+.databasewindow {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    min-width: 40rem;
+  }
+  
+  .header {
+    display: flex;
+    padding: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .content {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    padding: 10px;
+    cursor: pointer;
+    
+  }
+
+  .sidebarBTN{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #d4d4d4;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    height: 80px;
+    }
+
+  .database {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    padding: 10px;
+  }
+  
+  .sidebar div:hover {
+    background-color: #d4d4d4;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .databasewindow {
+      min-width: 22rem;
+    }
+  
+    .sidebar,
+    .database {
+      width: 100%;
+    }
+  
+    .content {
+      flex-direction: column;
+    }
+  }
+  
