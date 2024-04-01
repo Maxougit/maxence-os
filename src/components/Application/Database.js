@@ -1,80 +1,156 @@
-import React, { useEffect, useState } from "react";
-import styles from "./Database.module.css";
+import React, { useState } from "react";
 
-const skillsData = [
-  {
-    id: 1,
-    skill: "Python",
-    details: {
-      applications: ["Automatisation", "Scraping", "Selenium", "DataAnalysis"],
+const skillsData = {
+  Programation: [
+    {
+      Name: "C#",
+      Details: ["WPF", "UWP", "API", ".NET", "ORM"],
     },
-  },
-  {
-    id: 2,
-    skill: "React",
-    details: {
-      applications: ["next.js", "Angular", "API", "ORM"],
+    {
+      Name: "C++",
+      Details: ["Game Development", "Systems Programming"],
     },
-  },
-  {
-    id: 3,
-    skill: "C#",
-    details: {
-      applications: ["WPF", "UWP", "API", "ORM", ".NET"],
+    {
+      Name: "Python",
+      Details: ["Data Analysis", "Machine Learning", "Web Development"],
     },
-  },
-  {
-    id: 4,
-    skill: "SQL",
-    details: {
-      applications: ["MySQL", "MicrosoftSQL", "MariaDB", "PostgreSQL"],
+    {
+      Name: "JavaScript",
+      Details: ["React", "Angular", "Vue"],
     },
-  },
-  {
-    id: 5,
-    skill: "HTML/CSS",
-    details: {
-      applications: ["Tailwind", "MUI"],
+    {
+      Name: "PHP",
+      Details: ["Web Development", "CMS", "Backend"],
     },
-  },
-];
+    {
+      Name: "Rust",
+      Details: ["Systems Programming", "Performance"],
+    },
+    {
+      Name: "SQL",
+      Details: ["Database Design", "Optimization"],
+    },
+    {
+      Name: "HTML/CSS",
+      Details: ["Web Design", "Responsive Layouts"],
+    },
+  ],
+  Technologies: [
+    {
+      Name: "Node.js",
+      Details: ["Server-Side Programming", "API Development"],
+    },
+    {
+      Name: "Git",
+      Details: ["Version Control", "Collaboration"],
+    },
+    {
+      Name: "Docker",
+      Details: ["Containerization", "Microservices"],
+    },
+    {
+      Name: "Blockchain",
+      Details: ["Smart Contracts", "DApps"],
+    },
+    {
+      Name: "Linux",
+      Details: ["Ubuntu Server", "CentOS", "Debian"],
+    },
+    {
+      Name: "Arduino",
+      Details: ["Embedded Systems", "IoT Projects"],
+    },
+  ],
+  Concepts: [
+    {
+      Name: "Decentralization",
+      Details: ["Blockchain", "P2P Networks"],
+    },
+    {
+      Name: "Self-Hosting",
+      Details: ["Personal Data Management", "Custom Servers"],
+    },
+    {
+      Name: "Networking",
+      Details: ["LAN/WAN", "Cisco Devices"],
+    },
+    {
+      Name: "Big Data",
+      Details: ["Data Analysis", "ETL Processes", "Business Intelligence"],
+    },
+  ],
+};
 
 const Database = () => {
-  // État pour stocker les compétences chargées
-  const [skills, setSkills] = useState([]);
-  // État pour la compétence sélectionnée
-  const [selectedSkill, setSelectedSkill] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("Schema");
 
-  // Simule le chargement des données
-  useEffect(() => {
-    setSkills(skillsData);
-  }, []);
+  const handleSelectCategory = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const generateSQLQuery = (category) => {
+    if (category === "Schema") {
+      return "SELECT * FROM Maxence;";
+    }
+    return `FROM Maxence SELECT ${category}`;
+  };
 
   return (
-    <div className={styles.databasewindow}>
-      <div className={styles.header}>Compétences</div>
-      <div className={styles.content}>
-        <div className={styles.sidebar}>
-          {skills.map((skill) => (
-            <div key={skill.id} className={styles.sidebarBTN} onClick={() => setSelectedSkill(skill)}>
-              {skill.skill}
-            </div>
-          ))}
-        </div>
-        <div className={styles.database}>
-          {selectedSkill ? (
-            <div>
-              <ul>
-                {selectedSkill.details.applications.map((app, index) => (
-                  <li key={index}>{app}</li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <div>Sélectionnez une compétence pour voir les détails.</div>
-          )}
-        </div>
+    <div className="flex flex-col h-auto w-auto bg-gray-100 p-4">
+      <div className="flex space-x-2 mb-4">
+        {["Schema", "Programation", "Technologies", "Concepts"].map(
+          (tab, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 text-sm font-semibold rounded-md ${
+                selectedCategory === tab
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-blue-500"
+              }`}
+              onClick={() => handleSelectCategory(tab)}
+            >
+              {tab}
+            </button>
+          )
+        )}
       </div>
+      <div className="mb-4">
+        <input
+          type="text"
+          value={generateSQLQuery(selectedCategory)}
+          readOnly
+          className="w-full px-4 py-2 bg-grey border border-gray-300 rounded-md"
+        />
+      </div>
+      {selectedCategory !== "Schema" && (
+        <div className="flex-grow bg-white border border-gray-200 rounded-md overflow-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Details
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {skillsData[selectedCategory]?.map((skill, index) => (
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {skill.Name}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {skill.Details.join(", ")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {/* Ici, vous pouvez ajouter la logique pour afficher votre schéma relationnel pour l'onglet "Schema" */}
     </div>
   );
 };
