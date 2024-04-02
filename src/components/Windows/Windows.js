@@ -9,10 +9,12 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   const [startCoords, setStartCoords] = useState({ x: 0, y: 0 });
   const windowRef = useRef(null);
 
-  const startDrag = (x, y) => {
-    setIsDragging(true);
-    setStartCoords({ x, y });
-    onFocus();
+  const startDrag = (x, y, isTitleBar) => {
+    if (isTitleBar) {
+      setIsDragging(true);
+      setStartCoords({ x, y });
+      onFocus();
+    }
   };
 
   useEffect(() => {
@@ -66,7 +68,8 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
 
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
-    startDrag(touch.clientX, touch.clientY);
+    const isTitleBar = e.target.classList.contains(styles.titleBar);
+    startDrag(touch.clientX, touch.clientY, isTitleBar);
   };
 
   const handleTouchMove = useCallback(
@@ -81,6 +84,14 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
     },
     [isDragging, position, startCoords]
   );
+
+  const handleTitleBarMouseDown = (e) => {
+    startDrag(e.clientX, e.clientY, true);
+  };
+
+  const preventTouchStartPropagation = (e) => {
+    e.stopPropagation();
+  };
 
   useEffect(() => {
     if (isDragging || isResizing) {
@@ -114,12 +125,12 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
         height:
           typeof size.height === "number" ? `${size.height}px` : size.height,
       }}
-      onTouchStart={handleTouchStart}
+      onTouchStart={handleTouchStart} // Événement de démarrage du toucher pour toute la fenêtre
     >
       <div
         className={styles.titleBar}
-        onMouseDown={(e) => startDrag(e.clientX, e.clientY)}
-        onTouchStart={handleTouchStart}
+        onMouseDown={handleTitleBarMouseDown}
+        onTouchStart={handleTouchStart} // Événement de démarrage du toucher spécifique à la barre de titre
       >
         <span>{title}</span>
         <button onClick={onClose} className={styles.closeButton}></button>
@@ -129,7 +140,12 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
         onMouseDown={startResize}
         onTouchStart={startResize}
       ></div>
-      <div className={styles.content}>{children}</div>
+      <div
+        className={styles.content}
+        onTouchStart={preventTouchStartPropagation} // Empêcher la propagation pour le contenu
+      >
+        {children}
+      </div>
     </div>
   );
 };
