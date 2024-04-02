@@ -96,24 +96,23 @@ const Database = () => {
   };
 
   return (
-    <div className="flex flex-col h-auto w-auto bg-gray-100 p-4">
-      <div className="flex space-x-2 mb-4">
+    <div className="flex flex-col h-auto w-auto p-4 justify-center items-center">
+      <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
         {["Schema", "Programation", "Technologies", "Concepts"].map(
           (tab, index) => (
-            <button
-              key={index}
-              className={`px-4 py-2 text-sm font-semibold rounded-md ${
-                selectedCategory === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-blue-500"
-              }`}
-              onClick={() => handleSelectCategory(tab)}
-            >
-              {tab}
-            </button>
+            <li key={index}>
+              <a
+                className={`px-4 py-2 text-sm font-semibold rounded-md ${
+                  selectedCategory === tab ? " text-blue-500" : "none"
+                }`}
+                onClick={() => handleSelectCategory(tab)}
+              >
+                {tab}
+              </a>
+            </li>
           )
         )}
-      </div>
+      </ul>
       <div className="mb-4">
         <input
           type="text"
