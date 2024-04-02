@@ -96,8 +96,8 @@ const Database = () => {
   };
 
   return (
-    <div className="flex flex-col h-auto w-auto p-4 justify-center items-center">
-      <ul className="menu menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
+    <div className="flex flex-col w-auto p-4 justify-center items-center h-full">
+      <ul className="menu w-full menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
         {["Schema", "Programation", "Technologies", "Concepts"].map(
           (tab, index) => (
             <li key={index}>
@@ -113,43 +113,48 @@ const Database = () => {
           )
         )}
       </ul>
-      <div className="mb-4">
-        <input
-          type="text"
-          value={generateSQLQuery(selectedCategory)}
-          readOnly
-          className="w-full px-4 py-2 bg-grey border border-gray-300 rounded-md"
-        />
-      </div>
+
       {selectedCategory !== "Schema" && (
-        <div className="flex-grow bg-white border border-gray-200 rounded-md overflow-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Details
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {skillsData[selectedCategory]?.map((skill, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {skill.Name}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {skill.Details.join(", ")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <div className="mb-4 w-full">
+            <input
+              type="text"
+              value={generateSQLQuery(selectedCategory)}
+              readOnly
+              className="w-full px-4 py-2 bg-grey border rounded-md"
+            />
+          </div>
+          <div className="flex-grow bg-white border rounded-md overflow-hidden h-64 w-full md:w-96">
+            <div className="overflow-y-auto h-full">
+              <table className="min-w-full divide-y">
+                <thead>
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Details
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {skillsData[selectedCategory]?.map((skill, index) => (
+                    <tr key={index}>
+                      <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
+                        {skill.Name}
+                      </td>
+                      <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
+                        {skill.Details.join(", ")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
-      {/* Ici, vous pouvez ajouter la logique pour afficher votre schéma relationnel pour l'onglet "Schema" */}
+      {selectedCategory === "Schema" && <></>}
     </div>
   );
 };
