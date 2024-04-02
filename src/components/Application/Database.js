@@ -9,7 +9,7 @@ const skillsData = {
     },
     {
       Name: "C++",
-      Details: ["Game Development", "Systems Programming"],
+      Details: ["App Development"],
     },
     {
       Name: "Python",
@@ -17,11 +17,7 @@ const skillsData = {
     },
     {
       Name: "JavaScript",
-      Details: ["React", "Angular", "Vue"],
-    },
-    {
-      Name: "PHP",
-      Details: ["Web Development", "CMS", "Backend"],
+      Details: ["React", "Angular", "Next.js"],
     },
     {
       Name: "Rust",
@@ -55,7 +51,7 @@ const skillsData = {
     },
     {
       Name: "Linux",
-      Details: ["Ubuntu Server", "CentOS", "Debian"],
+      Details: ["Ubuntu Server", "CentOS", "Debian", "Shell Scripting"],
     },
     {
       Name: "Arduino",
@@ -77,7 +73,12 @@ const skillsData = {
     },
     {
       Name: "Big Data",
-      Details: ["Data Analysis", "ETL Processes", "Business Intelligence"],
+      Details: [
+        "Data Analysis",
+        "ETL Processes",
+        "Business Intelligence",
+        "Power BI",
+      ],
     },
   ],
 };
