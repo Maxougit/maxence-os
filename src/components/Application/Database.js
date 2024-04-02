@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SkillsUniverse from "./SkillsUniverse";
 
 const skillsData = {
   Programation: [
@@ -154,7 +155,11 @@ const Database = () => {
           </div>
         </>
       )}
-      {selectedCategory === "Schema" && <></>}
+      {selectedCategory === "Schema" && (
+        <div className="w-full h-80 rounded-box">
+          <SkillsUniverse skillsData={skillsData} />
+        </div>
+      )}
     </div>
   );
 };
