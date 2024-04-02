@@ -68,7 +68,10 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
 
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
-    const isTitleBar = e.target.classList.contains(styles.titleBar);
+    const isTitleBar =
+      e.target.classList.contains(styles.titleBar) ||
+      e.target.classList.contains(styles.closeButton) ||
+      e.target.classList.contains("span");
     startDrag(touch.clientX, touch.clientY, isTitleBar);
   };
 
@@ -92,6 +95,14 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   const preventTouchStartPropagation = (e) => {
     e.stopPropagation();
   };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [isDragging]);
 
   useEffect(() => {
     if (isDragging || isResizing) {
@@ -125,14 +136,14 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
         height:
           typeof size.height === "number" ? `${size.height}px` : size.height,
       }}
-      onTouchStart={handleTouchStart} // Événement de démarrage du toucher pour toute la fenêtre
+      onTouchStart={handleTouchStart}
     >
       <div
         className={styles.titleBar}
         onMouseDown={handleTitleBarMouseDown}
         onTouchStart={handleTouchStart} // Événement de démarrage du toucher spécifique à la barre de titre
       >
-        <span>{title}</span>
+        <span className="span">{title}</span>
         <button onClick={onClose} className={styles.closeButton}></button>
       </div>
       <div
