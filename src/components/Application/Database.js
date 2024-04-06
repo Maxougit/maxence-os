@@ -91,16 +91,7 @@ const Database = () => {
   };
 
   const generateSQLQuery = (category) => {
-    switch (category) {
-      case "Programation":
-        return [`FROM name, detail FROM programmation_skills`, `WHERE person = 'Maxence';`];
-      case "Technologies":
-        return [`FROM name, detail FROM programmation_skills`, `WHERE person = 'Maxence';`];
-      case "Concepts":
-        return [`FROM name, detail FROM programmation_skills`, `WHERE person = 'Maxence';`];
-      default:
-        return "";
-    }
+    return [`FROM name, detail FROM ${category}`, `WHERE person = 'Maxence';`];
   };
 
   return (
@@ -110,8 +101,9 @@ const Database = () => {
           (tab, index) => (
             <li key={index}>
               <a
-                className={`px-4 py-2 text-sm font-semibold rounded-md ${selectedCategory === tab ? " text-blue-500" : "none"
-                  }`}
+                className={`px-4 py-2 text-sm font-semibold rounded-md ${
+                  selectedCategory === tab ? " text-blue-500" : "none"
+                }`}
                 onClick={() => handleSelectCategory(tab)}
               >
                 {tab}
@@ -124,14 +116,18 @@ const Database = () => {
       {selectedCategory !== "Schema" && (
         <>
           <div className="mb-4 w-full">
-            <div className="mockup-code">
-              {generateSQLQuery(selectedCategory).map((query, i) => (
-                <pre key={i} data-prefix={i == 0 ? '$' : ''}>
-                  <code>
-                    {query}
-                  </code>
-                </pre>
-              ))}
+            <div className="mt-5">
+              <pre className="bg-gray-800 text-green-400 p-5 rounded-lg overflow-x-auto">
+                {generateSQLQuery(selectedCategory).map((query, i) => (
+                  <React.Fragment key={i}>
+                    {i === 0 && <span className="text-blue-500 mr-2">$</span>}
+                    <code>{query}</code>
+                    {i < generateSQLQuery(selectedCategory).length - 1 && (
+                      <br />
+                    )}
+                  </React.Fragment>
+                ))}
+              </pre>
             </div>
           </div>
           <div className="flex-grow bg-white border rounded-md overflow-hidden h-64 w-full md:w-96">

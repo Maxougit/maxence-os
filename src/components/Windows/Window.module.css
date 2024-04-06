@@ -4,12 +4,10 @@
   position: absolute;
   --tw-bg-opacity: 1;
   background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity)));
-  z-index: 100;
+  z-index: 40;
   border-radius: 5px;
   overflow: hidden; 
   resize: both;
-  min-width: 200px;
-  min-height: 150px;
   max-height: 95vh;
 }
 
@@ -19,12 +17,11 @@
   flex-grow: 1;
 }
 
-
 .titleBar {
   padding: 2px;
   display: flex;
   justify-content: space-between;
-  cursor: grab;
+  /* cursor: grab;  */
 }
 
 .titleBar:active {
@@ -38,7 +35,7 @@
   border-radius: 5px;
   background-color: transparent; /* Fond transparent */
   border: none; /* Supprime la bordure par défaut */
-  cursor: pointer; /* Curseur en forme de main au survol */
+  cursor: pointer;
   outline: none; /* Supprime le contour lors du focus */
 }
 
@@ -53,7 +50,6 @@
   left: 50%;
   width: 15px; /* Longueur des bandes */
   height: 2px; /* Épaisseur des bandes */
-
   background-color: #333; /* Couleur des bandes */
 }
 

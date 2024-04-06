@@ -69,9 +69,8 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   const handleTouchStart = (e) => {
     const touch = e.touches[0];
     const isTitleBar =
-      e.target.classList.contains(styles.titleBar) ||
-      e.target.classList.contains(styles.closeButton) ||
-      e.target.classList.contains("span");
+      e.target.classList.contains("title-bar") || e.target.nodeName === "SPAN";
+
     startDrag(touch.clientX, touch.clientY, isTitleBar);
   };
 
@@ -125,6 +124,12 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
     };
   }, [handleMouseMove, handleMouseUp, handleTouchMove, isDragging, isResizing]);
 
+  const [showIcon, setShowIcon] = useState({
+    close: false,
+    minimize: false,
+    expand: false,
+  });
+
   return (
     <div
       ref={windowRef}
@@ -143,16 +148,47 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
         onMouseDown={handleTitleBarMouseDown}
         onTouchStart={handleTouchStart}
       >
-        <div className="w-full bg-base-200 flex justify-between items-center py-4 px-5">
+        <div className="w-full bg-base-200 flex justify-between items-center py-3 px-3">
           <div className="flex flex-1 gap-2">
+            {/* Bouton rouge - Fermer */}
             <div
+              onMouseEnter={() => setShowIcon({ ...showIcon, close: true })}
+              onMouseLeave={() => setShowIcon({ ...showIcon, close: false })}
               onClick={onClose}
-              className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-red-500"
-            ></div>
-            <div className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-yellow-500"></div>
-            <div className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-green-500"></div>
+              className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-red-500 hover:bg-red-700 relative flex justify-center items-center"
+            >
+              {showIcon.close && (
+                <span className="absolute inset-0 flex justify-center items-center font-bold text-xs text-black">
+                  x
+                </span>
+              )}
+            </div>
+            {/* Bouton jaune - Minimiser */}
+            <div
+              onMouseEnter={() => setShowIcon({ ...showIcon, minimize: true })}
+              onMouseLeave={() => setShowIcon({ ...showIcon, minimize: false })}
+              className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-yellow-500 hover:bg-yellow-700 relative flex justify-center items-center"
+            >
+              {showIcon.minimize && (
+                <span className="absolute inset-0 flex justify-center items-center font-bold text-xs text-black">
+                  -
+                </span>
+              )}
+            </div>
+            {/* Bouton vert - Agrandir */}
+            <div
+              onMouseEnter={() => setShowIcon({ ...showIcon, expand: true })}
+              onMouseLeave={() => setShowIcon({ ...showIcon, expand: false })}
+              className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-green-500 hover:bg-green-700 relative flex justify-center items-center"
+            >
+              {showIcon.expand && (
+                <span className="absolute inset-0 flex justify-center items-center font-bold text-xs text-black">
+                  +
+                </span>
+              )}
+            </div>
           </div>
-          <span className="flex-1 span text-center">{title}</span>
+          <span className="flex-1 text-center text-nowrap">{title}</span>
           <div className="flex-1"></div>
         </div>
       </div>

@@ -1,6 +1,4 @@
-import React from "react";
-import styles from "./WindowsNavBar.module.css";
-import Icon from "@mdi/react";
+import React, { useEffect } from "react";
 import { mdiConsole, mdiFolder, mdiDatabase } from "@mdi/js";
 import Terminal from "../Application/Terminal";
 import Explorer from "../Application/Explorer";
@@ -25,64 +23,70 @@ export const StreamlineLayoutWindow1Solid = (props) => (
   </svg>
 );
 
-const WindowsNavBar = ({ onToggleStartMenu, openWindow }) => {
+const WindowsNavBar = ({ onToggleStartMenu, openWindow, windows }) => {
+  const isOpen = (tab) => {
+    return windows?.some((w) => w.contentId === tab);
+  };
   return (
-    <nav className={styles.windowsNavBar}>
-      {/* <Icon
-        className={styles.startMenuButton}
-        onClick={onToggleStartMenu}
-        path={StreamlineLayoutWindow1Solid}
-        size={1.8}
-        color="white"
-      /> */}
-      <StreamlineLayoutWindow1Solid
-        className={styles.startMenuButton}
-        onClick={onToggleStartMenu}
-      />
-      <Icon
-        className={styles.appIcon}
-        path={mdiConsole}
-        size={1.5}
-        color="white"
-        onClick={() => openWindow(1, "Terminal", <Terminal />)}
-      />
-      <Icon
-        className={styles.appIcon}
-        path={mdiFolder}
-        size={1.5}
-        color="white"
-        onClick={() => {
-          openWindow(
-            2,
-            "Explorer",
-            <Explorer
-              openFile={(file) => {
-                const sizeProps = isMobileDevice()
-                  ? null
-                  : file === undefined
-                  ? null
-                  : file.extension === "pdf"
-                  ? { width: "500px", height: "800px" }
-                  : null;
-                openWindow(
-                  file.id,
-                  file.name,
-                  <Viewer file={file} />,
-                  sizeProps
-                );
-              }}
-            />
-          );
-        }}
-      />
-      <Icon
-        className={styles.appIcon}
-        path={mdiDatabase}
-        size={1.5}
-        color="white"
-        onClick={() => openWindow(3, "Base de Données", <Database />)}
-      />
-    </nav>
+    <ul className="menu menu-horizontal bg-base-200/50 rounded-box p-2 mb-1 w-auto center place-content-center place-self-center border border-base-100 backdrop-blur-lg z-50">
+      {/* <li>
+        <a onClick={onToggleStartMenu}>
+          <StreamlineLayoutWindow1Solid className="h-5 w-5 text-white" />
+        </a>
+      </li> */}
+      <li>
+        <a
+          className={isOpen(1) ? "active" : ""}
+          onClick={() => openWindow(1, "Terminal", <Terminal />)}
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d={mdiConsole} />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a
+          className={isOpen(2) ? "active" : ""}
+          onClick={() => {
+            openWindow(
+              2,
+              "Explorer",
+              <Explorer
+                openFile={(file) => {
+                  const sizeProps = isMobileDevice()
+                    ? null
+                    : file === undefined
+                    ? null
+                    : file.extension === "pdf"
+                    ? { width: "500px", height: "800px" }
+                    : null;
+                  openWindow(
+                    file.id,
+                    file.name,
+                    <Viewer file={file} />,
+                    sizeProps
+                  );
+                }}
+              />
+            );
+          }}
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d={mdiFolder} />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a
+          className={isOpen(3) ? "active" : ""}
+          onClick={() => openWindow(3, "Base de Données", <Database />)}
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d={mdiDatabase} />
+          </svg>
+        </a>
+      </li>
+    </ul>
   );
 };
 

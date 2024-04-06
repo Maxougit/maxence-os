@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WindowsNavBar from "@/components/NavBar/WindowsNavBar";
 import StartMenu from "@/components/StartMenu/StartMenu";
 import styles from "./Page.module.css";
@@ -92,6 +92,7 @@ export default function Home() {
         </Window>
       ))}
       <WindowsNavBar
+        windows={windows}
         onToggleStartMenu={toggleStartMenu}
         openWindow={openWindow}
       />
