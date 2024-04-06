@@ -49,7 +49,10 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.mainContainer}>
+    <div
+      className={styles.mainContainer}
+      style={{ backgroundImage: "url(/wp.jpg)" }}
+    >
       <main className={styles.content}>
         <h1 className="text-4xl font-bold text-center">Maxence OS</h1>
         <p className="text-center">Site en construction</p>

@@ -3,6 +3,8 @@
     flex-direction: column;
     height: 100vh;
     overflow: hidden; /* Empêche le défilement */
+    background-size: cover;
+    background-position: center;
   }
   
   .content {
@@ -19,7 +21,7 @@
     position: absolute; /* Positionnement absolu par rapport à son parent relatif */
     top: 0;
     left: 0;
-    border: 1px solid black;
+    /* border: 1px solid black; */
     border-radius: 5px; /* Rend l'élément circulaire */
     padding: 2px;
     transition: all 0.3s ease-in-out; /* Applique une transition fluide pour toutes les propriétés changées */

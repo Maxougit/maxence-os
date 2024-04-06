@@ -128,7 +128,7 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   return (
     <div
       ref={windowRef}
-      className="bg-base-100 border rounded-xl overflow-hidden absolute resize z-50 max-w-[95vh]"
+      className={styles.window}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -141,11 +141,14 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
       <div
         className={styles.titleBar}
         onMouseDown={handleTitleBarMouseDown}
-        onTouchStart={handleTouchStart} // Événement de démarrage du toucher spécifique à la barre de titre
+        onTouchStart={handleTouchStart}
       >
         <div className="w-full bg-base-200 flex justify-between items-center py-4 px-5">
           <div className="flex flex-1 gap-2">
-            <div onClick={onClose} className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-red-500"></div>
+            <div
+              onClick={onClose}
+              className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-red-500"
+            ></div>
             <div className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-yellow-500"></div>
             <div className="cursor-pointer w-3 h-3 rounded-full duration-100 bg-gray-500 hover:bg-green-500"></div>
           </div>
