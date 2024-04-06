@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <div
       className={styles.mainContainer}
-      style={{ backgroundImage: "url(/wp.jpg)" }}
+      style={{ backgroundImage: "url(/wp.webp)" }}
     >
       <main className={styles.content}>
         <h1 className="text-4xl font-bold text-center">Maxence OS</h1>
