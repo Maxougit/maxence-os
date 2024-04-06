@@ -91,7 +91,10 @@ const Database = () => {
   };
 
   const generateSQLQuery = (category) => {
-    return [`FROM name, detail FROM ${category}`, `WHERE person = 'Maxence';`];
+    return [
+      `SELECT name, details FROM ${category}`,
+      `WHERE person = 'Maxence';`,
+    ];
   };
 
   return (
