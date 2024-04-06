@@ -91,10 +91,16 @@ const Database = () => {
   };
 
   const generateSQLQuery = (category) => {
-    if (category === "Schema") {
-      return "SELECT * FROM Maxence;";
+    switch (category) {
+      case "Programation":
+        return [`FROM name, detail FROM programmation_skills`, `WHERE person = 'Maxence';`];
+      case "Technologies":
+        return [`FROM name, detail FROM programmation_skills`, `WHERE person = 'Maxence';`];
+      case "Concepts":
+        return [`FROM name, detail FROM programmation_skills`, `WHERE person = 'Maxence';`];
+      default:
+        return "";
     }
-    return `FROM Maxence SELECT ${category}`;
   };
 
   return (
@@ -104,9 +110,8 @@ const Database = () => {
           (tab, index) => (
             <li key={index}>
               <a
-                className={`px-4 py-2 text-sm font-semibold rounded-md ${
-                  selectedCategory === tab ? " text-blue-500" : "none"
-                }`}
+                className={`px-4 py-2 text-sm font-semibold rounded-md ${selectedCategory === tab ? " text-blue-500" : "none"
+                  }`}
                 onClick={() => handleSelectCategory(tab)}
               >
                 {tab}
@@ -119,18 +124,24 @@ const Database = () => {
       {selectedCategory !== "Schema" && (
         <>
           <div className="mb-4 w-full">
-            <input
-              type="text"
-              value={generateSQLQuery(selectedCategory)}
-              readOnly
-              className="w-full px-4 py-2 bg-grey border rounded-md"
-            />
+            <div className="mockup-code">
+              {generateSQLQuery(selectedCategory).map((query, i) => (
+                <pre key={i} data-prefix={i == 0 ? '$' : ''}>
+                  <code>
+                    {query}
+                  </code>
+                </pre>
+              ))}
+            </div>
           </div>
           <div className="flex-grow bg-white border rounded-md overflow-hidden h-64 w-full md:w-96">
             <div className="overflow-y-auto h-full">
               <table className="min-w-full divide-y">
                 <thead>
                   <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Id
+                    </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Name
                     </th>
@@ -142,6 +153,9 @@ const Database = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {skillsData[selectedCategory]?.map((skill, index) => (
                     <tr key={index}>
+                      <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
+                        {index + 1}
+                      </td>
                       <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
                         {skill.Name}
                       </td>
