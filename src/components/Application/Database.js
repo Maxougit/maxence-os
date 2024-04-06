@@ -157,7 +157,7 @@ const Database = () => {
         </>
       )}
       {selectedCategory === "Schema" && (
-        <div className="w-full h-80 rounded-box">
+        <div className="w-96 h-80 rounded-box">
           <SkillsUniverse skillsData={skillsData} />
         </div>
       )}
