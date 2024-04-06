@@ -6,7 +6,6 @@ const SkillsUniverse = ({ skillsData }) => {
   const mountRef = useRef(null);
 
   useEffect(() => {
-    // Store the current value of the ref in a variable
     const mount = mountRef.current;
 
     const scene = new THREE.Scene();
@@ -19,7 +18,7 @@ const SkillsUniverse = ({ skillsData }) => {
     camera.position.z = 10;
     camera.position.y = 5;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     mount.appendChild(renderer.domElement);
 
@@ -33,10 +32,11 @@ const SkillsUniverse = ({ skillsData }) => {
     scene.add(directionalLight);
 
     const categories = Object.keys(skillsData);
+    let allSkillSpheres = [];
 
     categories.forEach((category, index) => {
       const angle = (index / categories.length) * Math.PI * 2;
-      const distance = 5;
+      const distance = 2; // Consider making this dynamic for movement
       const x = Math.cos(angle) * distance;
       const y = Math.sin(angle) * distance;
 
@@ -49,7 +49,7 @@ const SkillsUniverse = ({ skillsData }) => {
       scene.add(categorySphere);
 
       skillsData[category].forEach((skill, skillIndex) => {
-        const skillGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+        const skillGeometry = new THREE.SphereGeometry(0.15, 16, 16);
         const skillMaterial = new THREE.MeshStandardMaterial({
           color: Math.random() * 0xffffff,
         });
@@ -57,27 +57,42 @@ const SkillsUniverse = ({ skillsData }) => {
 
         const skillAngle =
           (skillIndex / skillsData[category].length) * Math.PI * 2;
-        const skillDistance = 1;
+        const skillDistance = 3;
         const skillX = x + Math.cos(skillAngle) * skillDistance;
         const skillY = y + Math.sin(skillAngle) * skillDistance;
 
         skillSphere.position.set(skillX, skillY, 0);
         scene.add(skillSphere);
 
-        let orbitSpeed = 0.02;
-        function animate() {
-          requestAnimationFrame(animate);
-          skillSphere.position.x =
-            categorySphere.position.x +
-            Math.cos(skillAngle + Date.now() * orbitSpeed) * skillDistance;
-          skillSphere.position.y =
-            categorySphere.position.y +
-            Math.sin(skillAngle + Date.now() * orbitSpeed) * skillDistance;
-          renderer.render(scene, camera);
-        }
-        animate();
+        allSkillSpheres.push({
+          skillSphere,
+          categorySphere,
+          skillAngle,
+          skillDistance,
+        });
       });
     });
+
+    let categoryOrbitSpeed = 0.001;
+    function animate() {
+      requestAnimationFrame(animate);
+
+      allSkillSpheres.forEach(
+        ({ skillSphere, categorySphere, skillAngle, skillDistance }) => {
+          skillSphere.position.x =
+            categorySphere.position.x +
+            Math.cos(skillAngle + Date.now() * categoryOrbitSpeed) *
+              skillDistance;
+          skillSphere.position.y =
+            categorySphere.position.y +
+            Math.sin(skillAngle + Date.now() * categoryOrbitSpeed) *
+              skillDistance;
+        }
+      );
+
+      renderer.render(scene, camera);
+    }
+    animate();
 
     return () => {
       if (renderer.domElement && mount) {
