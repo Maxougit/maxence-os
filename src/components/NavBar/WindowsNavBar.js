@@ -5,6 +5,7 @@ import Explorer from "../Application/Explorer";
 import Viewer from "../Application/Viewer";
 import Database from "../Application/Database";
 import { isMobileDevice } from "@/utils/device";
+import Chatbot from "../Application/chatbot";
 
 export const StreamlineLayoutWindow1Solid = (props) => (
   <svg
@@ -80,6 +81,16 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow, windows }) => {
         <a
           className={isOpen(3) ? "active" : ""}
           onClick={() => openWindow(3, "Base de Données", <Database />)}
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d={mdiDatabase} />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a
+          className={isOpen(4) ? "active" : ""}
+          onClick={() => openWindow(4, "IA", <Chatbot />)}
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path d={mdiDatabase} />
