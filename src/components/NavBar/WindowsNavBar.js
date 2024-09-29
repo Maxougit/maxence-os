@@ -5,6 +5,7 @@ import Explorer from "../Application/Explorer";
 import Viewer from "../Application/Viewer";
 import Database from "../Application/Database";
 import { isMobileDevice } from "@/utils/device";
+import PacManGame from "../Application/PacManGame";
 
 export const StreamlineLayoutWindow1Solid = (props) => (
   <svg
@@ -83,6 +84,17 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow, windows }) => {
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path d={mdiDatabase} />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a
+          className={isOpen(4) ? "active" : ""}
+          onClick={() => openWindow(4, "Jeu PAC-MAN", <PacManGame />)}
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            {/* Icône du jeu */}
+            <path d="M13 2C8.58 2 5 5.58 5 10s3.58 8 8 8c1.85 0 3.55-.63 4.9-1.69l-4.9-6.31V2z" />
           </svg>
         </a>
       </li>
