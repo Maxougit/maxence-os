@@ -1,19 +1,19 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import WindowsNavBar from "@/components/NavBar/WindowsNavBar";
-import StartMenu from "@/components/StartMenu/StartMenu";
-import styles from "./Page.module.css";
-import Window from "@/components/Windows/Windows";
-import { FaRegFilePdf } from "react-icons/fa6";
-import Viewer from "@/components/Application/Viewer";
-import { isMobileDevice } from "@/utils/device";
+'use client';
+import React, { useEffect, useState } from 'react';
+import WindowsNavBar from '@/components/NavBar/WindowsNavBar';
+import StartMenu from '@/components/StartMenu/StartMenu';
+import styles from './Page.module.css';
+import Window from '@/components/Windows/Windows';
+import { FaRegFilePdf } from 'react-icons/fa6';
+import Viewer from '@/components/Application/Viewer';
+import { isMobileDevice } from '@/utils/device';
 
 const file = {
   id: 101,
-  type: "file",
-  extension: "pdf",
-  name: "CV Leroux Maxence.pdf",
-  path: "/files/CV Leroux Maxence FR.pdf",
+  type: 'file',
+  extension: 'pdf',
+  name: 'CV Leroux Maxence.pdf',
+  path: '/files/CV Leroux Maxence FR.pdf',
 };
 
 export default function Home() {
@@ -25,9 +25,7 @@ export default function Home() {
   };
 
   const openWindow = (contentId, title, content, size) => {
-    const existingWindowIndex = windows.findIndex(
-      (w) => w.contentId === contentId
-    );
+    const existingWindowIndex = windows.findIndex((w) => w.contentId === contentId);
 
     if (existingWindowIndex >= 0) {
       // Si la fenêtre est déjà ouverte, on la retire pour la réouvrir au premier plan
@@ -49,25 +47,17 @@ export default function Home() {
   };
 
   return (
-    <div
-      className={styles.mainContainer}
-      style={{ backgroundImage: "url(/wp.webp)" }}
-    >
+    <div className={styles.mainContainer} style={{ backgroundImage: 'url(/wp.webp)' }}>
       <main className={styles.content}>
         <h1 className="text-4xl font-bold text-center">Maxence OS</h1>
-        <p className="text-center">Site en construction</p>
+        {/* <p className="text-center">Site en construction</p> */}
         <div
           className={styles.iconContainer}
           onClick={() => {
             const sizeProps = isMobileDevice()
               ? null
-              : { width: "500px", height: "800px" };
-            openWindow(
-              101,
-              "CV Leroux Maxence.pdf",
-              <Viewer file={file} />,
-              sizeProps
-            );
+              : { width: '500px', height: '800px' };
+            openWindow(101, 'CV Leroux Maxence.pdf', <Viewer file={file} />, sizeProps);
           }}
         >
           <div className={styles.icon}>
