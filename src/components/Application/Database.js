@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SkillsUniverse from "./SkillsUniverse";
 
 const skillsData = {
-  Programation: [
+  Programmation: [
     {
       Name: "C#",
       Details: ["WPF", "UWP", "API", ".NET", "ORM"],
@@ -100,7 +100,7 @@ const Database = () => {
   return (
     <div className="flex flex-col w-auto p-4 justify-center items-center h-full">
       <ul className="menu w-full menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
-        {["Schema", "Programation", "Technologies", "Concepts"].map(
+        {["Schema", "Programmation", "Technologies", "Concepts"].map(
           (tab, index) => (
             <li key={index}>
               <a
