@@ -81,6 +81,44 @@ const skillsData = {
       ],
     },
   ],
+  Experiences: [
+    {
+      Name: "ArcelorMittal Distribution Solutions",
+      Details: [
+        "CDD & contrat pro BAC+5 (2+12 mois)",
+        "Assistant projet – architecture GenAI et automatisation",
+      ],
+    },
+    {
+      Name: "STELLANTIS",
+      Details: [
+        "Alternance – ingénieur informatique (3 ans)",
+        "Développement d'outils IT et automatisation",
+      ],
+    },
+    {
+      Name: "AXON’CABLE",
+      Details: [
+        "Stage – technicien systèmes & réseaux (2 mois)",
+        "Maintenance infrastructure et support utilisateurs",
+      ],
+    },
+    {
+      Name: "E.P.S.M.D de l’Aisne",
+      Details: [
+        "Stage – technicien systèmes & réseaux (2 mois)",
+        "Déploiement téléphonie IP et installation postes",
+      ],
+    },
+    {
+      Name: "Décathlon logistique",
+      Details: ["Opérateur logistique (CDD de 2 mois)"]
+    },
+    {
+      Name: "Freelance / auto‑entrepreneur",
+      Details: ["Intervention PC / réseau & développement web"]
+    },
+  ],
 };
 
 const Database = () => {
@@ -100,7 +138,7 @@ const Database = () => {
   return (
     <div className="flex flex-col w-auto p-4 justify-center items-center h-full">
       <ul className="menu w-full menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
-        {["Schema", "Programation", "Technologies", "Concepts"].map(
+        {["Schema", "Programation", "Technologies", "Concepts", "Experiences"].map(
           (tab, index) => (
             <li key={index}>
               <a
