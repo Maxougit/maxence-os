@@ -51,7 +51,7 @@ class Terminal extends React.Component {
     }));
   };
 
-  whoAmI = () => 'Name: Maxence\nAge: 22\nJob: Student at CESI engineer school';
+  whoAmI = () => 'Name: Maxence\nAge: 23\nJob: Student at CESI engineer school';
   listDirectory = () => 'file1.txt  file2.txt  folder1  folder2';
   showHelp = () => 'Commands: whoami, ls, help, about, easter_egg, contact, linkedin';
   aboutMe = () =>

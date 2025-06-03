@@ -1,111 +1,151 @@
-import React, { useState } from "react";
-import SkillsUniverse from "./SkillsUniverse";
+import React, { useState } from 'react';
+import SkillsUniverse from './SkillsUniverse';
 
 const skillsData = {
   Programation: [
     {
-      Name: "C#",
-      Details: ["WPF", "UWP", "API", ".NET", "ORM"],
+      Name: 'C#',
+      Details: ['WPF', 'UWP', 'API', '.NET', 'ORM'],
     },
     {
-      Name: "C++",
-      Details: ["App Development"],
+      Name: 'C++',
+      Details: ['App Development'],
     },
     {
-      Name: "Python",
-      Details: ["Data Analysis", "Machine Learning", "Web Development"],
+      Name: 'Python',
+      Details: ['Data Analysis', 'Machine Learning', 'Web Development'],
     },
     {
-      Name: "JavaScript",
-      Details: ["React", "Angular", "Next.js"],
+      Name: 'JavaScript',
+      Details: ['React', 'Angular', 'Next.js'],
+    },
+    { Name: 'TypeScript', Details: ['node.js', 'expressJS'] },
+    {
+      Name: 'Rust',
+      Details: ['Systems Programming', 'Performance'],
     },
     {
-      Name: "Rust",
-      Details: ["Systems Programming", "Performance"],
+      Name: 'SQL',
+      Details: ['Database Design', 'Optimization'],
     },
     {
-      Name: "SQL",
-      Details: ["Database Design", "Optimization"],
-    },
-    {
-      Name: "HTML/CSS",
-      Details: ["Web Design", "Responsive Layouts"],
+      Name: 'HTML/CSS',
+      Details: ['Web Design', 'Responsive Layouts'],
     },
   ],
   Technologies: [
     {
-      Name: "Node.js",
-      Details: ["Server-Side Programming", "API Development"],
+      Name: 'Node.js',
+      Details: ['Server-Side Programming', 'API Development'],
     },
     {
-      Name: "Git",
-      Details: ["Version Control", "Collaboration"],
+      Name: 'Git',
+      Details: ['Version Control', 'Collaboration'],
     },
     {
-      Name: "Docker",
-      Details: ["Containerization", "Microservices"],
+      Name: 'Docker',
+      Details: ['Containerization', 'Microservices'],
     },
     {
-      Name: "Blockchain",
-      Details: ["Smart Contracts", "DApps"],
+      Name: 'Kubernetes',
+      Details: [
+        'Container Orchestration',
+        'Scalability',
+        'Azure Kubernetes Service',
+        'K8S',
+      ],
     },
     {
-      Name: "Linux",
-      Details: ["Ubuntu Server", "CentOS", "Debian", "Shell Scripting"],
+      Name: 'Blockchain',
+      Details: ['Smart Contracts', 'DApps'],
     },
     {
-      Name: "Arduino",
-      Details: ["Embedded Systems", "IoT Projects"],
+      Name: 'Linux',
+      Details: ['Ubuntu Server', 'CentOS', 'Debian', 'Shell Scripting'],
+    },
+    {
+      Name: 'Arduino',
+      Details: ['Embedded Systems', 'IoT Projects'],
     },
   ],
   Concepts: [
     {
-      Name: "Decentralization",
-      Details: ["Blockchain", "P2P Networks"],
+      Name: 'Decentralization',
+      Details: ['Blockchain', 'P2P Networks'],
     },
     {
-      Name: "Self-Hosting",
-      Details: ["Personal Data Management", "Custom Servers"],
+      Name: 'Self-Hosting',
+      Details: ['Personal Data Management', 'Custom Servers'],
     },
     {
-      Name: "Networking",
-      Details: ["LAN/WAN", "Cisco Devices"],
+      Name: 'Networking',
+      Details: ['LAN/WAN', 'Cisco Devices'],
     },
     {
-      Name: "Big Data",
+      Name: 'Big Data',
+      Details: ['Data Analysis', 'ETL Processes', 'Business Intelligence', 'Power BI'],
+    },
+  ],
+  Experiences: [
+    {
+      Name: 'ArcelorMittal Distribution Solutions',
       Details: [
-        "Data Analysis",
-        "ETL Processes",
-        "Business Intelligence",
-        "Power BI",
+        'CDD & contrat pro BAC+5 (2+12 mois)',
+        'Assistant projet – architecture GenAI et automatisation',
       ],
+    },
+    {
+      Name: 'STELLANTIS',
+      Details: [
+        'Alternance – ingénieur informatique (3 ans)',
+        "Développement d'outils IT et automatisation",
+      ],
+    },
+    {
+      Name: 'AXON’CABLE',
+      Details: [
+        'Stage – technicien systèmes & réseaux (2 mois)',
+        'Maintenance infrastructure et support utilisateurs',
+      ],
+    },
+    {
+      Name: 'E.P.S.M.D de l’Aisne',
+      Details: [
+        'Stage – technicien systèmes & réseaux (2 mois)',
+        'Déploiement et installation de postes',
+      ],
+    },
+    {
+      Name: 'Décathlon logistique',
+      Details: ['Opérateur logistique (CDD de 2 mois)'],
+    },
+    {
+      Name: 'Freelance / auto‑entrepreneur',
+      Details: ['Intervention PC / réseau & développement web'],
     },
   ],
 };
 
 const Database = () => {
-  const [selectedCategory, setSelectedCategory] = useState("Schema");
+  const [selectedCategory, setSelectedCategory] = useState('Schema');
 
   const handleSelectCategory = (category) => {
     setSelectedCategory(category);
   };
 
   const generateSQLQuery = (category) => {
-    return [
-      `SELECT name, details FROM ${category}`,
-      `WHERE person = 'Maxence';`,
-    ];
+    return [`SELECT name, details FROM ${category}`, `WHERE person = 'Maxence';`];
   };
 
   return (
     <div className="flex flex-col w-auto p-4 justify-center items-center h-full">
       <ul className="menu w-full menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
-        {["Schema", "Programation", "Technologies", "Concepts"].map(
+        {['Schema', 'Programation', 'Technologies', 'Concepts', 'Experiences'].map(
           (tab, index) => (
             <li key={index}>
               <a
                 className={`px-4 py-2 text-sm font-semibold rounded-md ${
-                  selectedCategory === tab ? " text-blue-500" : "none"
+                  selectedCategory === tab ? ' text-blue-500' : 'none'
                 }`}
                 onClick={() => handleSelectCategory(tab)}
               >
@@ -116,7 +156,7 @@ const Database = () => {
         )}
       </ul>
 
-      {selectedCategory !== "Schema" && (
+      {selectedCategory !== 'Schema' && (
         <>
           <div className="mb-4 w-full">
             <div className="mt-5">
@@ -125,9 +165,7 @@ const Database = () => {
                   <React.Fragment key={i}>
                     {i === 0 && <span className="text-blue-500 mr-2">$</span>}
                     <code>{query}</code>
-                    {i < generateSQLQuery(selectedCategory).length - 1 && (
-                      <br />
-                    )}
+                    {i < generateSQLQuery(selectedCategory).length - 1 && <br />}
                   </React.Fragment>
                 ))}
               </pre>
@@ -159,7 +197,7 @@ const Database = () => {
                         {skill.Name}
                       </td>
                       <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
-                        {skill.Details.join(", ")}
+                        {skill.Details.join(', ')}
                       </td>
                     </tr>
                   ))}
@@ -169,7 +207,7 @@ const Database = () => {
           </div>
         </>
       )}
-      {selectedCategory === "Schema" && (
+      {selectedCategory === 'Schema' && (
         <div className="w-96 h-80 rounded-box">
           <SkillsUniverse skillsData={skillsData} />
         </div>
