@@ -49,21 +49,8 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
         setSize({ width: size.width + dx, height: size.height + dy });
         setStartCoords({ x: e.clientX, y: e.clientY });
       }
-
-      if (isDragging || isResizing) {
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-      } else {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      }
-
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
     },
-    [handleMouseUp, isDragging, isResizing, position, size, startCoords]
+    [isDragging, isResizing, position, size, startCoords]
   );
 
   const handleTouchStart = (e) => {
@@ -76,6 +63,7 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
 
   const handleTouchMove = useCallback(
     (e) => {
+      e.preventDefault();
       const touch = e.touches[0];
       if (isDragging) {
         const dx = touch.clientX - startCoords.x;
@@ -104,22 +92,23 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   }, [isDragging]);
 
   useEffect(() => {
+    const touchOptions = { passive: false };
     if (isDragging || isResizing) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
-      window.addEventListener("touchmove", handleTouchMove);
+      window.addEventListener("touchmove", handleTouchMove, touchOptions);
       window.addEventListener("touchend", handleMouseUp);
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchmove", handleTouchMove, touchOptions);
       window.removeEventListener("touchend", handleMouseUp);
     }
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchmove", handleTouchMove, touchOptions);
       window.removeEventListener("touchend", handleMouseUp);
     };
   }, [handleMouseMove, handleMouseUp, handleTouchMove, isDragging, isResizing]);
@@ -199,7 +188,7 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
       ></div>
       <div
         className={styles.content}
-        onTouchStart={preventTouchStartPropagation} // Empêcher la propagation pour le contenu
+        onTouchStart={preventTouchStartPropagation}
       >
         {children}
       </div>
