@@ -1,5 +1,5 @@
 # Étape 1: Construire votre application
-FROM node:latest as builder
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -7,16 +7,17 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm ci
 
 # Copier les fichiers du projet
 COPY . .
 
 # Construire l'application
 RUN npm run build
+RUN npm prune --production
 
 # Étape 2: Exécuter l'application
-FROM node:latest
+FROM node:18-alpine
 
 WORKDIR /app
 
