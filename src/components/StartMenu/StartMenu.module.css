@@ -4,7 +4,7 @@
     position: fixed;
     bottom: 50px;
     left: 0;
-    width: 300px; /* Ajuste selon tes préférences */
+  width: 300px;
     background: rgba(255, 255, 255, 0.8);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
@@ -14,7 +14,6 @@
   
   .userSection {
     padding: 10px;
-    /* Style pour la section utilisateur */
   }
   
   .appSection {
@@ -22,7 +21,6 @@
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 10px;
     padding: 10px;
-    /* Style pour la section des applications */
   }
   
   .app {
@@ -32,6 +30,5 @@
     justify-content: center;
     align-items: center;
     border-radius: 4px;
-    /* Style pour chaque case d'application */
   }
   
