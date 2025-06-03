@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SkillsUniverse from './SkillsUniverse';
 
 const skillsData = {
-  Programmation: [
+  Programation: [
     {
       Name: 'C#',
       Details: ['WPF', 'UWP', 'API', '.NET', 'ORM'],
@@ -19,7 +19,10 @@ const skillsData = {
       Name: 'JavaScript',
       Details: ['React', 'Angular', 'Next.js'],
     },
-    { Name: 'TypeScript', Details: ['node.js', 'expressJS'] },
+    {
+      Name: 'TypeScript',
+      Details: ['node.js', 'expressJS'],
+    },
     {
       Name: 'Rust',
       Details: ['Systems Programming', 'Performance'],
