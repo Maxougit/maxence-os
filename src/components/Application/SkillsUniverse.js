@@ -36,7 +36,7 @@ const SkillsUniverse = ({ skillsData }) => {
 
     categories.forEach((category, index) => {
       const angle = (index / categories.length) * Math.PI * 2;
-      const distance = 2; // Consider making this dynamic for movement
+      const distance = 2;
       const x = Math.cos(angle) * distance;
       const y = Math.sin(angle) * distance;
 

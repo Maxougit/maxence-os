@@ -199,7 +199,7 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
       ></div>
       <div
         className={styles.content}
-        onTouchStart={preventTouchStartPropagation} // Empêcher la propagation pour le contenu
+        onTouchStart={preventTouchStartPropagation}
       >
         {children}
       </div>

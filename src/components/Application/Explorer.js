@@ -65,7 +65,6 @@ const Explorer = ({ openFile }) => {
 
   const navigateTo = (item) => {
     if (item.type === "file") {
-      // Use the openFile function passed from the parent component (WindowsNavBar) to open the file
       openFile(item);
     } else {
       setCurrentItem(item);

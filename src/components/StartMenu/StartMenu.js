@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './StartMenu.module.css'; // Assure-toi de créer ce fichier CSS
+import styles from './StartMenu.module.css';
 
 const StartMenu = () => {
   return (
