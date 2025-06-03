@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SkillsUniverse from './SkillsUniverse';
 
 const skillsData = {
-  Programation: [
+  Programmation: [
     {
       Name: 'C#',
       Details: ['WPF', 'UWP', 'API', '.NET', 'ORM'],
