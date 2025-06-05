@@ -49,21 +49,8 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
         setSize({ width: size.width + dx, height: size.height + dy });
         setStartCoords({ x: e.clientX, y: e.clientY });
       }
-
-      if (isDragging || isResizing) {
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseup", handleMouseUp);
-      } else {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      }
-
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("mouseup", handleMouseUp);
-      };
     },
-    [handleMouseUp, isDragging, isResizing, position, size, startCoords]
+    [isDragging, isResizing, position, size, startCoords]
   );
 
   const handleTouchStart = (e) => {
