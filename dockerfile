@@ -17,7 +17,7 @@ RUN npm run build
 RUN npm prune --production
 
 # Étape 2: Exécuter l'application
-FROM node:18-alpine
+FROM node:25-alpine
 
 WORKDIR /app
 
