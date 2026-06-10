@@ -9,7 +9,7 @@ export const profile = {
   linkedin: 'https://www.linkedin.com/in/maxence-leroux123/',
   website: 'https://maxadev.fr',
   location: 'Reims, France',
-  photo: '/images/profil.jpg',
+  photo: '/images/portrait.jpg',
 };
 
 export const education = [
