@@ -5,7 +5,10 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [position, setPosition] = useState({ x: 10, y: 10 });
-  const [size, setSize] = useState({ width: "auto", height: "auto" });
+  const [size, setSize] = useState({
+    width: forceDefaultSize?.width || "auto",
+    height: forceDefaultSize?.height || "auto",
+  });
   const [startCoords, setStartCoords] = useState({ x: 0, y: 0 });
   const windowRef = useRef(null);
 
@@ -16,15 +19,6 @@ const Window = ({ title, children, onClose, onFocus, forceDefaultSize }) => {
       onFocus();
     }
   };
-
-  useEffect(() => {
-    if (forceDefaultSize) {
-      setSize({
-        width: forceDefaultSize.width || "auto",
-        height: forceDefaultSize.height || "auto",
-      });
-    }
-  }, [forceDefaultSize]);
 
   const startResize = (e) => {
     setIsResizing(true);

@@ -21,6 +21,7 @@ class Terminal extends React.Component {
       easter_egg: this.easterEgg,
       contact: this.contactMe,
       linkedin: this.linkedin,
+      maxadev: this.maxadev,
     };
   }
 
@@ -51,14 +52,17 @@ class Terminal extends React.Component {
     }));
   };
 
-  whoAmI = () => 'Name: Maxence\nAge: 23\nJob: Student at CESI engineer school';
+  whoAmI = () =>
+    'Name: Maxence Leroux\nJob: Ingénieur informatique freelance — Maxadev\nFormation: Diplôme d\'ingénieur CESI (2025)';
   listDirectory = () => 'file1.txt  file2.txt  folder1  folder2';
-  showHelp = () => 'Commands: whoami, ls, help, about, easter_egg, contact, linkedin';
+  showHelp = () =>
+    'Commands: whoami, ls, help, about, easter_egg, contact, linkedin, maxadev';
   aboutMe = () =>
-    'I am Maxence, a software engineering student with a passion for AI and development.';
+    "I am Maxence, a software engineer specialized in GenAI, microservices architecture and DevOps. Currently LeadDev AI & DevOps at ArcelorMittal, freelancing via Maxadev.";
   easterEgg = () => 'You found an easter egg! 🥚';
   contactMe = () => 'You can contact me at contact@maxenceleroux.fr';
   linkedin = () => 'https://www.linkedin.com/in/maxence-leroux123/';
+  maxadev = () => 'Freelance & consulting: https://maxadev.fr';
 
   handleCommandChange = (event) => {
     this.setState({ command: event.target.value });
