@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 
 const securityHeaders = [
-  { key: 'X-Frame-Options', value: 'DENY' },
+  // SAMEORIGIN (et non DENY) : le viewer interne affiche le PDF dans une iframe
+  { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   {
@@ -23,7 +24,7 @@ const securityHeaders = [
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "frame-ancestors 'none'",
+      "frame-ancestors 'self'",
     ].join('; '),
   },
 ]
