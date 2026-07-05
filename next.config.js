@@ -14,7 +14,10 @@ const securityHeaders = [
     value: [
       "default-src 'self'",
       // 'unsafe-inline' requis : scripts inline injectés par Next.js (RSC) + snippet GA
-      "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com",
+      // 'unsafe-eval' en dev uniquement : requis par React pour le debugging (jamais utilisé en prod)
+      `script-src 'self' 'unsafe-inline'${
+        process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''
+      } https://www.googletagmanager.com`,
       "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
       "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
       "style-src 'self' 'unsafe-inline'",
