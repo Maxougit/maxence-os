@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import { mdiConsole, mdiFolder, mdiDatabase } from "@mdi/js";
+import { mdiConsole, mdiFolder, mdiDatabase, mdiKubernetes } from "@mdi/js";
 import Terminal from "../Application/Terminal";
 import Explorer from "../Application/Explorer";
 import Viewer from "../Application/Viewer";
 import Database from "../Application/Database";
+import ServerRescue from "../Application/ServerRescue";
 import { isMobileDevice } from "@/utils/device";
 
 export const StreamlineLayoutWindow1Solid = (props) => (
@@ -83,6 +84,23 @@ const WindowsNavBar = ({ onToggleStartMenu, openWindow, windows }) => {
         >
           <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
             <path d={mdiDatabase} />
+          </svg>
+        </a>
+      </li>
+      <li>
+        <a
+          className={isOpen(4) ? "active" : ""}
+          onClick={() =>
+            openWindow(
+              4,
+              "Server Rescue",
+              <ServerRescue />,
+              isMobileDevice() ? null : { width: "640px", height: "560px" }
+            )
+          }
+        >
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+            <path d={mdiKubernetes} />
           </svg>
         </a>
       </li>
