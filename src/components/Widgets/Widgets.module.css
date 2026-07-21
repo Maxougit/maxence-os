@@ -283,17 +283,107 @@
   }
 }
 
-/* Sur mobile, la grille reste ancrée à gauche et tient sur deux rangées. */
+@media (max-width: 768px) {
+  .widgets {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    max-height: none;
+    order: 1;
+  }
+}
+
+/* Sur mobile, les quatre cartes font partie du flux du bureau. Elles tiennent
+   sur deux rangées et ne peuvent plus recouvrir les icônes ou le Dock. */
 @media (max-width: 520px) {
   .widgets {
-    top: calc(var(--menubar-height) + 8px);
-    bottom: 76px;
-    left: 10px;
+    position: static;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: calc(100vw - 20px);
+    width: 100%;
+    max-height: none;
+    gap: 8px;
+    order: 1;
+  }
+
+  .widget {
+    min-width: 0;
+    border-radius: 17px;
+    padding: 9px 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
+  }
+
+  .calendarGrid {
+    font-size: 9px;
+  }
+
+  .calendarDay {
+    padding-block: 1px;
+  }
+
+  .weatherCity {
+    font-size: 13px;
+  }
+
+  .weatherTemp {
+    font-size: 28px;
+  }
+
+  .weatherIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .weatherDesc,
+  .weatherRange {
+    font-size: 10.5px;
+  }
+
+  .stockRow {
+    gap: 5px;
+  }
+
+  .stockTicker {
+    font-size: 11.5px;
+  }
+
+  .stockLabel {
+    max-width: 62px;
+    font-size: 9px;
+  }
+
+  .stockDelta {
+    font-size: 9px;
+    padding: 2px 3px;
   }
 
   .sparkline {
     display: none;
+  }
+
+  .shortcut {
+    min-height: 43px;
+    padding: 6px;
+    font-size: 10px;
+    touch-action: manipulation;
+  }
+
+  .shortcut:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .widgets {
+    gap: 6px;
+  }
+
+  .widget {
+    padding-inline: 8px;
+  }
+
+  .weatherDesc {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }

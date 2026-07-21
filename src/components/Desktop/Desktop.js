@@ -528,7 +528,7 @@ export default function Desktop() {
 
   const dockItems = useMemo(() => {
     const items = buildDockItems(api);
-    return items.map((item) => {
+    const enrichedItems = items.map((item) => {
       if (item.type === 'separator') return item;
       const running = item.windowId
         ? windows.some((w) => w.id === item.windowId)
@@ -537,7 +537,18 @@ export default function Desktop() {
           : false;
       return { ...item, running };
     });
-  }, [api, windows]);
+
+    // Sur téléphone, le Dock devient une barre d'accès rapide. Launchpad
+    // (Spotlight) donne toujours accès à toutes les autres applications.
+    if (isMobile) {
+      const mobileDockIds = new Set(['finder', 'launchpad', 'cv', 'mail', 'safari']);
+      return enrichedItems.filter(
+        (item) => item.type !== 'separator' && mobileDockIds.has(item.id)
+      );
+    }
+
+    return enrichedItems;
+  }, [api, isMobile, windows]);
 
   // ------------------------------------------------------------------
   // Spotlight
@@ -693,28 +704,30 @@ export default function Desktop() {
             controlCenterOpen={controlCenterOpen}
           />
 
-          {widgetsVisible && <Widgets onShortcut={handleShortcut} />}
+          <main className={styles.desktopSurface} aria-label="Bureau Maxence OS">
+            {widgetsVisible && <Widgets onShortcut={handleShortcut} />}
 
-          <div className={styles.desktopIcons}>
-            {desktopIconEntries.map((entry) => (
-              <button
-                key={entry.id}
-                type="button"
-                className={`${styles.desktopIcon} ${
-                  selectedIcon === entry.id ? styles.selected : ''
-                }`}
-                onClick={() => handleIconClick(entry)}
-                onDoubleClick={entry.open}
-              >
-                <span className={styles.desktopIconImage}>{entry.icon}</span>
-                <span className={styles.desktopIconLabel}>{entry.label}</span>
-              </button>
-            ))}
-          </div>
+            <div className={styles.desktopIcons}>
+              {desktopIconEntries.map((entry) => (
+                <button
+                  key={entry.id}
+                  type="button"
+                  className={`${styles.desktopIcon} ${
+                    selectedIcon === entry.id ? styles.selected : ''
+                  }`}
+                  onClick={() => handleIconClick(entry)}
+                  onDoubleClick={entry.open}
+                >
+                  <span className={styles.desktopIconImage}>{entry.icon}</span>
+                  <span className={styles.desktopIconLabel}>{entry.label}</span>
+                </button>
+              ))}
+            </div>
 
-          <a href="#cv" className={styles.scrollHint}>
-            Voir le CV en version texte ↓
-          </a>
+            <a href="#cv" className={styles.scrollHint}>
+              Voir le CV en version texte ↓
+            </a>
+          </main>
         </>
       )}
 

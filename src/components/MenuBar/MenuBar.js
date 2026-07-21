@@ -50,6 +50,9 @@ const formatClock = (date) => {
   return `${day}  ${time.replace(':', ':')}`;
 };
 
+const formatMobileClock = (date) =>
+  date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
 /**
  * Barre de menus macOS : menu Apple + menus de l'app active (data-driven),
  * zone de statut (Wi-Fi, batterie, Spotlight, Control Center, horloge).
@@ -170,8 +173,11 @@ const MenuBar = ({ menus, onOpenSpotlight, onToggleControlCenter, controlCenterO
         >
           <ControlCenterGlyph />
         </button>
-        <span className={styles.clock} suppressHydrationWarning>
+        <span className={`${styles.clock} ${styles.desktopClock}`} suppressHydrationWarning>
           {now ? formatClock(now) : ''}
+        </span>
+        <span className={`${styles.clock} ${styles.mobileClock}`} suppressHydrationWarning>
+          {now ? formatMobileClock(now) : ''}
         </span>
       </div>
     </nav>

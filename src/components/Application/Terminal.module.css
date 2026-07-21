@@ -77,11 +77,21 @@
 
 @media (max-width: 600px) {
   .terminal {
-    padding: 8px;
+    padding: 9px 8px;
+    font-size: 11.5px;
   }
 
   .neofetch {
     flex-direction: column;
     gap: 8px;
+  }
+
+  .neofetchArt {
+    font-size: 9.5px;
+  }
+
+  .commandInput {
+    min-width: 80px;
+    font-size: 16px;
   }
 }

@@ -1,6 +1,14 @@
 import Script from 'next/script'
+import { Poppins } from 'next/font/google'
 import './globals.css'
 import { profile, SITE_URL } from '@/data/cv'
+
+const poppins = Poppins({
+  variable: '--font-poppins',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
+})
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -45,7 +53,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={poppins.variable}>
       <body>
         <Script
           async

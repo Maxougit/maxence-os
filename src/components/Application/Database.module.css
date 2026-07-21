@@ -380,6 +380,85 @@
 .queryFooter b { color: var(--holo-gold); }
 
 @media (max-width: 560px) {
-  .reticle { display: none; }
-  .readout { width: calc(100% - 24px); }
+  .hudTop {
+    align-items: center;
+    padding: 9px 10px 7px;
+  }
+
+  .brand {
+    font-size: 13px;
+  }
+
+  .subtitle,
+  .hudStats {
+    display: none;
+  }
+
+  .status {
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    gap: 5px;
+    padding: 6px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab {
+    min-height: 38px;
+    padding: 7px 11px;
+    flex-shrink: 0;
+    touch-action: manipulation;
+  }
+
+  .reticle {
+    display: none;
+  }
+
+  .readout {
+    bottom: 10px;
+    width: calc(100% - 20px);
+    padding: 8px 10px;
+  }
+
+  .readoutHint {
+    font-size: 9.5px;
+  }
+
+  .query {
+    padding: 10px;
+  }
+
+  .queryLine {
+    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+
+  .tableWrap {
+    margin-top: 8px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .rowsTable {
+    min-width: 460px;
+  }
+
+  .rowsTable th,
+  .rowsTable td {
+    padding: 8px 9px;
+  }
+
+  .queryFooter {
+    gap: 8px;
+    font-size: 9px;
+  }
 }

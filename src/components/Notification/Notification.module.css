@@ -81,3 +81,27 @@
 .notification:hover .close {
   opacity: 1;
 }
+
+@media (max-width: 520px) {
+  .notification {
+    top: calc(var(--menubar-height) + 8px);
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-width: none;
+    min-height: 72px;
+    padding: 12px 42px 12px 13px;
+    border-radius: 18px;
+    touch-action: manipulation;
+  }
+
+  .close {
+    top: 50%;
+    right: 8px;
+    left: auto;
+    width: 34px;
+    height: 34px;
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}

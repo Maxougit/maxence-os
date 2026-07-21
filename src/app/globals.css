@@ -16,6 +16,7 @@
     monospace;
 
   --menubar-height: 30px;
+  --mobile-dock-space: 78px;
 
   --mac-accent: #0a84ff;
   --mac-red: #ff5f57;
@@ -75,9 +76,26 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   color: var(--mac-text);
   background: #000;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --menubar-height: calc(42px + env(safe-area-inset-top));
+    --mobile-dock-space: calc(72px + env(safe-area-inset-bottom));
+  }
+
+  button,
+  a,
+  input {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 /* Scrollbars discrètes façon macOS */

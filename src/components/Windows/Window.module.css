@@ -66,11 +66,75 @@
 }
 
 .window.mobileWindow {
-  left: 2vw !important;
-  top: calc(var(--menubar-height) + 8px) !important;
-  width: 96vw !important;
-  height: calc(100dvh - var(--menubar-height) - 96px) !important;
+  left: 0 !important;
+  top: var(--menubar-height) !important;
+  width: 100vw !important;
+  height: calc(100dvh - var(--menubar-height) - var(--mobile-dock-space)) !important;
   min-width: 0;
+  min-height: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 0;
+  border-radius: 0;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+}
+
+.mobileWindow .titleBar {
+  height: 44px;
+  padding: 0 6px;
+  touch-action: manipulation;
+}
+
+.mobileWindow .lights {
+  gap: 0;
+}
+
+.mobileWindow .light {
+  --mobile-light: rgba(140, 140, 145, 0.5);
+
+  position: relative;
+  width: 34px;
+  height: 38px;
+  border: 0;
+  background: transparent;
+  touch-action: manipulation;
+}
+
+.mobileWindow .light::before {
+  content: '';
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  background: var(--mobile-light);
+}
+
+.mobileWindow .lightClose {
+  --mobile-light: var(--mac-red);
+}
+
+.mobileWindow .lightMin {
+  --mobile-light: var(--mac-yellow);
+}
+
+.mobileWindow .lightMax {
+  --mobile-light: var(--mac-green);
+}
+
+.mobileWindow .light svg {
+  position: relative;
+  z-index: 1;
+}
+
+.mobileWindow .title {
+  left: 108px;
+  right: 108px;
+  font-size: 13.5px;
+}
+
+.mobileWindow .content {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ------------------------------------------------------------------ */
@@ -221,4 +285,24 @@
 
 .darkChrome.unfocused .title {
   color: rgba(235, 235, 245, 0.3);
+}
+
+.mobileWindow.unfocused .light {
+  background: transparent;
+}
+
+.mobileWindow.unfocused .light::before {
+  background: rgba(140, 140, 145, 0.5);
+}
+
+.mobileWindow.unfocused .lights:hover .lightClose::before {
+  background: var(--mac-red);
+}
+
+.mobileWindow.unfocused .lights:hover .lightMin::before {
+  background: var(--mac-yellow);
+}
+
+.mobileWindow.unfocused .lights:hover .lightMax::before {
+  background: var(--mac-green);
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, createEvent, fireEvent, render, screen } from '@testing-library/react';
+import { act, createEvent, fireEvent, render, screen, within } from '@testing-library/react';
 import Desktop from './Desktop';
 
 jest.mock('../Application/SkillsHologram', () => function MockSkillsHologram() {
@@ -94,5 +94,26 @@ describe('Desktop window management', () => {
     expect(quitEvent.defaultPrevented).toBe(true);
     act(() => jest.advanceTimersByTime(220));
     expect(screen.queryByRole('region', { name: 'MacBook de Maxence' })).not.toBeInTheDocument();
+  });
+
+  it('keeps a compact five-app Dock on mobile', () => {
+    window.matchMedia = jest.fn().mockImplementation((query) => ({
+      matches: query === '(max-width: 768px)' || query === '(hover: none)',
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+    }));
+
+    unlockDesktop();
+
+    const dock = screen.getByRole('toolbar', { name: 'Dock' });
+    const buttons = within(dock).getAllByRole('button');
+    expect(buttons).toHaveLength(5);
+    expect(buttons.map((button) => button.getAttribute('aria-label'))).toEqual([
+      'Finder',
+      'Launchpad',
+      'CV — Aperçu',
+      'Me contacter',
+      'Safari',
+    ]);
   });
 });

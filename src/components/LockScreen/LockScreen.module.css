@@ -2,99 +2,301 @@
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9vh 24px 9vh;
+  min-height: 100dvh;
   overflow: hidden;
-  cursor: default;
+  color: #fff;
+  font-family: var(--font-poppins), var(--mac-font);
   user-select: none;
-  transition: opacity 0.55s ease, transform 0.55s ease;
+  transition: opacity 0.55s ease, transform 0.55s ease, filter 0.55s ease;
 }
 
 .background {
   position: absolute;
-  inset: -40px;
-  background-size: cover;
+  inset: -12px;
   background-position: center;
-  filter: blur(34px) brightness(0.72) saturate(1.2);
-  transform: scale(1.1);
+  background-size: cover;
+  filter: brightness(0.74) saturate(1.04) blur(2px);
+  transform: scale(1.02);
 }
 
 .scrim {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.05) 40%, rgba(0, 0, 0, 0.35) 100%);
+  background:
+    linear-gradient(180deg, rgba(3, 8, 20, 0.22) 0%, transparent 34%, rgba(3, 8, 20, 0.17) 100%),
+    radial-gradient(circle at 50% 55%, transparent 28%, rgba(3, 8, 20, 0.13) 100%);
 }
 
 .unlocking {
   opacity: 0;
-  transform: scale(1.08);
+  filter: blur(8px);
+  transform: scale(1.035);
   pointer-events: none;
 }
 
+.systemBar {
+  position: absolute;
+  z-index: 2;
+  top: max(18px, env(safe-area-inset-top));
+  right: max(24px, env(safe-area-inset-right));
+  animation: lock-fade-down 0.6s ease backwards;
+}
+
+.systemStatus {
+  display: flex;
+  height: 28px;
+  align-items: center;
+  gap: 11px;
+  font-size: 12px;
+  font-weight: 500;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.65);
+}
+
+.systemStatus svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.45));
+}
+
+.systemStatus svg:last-child {
+  width: 27px;
+}
+
 .clockBlock {
-  position: relative;
+  position: absolute;
+  z-index: 1;
+  top: clamp(54px, 8vh, 94px);
+  left: 50%;
+  width: min(720px, calc(100vw - 32px));
   text-align: center;
-  color: #fff;
-  animation: mac-fade-in 0.8s ease;
+  text-shadow: 0 3px 24px rgba(0, 0, 0, 0.34);
+  transform: translateX(-50%);
+  animation: lock-clock-in 0.75s cubic-bezier(0.2, 0.8, 0.25, 1) backwards;
 }
 
 .date {
-  font-size: clamp(16px, 2.2vw, 22px);
-  font-weight: 600;
-  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  margin: 0 0 1px;
+  font-size: clamp(16px, 1.35vw, 20px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
   text-transform: capitalize;
 }
 
 .time {
-  font-size: clamp(64px, 12vw, 128px);
-  font-weight: 250;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+  margin: 0;
+  font-size: clamp(84px, 9.4vw, 132px);
+  font-weight: 300;
+  line-height: 0.96;
+  letter-spacing: -0.06em;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
 }
 
-.userBlock {
-  position: relative;
+.userPanel {
+  position: absolute;
+  z-index: 2;
+  top: 62%;
+  left: 50%;
   display: flex;
+  width: min(280px, calc(100vw - 40px));
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  color: #fff;
-  animation: mac-fade-in 0.8s ease 0.15s backwards;
+  transform: translate(-50%, -50%);
+  animation: lock-user-in 0.75s cubic-bezier(0.2, 0.85, 0.25, 1) 0.06s backwards;
+}
+
+.avatarFrame {
+  width: 104px;
+  height: 104px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .avatar {
-  width: 92px;
-  height: 92px;
+  display: block;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
-  border: 2.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
 }
 
 .name {
-  font-size: 17px;
-  font-weight: 700;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  margin: 12px 0 14px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.48);
 }
 
-.hint {
-  font-size: 13.5px;
-  color: rgba(255, 255, 255, 0.78);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
-  animation: lock-hint-pulse 2.4s ease-in-out infinite;
+.unlockButton {
+  display: flex;
+  width: 224px;
+  height: 34px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 4px 3px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(38, 43, 52, 0.44);
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  cursor: pointer;
+  backdrop-filter: blur(22px) saturate(1.3);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+  touch-action: manipulation;
 }
 
-@keyframes lock-hint-pulse {
-  0%,
-  100% {
-    opacity: 0.55;
+.unlockButton:hover {
+  border-color: rgba(255, 255, 255, 0.36);
+  background: rgba(53, 58, 68, 0.58);
+}
+
+.unlockButton:active {
+  transform: scale(0.985);
+}
+
+.unlockButton:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.42);
+  outline-offset: 3px;
+}
+
+.arrow {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 50%;
+  color: #fff;
+}
+
+.arrow svg {
+  width: 14px;
+  height: 14px;
+}
+
+.keyboardHint {
+  margin: 9px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
+  font-weight: 400;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.65);
+}
+
+@keyframes lock-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
   }
-  50% {
-    opacity: 1;
+}
+
+@keyframes lock-clock-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.99);
+  }
+}
+
+@keyframes lock-user-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 18px)) scale(0.98);
+  }
+}
+
+@media (max-width: 600px) {
+  .background {
+    background-position: 58% center;
+  }
+
+  .systemBar {
+    top: max(10px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+  }
+
+  .systemStatus {
+    gap: 8px;
+    font-size: 10.5px;
+  }
+
+  .clockBlock {
+    top: clamp(54px, 9vh, 76px);
+  }
+
+  .date {
+    font-size: 14px;
+  }
+
+  .time {
+    font-size: clamp(70px, 23vw, 92px);
+  }
+
+  .userPanel {
+    top: 61%;
+  }
+
+  .avatarFrame {
+    width: 96px;
+    height: 96px;
+  }
+
+  .name {
+    margin-top: 10px;
+    font-size: 17px;
+  }
+
+  .unlockButton {
+    width: 218px;
+    height: 35px;
+  }
+}
+
+@media (max-height: 670px) and (orientation: landscape) {
+  .clockBlock {
+    top: 50%;
+    left: 27%;
+    width: 48vw;
+    transform: translate(-50%, -50%);
+  }
+
+  .time {
+    font-size: clamp(70px, 10vw, 100px);
+  }
+
+  .userPanel {
+    top: 52%;
+    left: 72%;
+  }
+
+  @keyframes lock-clock-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, calc(-50% - 12px)) scale(0.99);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lockScreen,
+  .systemBar,
+  .clockBlock,
+  .userPanel {
+    animation: none;
+    transition: none;
   }
 }

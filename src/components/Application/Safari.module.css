@@ -505,3 +505,120 @@
 /* ------------------------------------------------------------------ */
 /* Vue Maxadev (site perso non-framable pour l'instant)               */
 /* ------------------------------------------------------------------ */
+
+@media (max-width: 540px) {
+  .toolbar {
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .navGroup {
+    gap: 0;
+  }
+
+  .iconBtn,
+  .homeBtn {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    touch-action: manipulation;
+  }
+
+  .addressBar {
+    height: 36px;
+    padding-inline: 8px;
+  }
+
+  .addressInput {
+    font-size: 16px;
+  }
+
+  .startPage {
+    padding: 24px 14px;
+  }
+
+  .startTitle {
+    margin-bottom: 16px;
+  }
+
+  .favorites {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px 10px;
+  }
+
+  .favorite {
+    min-height: 96px;
+    touch-action: manipulation;
+  }
+
+  .favIcon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .liBanner {
+    height: 86px;
+  }
+
+  .liCard {
+    padding: 0 16px 24px;
+  }
+
+  .liAvatarWrap {
+    margin-top: -48px;
+  }
+
+  .liAvatar {
+    width: 96px;
+    height: 96px;
+  }
+
+  .liName {
+    font-size: 21px;
+  }
+
+  .liActions {
+    flex-direction: column;
+  }
+
+  .liPrimary,
+  .liSecondary {
+    min-height: 42px;
+    justify-content: center;
+    text-align: center;
+    touch-action: manipulation;
+  }
+
+  .blockedHint {
+    bottom: 10px;
+    flex-direction: column;
+    width: calc(100% - 20px);
+    padding: 10px;
+    text-align: center;
+  }
+
+  .blockedHint button {
+    min-height: 36px;
+    padding-inline: 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .toolbar {
+    gap: 1px;
+    padding-inline: 4px;
+  }
+
+  .iconBtn,
+  .homeBtn {
+    width: 33px;
+  }
+
+  .addressBar {
+    padding-inline: 5px;
+  }
+
+  .lock {
+    display: none;
+  }
+}

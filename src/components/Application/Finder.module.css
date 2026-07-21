@@ -285,4 +285,73 @@
   .sidebar {
     display: none;
   }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    gap: 5px;
+    padding: 6px 8px 8px;
+  }
+
+  .navButtons {
+    display: flex;
+  }
+
+  .toolButton {
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    touch-action: manipulation;
+  }
+
+  .folderTitle {
+    padding-inline: 3px;
+    font-size: 13.5px;
+  }
+
+  .search {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-height: 36px;
+    padding-inline: 11px;
+  }
+
+  .search input {
+    font-size: 16px;
+  }
+
+  .content {
+    padding: 10px 8px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+    gap: 10px 4px;
+  }
+
+  .gridItem {
+    min-height: 82px;
+    padding: 7px 2px;
+    touch-action: manipulation;
+  }
+
+  .gridIcon {
+    width: 52px;
+    height: 46px;
+  }
+
+  .list th:not(:first-child),
+  .list td:not(:first-child) {
+    display: none;
+  }
+
+  .list td {
+    height: 46px;
+    max-width: calc(100vw - 32px);
+    padding-inline: 9px;
+  }
+
+  .statusBar > span:last-child {
+    display: none;
+  }
 }

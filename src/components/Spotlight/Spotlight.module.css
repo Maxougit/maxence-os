@@ -136,3 +136,42 @@
   font-size: 11.5px;
   color: var(--mac-text-tertiary);
 }
+
+@media (max-width: 600px) {
+  .overlay {
+    padding: calc(var(--menubar-height) + 8px) 8px var(--mobile-dock-space);
+  }
+
+  .spotlight {
+    width: 100%;
+    max-width: none;
+    max-height: 100%;
+    border-radius: 18px;
+  }
+
+  .searchRow {
+    gap: 10px;
+    min-height: 54px;
+    padding: 10px 13px;
+  }
+
+  .input {
+    min-width: 0;
+    font-size: 17px;
+  }
+
+  .results {
+    max-height: calc(100dvh - var(--menubar-height) - var(--mobile-dock-space) - 116px);
+    padding: 5px;
+  }
+
+  .result {
+    min-height: 48px;
+    padding: 7px 9px;
+    touch-action: manipulation;
+  }
+
+  .footer {
+    display: none;
+  }
+}

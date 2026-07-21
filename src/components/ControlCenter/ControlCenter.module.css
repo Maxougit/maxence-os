@@ -174,3 +174,40 @@
   font-weight: 400;
   font-size: 11.5px;
 }
+
+@media (max-width: 520px) {
+  .panel {
+    top: calc(var(--menubar-height) + 6px);
+    right: 8px;
+    left: 8px;
+    width: auto;
+    max-width: none;
+    max-height: calc(100dvh - var(--menubar-height) - var(--mobile-dock-space) - 12px);
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 20px;
+  }
+
+  .card {
+    padding: 10px;
+  }
+
+  .toggleRow,
+  .appearanceButton {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  .toggleIcon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .slider {
+    height: 30px;
+  }
+
+  .batteryRow {
+    gap: 12px;
+  }
+}

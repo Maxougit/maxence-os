@@ -304,6 +304,7 @@
   .markdownImageButton {
     margin-top: 16px;
     border-radius: 10px;
+    touch-action: manipulation;
   }
 
   .imageLightbox {
@@ -312,5 +313,18 @@
 
   .lightboxImage {
     border-radius: 10px;
+  }
+
+  .lightboxClose {
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .zoomHint {
+    right: 8px;
+    bottom: 8px;
+    opacity: 1;
   }
 }
