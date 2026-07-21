@@ -1,0 +1,100 @@
+.lockScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9vh 24px 9vh;
+  overflow: hidden;
+  cursor: default;
+  user-select: none;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.background {
+  position: absolute;
+  inset: -40px;
+  background-size: cover;
+  background-position: center;
+  filter: blur(34px) brightness(0.72) saturate(1.2);
+  transform: scale(1.1);
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.05) 40%, rgba(0, 0, 0, 0.35) 100%);
+}
+
+.unlocking {
+  opacity: 0;
+  transform: scale(1.08);
+  pointer-events: none;
+}
+
+.clockBlock {
+  position: relative;
+  text-align: center;
+  color: #fff;
+  animation: mac-fade-in 0.8s ease;
+}
+
+.date {
+  font-size: clamp(16px, 2.2vw, 22px);
+  font-weight: 600;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+  text-transform: capitalize;
+}
+
+.time {
+  font-size: clamp(64px, 12vw, 128px);
+  font-weight: 250;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+}
+
+.userBlock {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  animation: mac-fade-in 0.8s ease 0.15s backwards;
+}
+
+.avatar {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+}
+
+.name {
+  font-size: 17px;
+  font-weight: 700;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+}
+
+.hint {
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+  animation: lock-hint-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes lock-hint-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}

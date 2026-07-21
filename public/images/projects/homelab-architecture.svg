@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture du homelab auto-hébergé</title>
+  <desc id="desc">Un serveur Unraid héberge les services de données, multimédia, réseau, supervision et intelligence artificielle locale.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#10131d"/>
+      <stop offset="1" stop-color="#171b2a"/>
+    </linearGradient>
+    <linearGradient id="server" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ff7a18"/>
+      <stop offset="1" stop-color="#ff3d2e"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="620" rx="30" fill="url(#bg)"/>
+  <circle cx="1075" cy="88" r="150" fill="#0a84ff" opacity=".07"/>
+  <circle cx="95" cy="560" r="185" fill="#ff5e35" opacity=".06"/>
+
+  <text x="56" y="66" fill="#f7f8fc" font-family="system-ui, sans-serif" font-size="29" font-weight="700">Homelab personnel</text>
+  <text x="56" y="97" fill="#99a2b8" font-family="system-ui, sans-serif" font-size="16">Services privés, données maîtrisées et expérimentation locale</text>
+
+  <g stroke="#64708a" stroke-width="2" stroke-dasharray="7 8" opacity=".62">
+    <path d="M365 212 C425 212 420 181 479 181"/>
+    <path d="M365 262 C425 262 420 289 479 289"/>
+    <path d="M365 313 C425 313 420 397 479 397"/>
+    <path d="M365 365 C425 365 420 505 479 505"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="56" y="155" width="309" height="272" rx="24" fill="#202637" stroke="#343c51"/>
+    <rect x="82" y="184" width="257" height="56" rx="12" fill="url(#server)"/>
+    <circle cx="110" cy="212" r="8" fill="#fff" opacity=".92"/>
+    <circle cx="135" cy="212" r="8" fill="#fff" opacity=".48"/>
+    <path d="M285 203h25M285 213h25M285 223h25" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".9"/>
+    <text x="82" y="281" fill="#fff" font-family="system-ui, sans-serif" font-size="25" font-weight="700">Unraid</text>
+    <text x="82" y="309" fill="#aeb7ca" font-family="system-ui, sans-serif" font-size="15">Docker · KVM · stockage persistant</text>
+    <rect x="82" y="339" width="104" height="40" rx="20" fill="#2c3447"/>
+    <text x="105" y="365" fill="#dce2ee" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Volumes</text>
+    <rect x="197" y="339" width="118" height="40" rx="20" fill="#2c3447"/>
+    <text x="219" y="365" fill="#dce2ee" font-family="system-ui, sans-serif" font-size="14" font-weight="600">Réseaux</text>
+  </g>
+
+  <g font-family="system-ui, sans-serif" filter="url(#shadow)">
+    <g>
+      <rect x="479" y="127" width="308" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="520" cy="181" r="24" fill="#0a84ff" opacity=".18"/>
+      <path d="M507 181h26M520 168v26" stroke="#55aaff" stroke-width="4" stroke-linecap="round"/>
+      <text x="556" y="173" fill="#f7f8fc" font-size="17" font-weight="700">Données &amp; collaboration</text>
+      <text x="556" y="199" fill="#aeb7ca" font-size="14">Nextcloud · MariaDB · Collabora</text>
+    </g>
+    <g>
+      <rect x="479" y="251" width="308" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="520" cy="305" r="24" fill="#bf5af2" opacity=".18"/>
+      <path d="M508 312c6-17 18-17 24 0M513 296h14" stroke="#d88cff" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <text x="556" y="297" fill="#f7f8fc" font-size="17" font-weight="700">Média &amp; maison</text>
+      <text x="556" y="323" fill="#aeb7ca" font-size="14">Jellyfin · Homebridge</text>
+    </g>
+    <g>
+      <rect x="479" y="375" width="308" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="520" cy="429" r="24" fill="#30d158" opacity=".17"/>
+      <path d="M520 414l13 6v9c0 9-6 15-13 18-7-3-13-9-13-18v-9z" stroke="#5ee27a" stroke-width="3" fill="none"/>
+      <text x="556" y="421" fill="#f7f8fc" font-size="17" font-weight="700">Accès &amp; sécurité</text>
+      <text x="556" y="447" fill="#aeb7ca" font-size="14">Nginx Proxy · WireGuard · Vaultwarden</text>
+    </g>
+    <g>
+      <rect x="479" y="499" width="308" height="76" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="520" cy="537" r="20" fill="#ffd60a" opacity=".17"/>
+      <path d="M509 539l7-7 6 5 9-11" stroke="#ffe45c" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="556" y="532" fill="#f7f8fc" font-size="17" font-weight="700">Exploitation</text>
+      <text x="556" y="553" fill="#aeb7ca" font-size="13">Uptime Kuma · Duplicati</text>
+    </g>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="833" y="183" width="311" height="275" rx="27" fill="#181f33" stroke="#445273" stroke-width="2"/>
+    <circle cx="988" cy="271" r="57" fill="#0a84ff" opacity=".12"/>
+    <path d="M955 280c0-23 14-40 34-40 22 0 39 18 39 41 0 17-9 28-22 35M970 310c-10-8-15-18-15-30M990 239c-10 13-14 28-11 46M1025 266c-15-5-29-4-44 3" fill="none" stroke="#56aaff" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="974" cy="315" r="5" fill="#56aaff"/>
+    <circle cx="1007" cy="318" r="5" fill="#56aaff"/>
+    <text x="988" y="363" text-anchor="middle" fill="#f7f8fc" font-family="system-ui, sans-serif" font-size="25" font-weight="700">IA locale</text>
+    <text x="988" y="393" text-anchor="middle" fill="#66b3ff" font-family="system-ui, sans-serif" font-size="17" font-weight="650">Ollama</text>
+    <text x="988" y="420" text-anchor="middle" fill="#aeb7ca" font-family="system-ui, sans-serif" font-size="14">Modèles exécutés à domicile</text>
+  </g>
+
+  <path d="M787 305h46" stroke="#64708a" stroke-width="2" stroke-dasharray="7 8" opacity=".65"/>
+</svg>

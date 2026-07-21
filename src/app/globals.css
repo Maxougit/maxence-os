@@ -1,50 +1,240 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@config '../../tailwind.config.js';
+@plugin 'daisyui';
+
+/* ---------------------------------------------------------------------------
+   Maxence OS — design system macOS
+   Thème par défaut : dark. [data-theme='light'] bascule en clair.
+--------------------------------------------------------------------------- */
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --mac-font:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif;
+  --mac-font-mono:
+    'SF Mono', ui-monospace, 'Cascadia Code', Menlo, Monaco, 'Courier New',
+    monospace;
+
+  --menubar-height: 30px;
+
+  --mac-accent: #0a84ff;
+  --mac-red: #ff5f57;
+  --mac-yellow: #febc2e;
+  --mac-green: #28c840;
+
+  /* Dark (défaut) */
+  --mac-text: #f5f5f7;
+  --mac-text-secondary: rgba(235, 235, 245, 0.62);
+  --mac-text-tertiary: rgba(235, 235, 245, 0.35);
+  --mac-window-bg: #232326;
+  --mac-window-sidebar: rgba(38, 38, 42, 0.72);
+  --mac-titlebar-bg: rgba(43, 43, 47, 0.96);
+  --mac-glass: rgba(28, 28, 32, 0.72);
+  --mac-glass-strong: rgba(32, 32, 37, 0.93);
+  --mac-menubar-bg: rgba(18, 18, 22, 0.45);
+  --mac-dock-bg: rgba(35, 35, 40, 0.42);
+  --mac-border: rgba(255, 255, 255, 0.12);
+  --mac-border-strong: rgba(255, 255, 255, 0.2);
+  --mac-hover: rgba(255, 255, 255, 0.08);
+  --mac-widget-bg: rgba(30, 30, 34, 0.55);
+  --mac-input-bg: rgba(255, 255, 255, 0.08);
+  --mac-shadow-window:
+    0 22px 70px 4px rgba(0, 0, 0, 0.56), 0 0 0 0.5px rgba(0, 0, 0, 0.6);
+  --mac-shadow-window-inactive:
+    0 10px 30px 2px rgba(0, 0, 0, 0.4), 0 0 0 0.5px rgba(0, 0, 0, 0.55);
+  --mac-shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.45);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+[data-theme='light'] {
+  --mac-text: #1d1d1f;
+  --mac-text-secondary: rgba(60, 60, 67, 0.65);
+  --mac-text-tertiary: rgba(60, 60, 67, 0.35);
+  --mac-window-bg: #f5f5f7;
+  --mac-window-sidebar: rgba(240, 240, 244, 0.72);
+  --mac-titlebar-bg: rgba(246, 246, 248, 0.96);
+  --mac-glass: rgba(246, 246, 250, 0.75);
+  --mac-glass-strong: rgba(249, 249, 252, 0.95);
+  --mac-menubar-bg: rgba(250, 250, 252, 0.5);
+  --mac-dock-bg: rgba(245, 245, 250, 0.4);
+  --mac-border: rgba(0, 0, 0, 0.1);
+  --mac-border-strong: rgba(0, 0, 0, 0.18);
+  --mac-hover: rgba(0, 0, 0, 0.06);
+  --mac-widget-bg: rgba(255, 255, 255, 0.62);
+  --mac-input-bg: rgba(0, 0, 0, 0.06);
+  --mac-shadow-window:
+    0 22px 70px 4px rgba(0, 0, 0, 0.28), 0 0 0 0.5px rgba(0, 0, 0, 0.12);
+  --mac-shadow-window-inactive:
+    0 10px 30px 2px rgba(0, 0, 0, 0.18), 0 0 0 0.5px rgba(0, 0, 0, 0.1);
+  --mac-shadow-panel: 0 12px 40px rgba(0, 0, 0, 0.22);
 }
 
+html,
+body {
+  font-family: var(--mac-font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: var(--mac-text);
+  background: #000;
+}
+
+/* Scrollbars discrètes façon macOS */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #888;
+  background: rgba(128, 128, 132, 0.5);
+  border-radius: 8px;
+  background-clip: padding-box;
+  border: 2px solid transparent;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(128, 128, 132, 0.8);
+  background-clip: padding-box;
+  border: 2px solid transparent;
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
+  scrollbar-color: rgba(128, 128, 132, 0.5) transparent;
 }
 
+/* ---------------------------------------------------------------------------
+   Animations partagées
+--------------------------------------------------------------------------- */
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+@keyframes mac-window-open {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes mac-window-close {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.82) translateY(12px);
+  }
+}
+
+@keyframes mac-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes mac-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mac-menu-open {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes mac-dock-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-26px);
+  }
+  55% {
+    transform: translateY(0);
+  }
+  75% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes mac-notification-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(100% + 24px));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes mac-notification-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(calc(100% + 24px));
+  }
+}
+
+@keyframes mac-menubar-slide {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mac-dock-rise {
+  from {
+    transform: translateX(-50%) translateY(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes mac-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

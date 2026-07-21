@@ -165,7 +165,7 @@ export default function Home() {
             <li>
               CV PDF :{' '}
               <a
-                href="/files/CV Leroux Maxence FR.pdf"
+                href="/files/CV-Leroux-Maxence-FR.pdf"
                 className="text-blue-400 hover:underline"
               >
                 télécharger le CV (PDF)

@@ -1,0 +1,316 @@
+.videoViewer {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  background: #000;
+}
+
+.videoStage {
+  display: flex;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+.video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+.videoMeta {
+  padding: 13px 18px 15px;
+  border-top: 1px solid var(--mac-border);
+  background: var(--mac-window-bg);
+  color: var(--mac-text);
+}
+
+.videoTitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.videoDescription {
+  margin: 4px 0 0;
+  color: var(--mac-text-secondary);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.markdownShell {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+}
+
+.markdownViewer {
+  height: 100%;
+  overflow: auto;
+  padding: 30px clamp(24px, 4vw, 58px) 46px;
+  color: var(--mac-text);
+  font-size: 14px;
+  line-height: 1.7;
+  scrollbar-gutter: stable;
+}
+
+.markdownViewer > :first-child {
+  margin-top: 0;
+}
+
+.markdownViewer > :last-child {
+  margin-bottom: 0;
+}
+
+.markdownViewer h1,
+.markdownViewer h2,
+.markdownViewer h3 {
+  color: var(--mac-text);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.markdownViewer h1 {
+  margin: 0 0 18px;
+  font-size: clamp(25px, 4vw, 34px);
+}
+
+.markdownViewer h2 {
+  margin: 30px 0 10px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--mac-border);
+  font-size: 19px;
+}
+
+.markdownViewer h3 {
+  margin: 22px 0 8px;
+  font-size: 16px;
+}
+
+.markdownViewer p {
+  margin: 10px 0;
+}
+
+.markdownViewer ul,
+.markdownViewer ol {
+  margin: 9px 0 16px;
+  padding-left: 1.45rem;
+}
+
+.markdownViewer li {
+  margin: 4px 0;
+  padding-left: 3px;
+}
+
+.markdownViewer li::marker {
+  color: #0a84ff;
+}
+
+.markdownViewer a {
+  color: #0a84ff;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.markdownViewer a:hover {
+  color: #2997ff;
+}
+
+.markdownViewer code {
+  padding: 2px 5px;
+  border: 1px solid var(--mac-border);
+  border-radius: 5px;
+  background: var(--mac-hover);
+  font-family: var(--mac-font-mono);
+  font-size: 0.88em;
+}
+
+.markdownViewer pre {
+  overflow-x: auto;
+  padding: 14px 16px;
+  border: 1px solid var(--mac-border);
+  border-radius: 10px;
+  background: var(--mac-hover);
+}
+
+.markdownViewer pre code {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.markdownViewer blockquote {
+  margin: 16px 0;
+  padding: 2px 0 2px 16px;
+  border-left: 3px solid #0a84ff;
+  color: var(--mac-text-secondary);
+}
+
+.markdownViewer table {
+  width: 100%;
+  margin: 16px 0;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.markdownViewer th,
+.markdownViewer td {
+  padding: 9px 11px;
+  border: 1px solid var(--mac-border);
+  text-align: left;
+}
+
+.markdownViewer th {
+  background: var(--mac-hover);
+}
+
+.markdownImageButton {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 20px auto 8px;
+  padding: 0;
+  border: 1px solid var(--mac-border);
+  border-radius: 14px;
+  background: #10121a;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 20%);
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.markdownImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 620px;
+  object-fit: contain;
+}
+
+.zoomHint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 5px 9px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 8px;
+  background: rgb(10 12 19 / 78%);
+  color: #fff;
+  font-family: inherit;
+  font-size: 11px;
+  opacity: 0;
+  backdrop-filter: blur(12px);
+  transition: opacity 0.16s ease;
+}
+
+.markdownImageButton:hover .zoomHint,
+.markdownImageButton:focus-visible .zoomHint {
+  opacity: 1;
+}
+
+.markdownImageButton:focus-visible {
+  outline: 3px solid rgb(10 132 255 / 45%);
+  outline-offset: 3px;
+}
+
+.markdownViewer p:has(> .markdownImageButton) {
+  margin-bottom: 8px;
+}
+
+.markdownViewer p:has(> .markdownImageButton) + p {
+  margin-top: 0;
+  text-align: center;
+}
+
+.markdownViewer p:has(> .markdownImageButton) + p > em:only-child {
+  display: block;
+  color: var(--mac-text-secondary);
+  font-size: 12px;
+}
+
+.imageLightbox {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgb(5 7 12 / 90%);
+  backdrop-filter: blur(16px);
+  animation: viewer-lightbox-in 0.18s ease-out;
+}
+
+.lightboxImage {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 14px;
+  background: #10121a;
+  box-shadow: 0 22px 70px rgb(0 0 0 / 55%);
+  object-fit: contain;
+}
+
+.lightboxClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 2px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 50%;
+  background: rgb(24 26 34 / 82%);
+  color: #fff;
+  font-family: inherit;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+@keyframes viewer-lightbox-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .videoMeta {
+    padding: 10px 13px 12px;
+  }
+
+  .markdownViewer {
+    padding: 20px 16px 32px;
+    font-size: 13.5px;
+  }
+
+  .markdownViewer h2 {
+    margin-top: 24px;
+  }
+
+  .markdownImage {
+    max-height: none;
+  }
+
+  .markdownImageButton {
+    margin-top: 16px;
+    border-radius: 10px;
+  }
+
+  .imageLightbox {
+    padding: 10px;
+  }
+
+  .lightboxImage {
+    border-radius: 10px;
+  }
+}

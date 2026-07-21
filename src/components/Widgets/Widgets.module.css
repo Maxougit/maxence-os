@@ -1,0 +1,299 @@
+.widgets {
+  position: absolute;
+  top: calc(var(--menubar-height) + 12px);
+  bottom: 84px;
+  left: clamp(10px, 1.4vw, 18px);
+  display: grid;
+  grid-template-columns: 188px;
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 10px;
+  z-index: 1;
+  width: 188px;
+  max-height: calc(100dvh - var(--menubar-height) - 96px);
+  user-select: none;
+  /* Les cartes changent de disposition selon la hauteur disponible :
+     aucun scroll n'est nécessaire pour voir l'ensemble des widgets. */
+  pointer-events: none;
+}
+
+.widgets > * {
+  pointer-events: auto;
+}
+
+.widget {
+  flex-shrink: 0;
+  border-radius: 20px;
+  padding: 13px 14px;
+  background: var(--mac-widget-bg);
+  backdrop-filter: blur(30px) saturate(1.5);
+  -webkit-backdrop-filter: blur(30px) saturate(1.5);
+  border: 1px solid var(--mac-border);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  color: var(--mac-text);
+  animation: mac-pop-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.1) backwards;
+}
+
+.widget:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.widget:nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+.widget:nth-child(4) {
+  animation-delay: 0.24s;
+}
+
+.widgetTitle {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mac-text-secondary);
+  margin-bottom: 8px;
+}
+
+/* Calendrier */
+
+.calendarMonth {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ff453a;
+  text-transform: capitalize;
+  margin-bottom: 6px;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px 0;
+  text-align: center;
+  font-size: 10.5px;
+}
+
+.calendarWeekday {
+  color: var(--mac-text-tertiary);
+  font-weight: 600;
+}
+
+.calendarDay {
+  padding: 2.5px 0;
+  color: var(--mac-text-secondary);
+  border-radius: 50%;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendarDay.today {
+  background: #ff453a;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Météo */
+
+.weatherTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.weatherCity {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.weatherTemp {
+  font-size: 34px;
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.weatherIcon {
+  width: 38px;
+  height: 38px;
+}
+
+.weatherDesc {
+  font-size: 12px;
+  color: var(--mac-text-secondary);
+  margin-top: 4px;
+}
+
+.weatherRange {
+  font-size: 12px;
+  color: var(--mac-text-secondary);
+  margin-top: 2px;
+}
+
+/* Compétences façon bourse */
+
+.stockRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4.5px 0;
+  border-bottom: 1px solid var(--mac-border);
+}
+
+.stockRow:last-child {
+  border-bottom: none;
+}
+
+.stockName {
+  min-width: 0;
+}
+
+.stockTicker {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.stockLabel {
+  font-size: 10px;
+  color: var(--mac-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 74px;
+}
+
+.sparkline {
+  width: 40px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.stockDelta {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fff;
+  background: #30d158;
+  border-radius: 5px;
+  padding: 2px 4px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Liens rapides */
+
+.shortcutsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.shortcut {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 9px 10px;
+  border-radius: 13px;
+  border: none;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.shortcut:hover {
+  transform: scale(1.04);
+  filter: brightness(1.08);
+}
+
+.shortcut:active {
+  transform: scale(0.97);
+}
+
+.shortcut svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Deux colonnes sur les écrans peu hauts pour conserver tous les widgets
+   entre la barre de menu et le Dock. */
+@media (max-height: 820px) and (min-width: 521px) {
+  .widgets {
+    grid-template-columns: repeat(2, 188px);
+    width: 386px;
+  }
+}
+
+/* Version compacte : les widgets restent visibles sur les petites fenêtres. */
+@media (max-width: 900px), (max-height: 680px) {
+  .widgets {
+    gap: 8px;
+  }
+
+  .widget {
+    border-radius: 16px;
+    padding: 9px 10px;
+  }
+
+  .calendarMonth,
+  .widgetTitle {
+    margin-bottom: 4px;
+  }
+
+  .calendarGrid {
+    gap: 1px;
+    font-size: 9.5px;
+  }
+
+  .calendarDay {
+    padding: 1.5px 0;
+  }
+
+  .weatherTemp {
+    font-size: 29px;
+  }
+
+  .weatherIcon {
+    font-size: 32px;
+  }
+
+  .stockRow {
+    padding: 3px 0;
+  }
+
+  .shortcutsGrid {
+    gap: 5px;
+  }
+
+  .shortcut {
+    gap: 4px;
+    padding: 6px 7px;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 521px) {
+  .widgets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(386px, calc(100vw - 20px));
+  }
+}
+
+/* Sur mobile, la grille reste ancrée à gauche et tient sur deux rangées. */
+@media (max-width: 520px) {
+  .widgets {
+    top: calc(var(--menubar-height) + 8px);
+    bottom: 76px;
+    left: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: calc(100vw - 20px);
+  }
+
+  .sparkline {
+    display: none;
+  }
+}

@@ -1,0 +1,190 @@
+.menuBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--menubar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  background: var(--mac-menubar-bg);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  color: var(--mac-text);
+  font-size: 13px;
+  z-index: 60;
+  user-select: none;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+  animation: mac-menubar-slide 0.5s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.left,
+.right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.left {
+  gap: 2px;
+}
+
+.right {
+  gap: 2px;
+}
+
+.menuTitle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 5px;
+  cursor: default;
+  white-space: nowrap;
+  color: inherit;
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+.menuTitle.appName {
+  font-weight: 700;
+}
+
+.menuTitle.open,
+.menuTitle:active {
+  background: var(--mac-hover);
+}
+
+.appleLogo {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+.statusButton {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 5px;
+  cursor: default;
+  color: inherit;
+  background: none;
+  border: none;
+  font: inherit;
+}
+
+.statusButton.open,
+.statusButton:active {
+  background: var(--mac-hover);
+}
+
+.statusButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.clock {
+  padding: 0 8px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.battery {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Menus déroulants                                                    */
+/* ------------------------------------------------------------------ */
+
+.dropdown {
+  position: absolute;
+  top: calc(var(--menubar-height) + 4px);
+  min-width: 230px;
+  padding: 5px;
+  border-radius: 9px;
+  background: var(--mac-glass-strong);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  border: 1px solid var(--mac-border);
+  box-shadow: var(--mac-shadow-panel);
+  animation: mac-menu-open 0.14s ease-out;
+  z-index: 70;
+  text-shadow: none;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--mac-text);
+  cursor: default;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.menuItem:hover:not(:disabled) {
+  background: var(--mac-accent);
+  color: #fff;
+}
+
+.menuItem:disabled {
+  color: var(--mac-text-tertiary);
+}
+
+.menuItem:hover:not(:disabled) .shortcut {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.shortcut {
+  color: var(--mac-text-tertiary);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+}
+
+.divider {
+  height: 1px;
+  margin: 5px 10px;
+  background: var(--mac-border);
+}
+
+.check {
+  display: inline-block;
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.itemLabel {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 760px) {
+  .desktopOnly {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .hideOnMobile {
+    display: none;
+  }
+}

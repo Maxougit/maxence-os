@@ -1,0 +1,176 @@
+.panel {
+  position: absolute;
+  top: calc(var(--menubar-height) + 6px);
+  right: 8px;
+  width: 330px;
+  max-width: calc(100vw - 16px);
+  padding: 12px;
+  border-radius: 18px;
+  background: var(--mac-glass);
+  backdrop-filter: blur(40px) saturate(1.8);
+  -webkit-backdrop-filter: blur(40px) saturate(1.8);
+  border: 1px solid var(--mac-border);
+  box-shadow: var(--mac-shadow-panel);
+  color: var(--mac-text);
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: mac-menu-open 0.18s ease-out;
+  user-select: none;
+}
+
+.card {
+  border-radius: 14px;
+  background: var(--mac-hover);
+  border: 1px solid var(--mac-border);
+  padding: 10px 12px;
+}
+
+.togglesGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  padding: 2px 0;
+  text-align: left;
+  cursor: default;
+}
+
+.toggleIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 128, 135, 0.4);
+  color: #fff;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.toggleIcon.active {
+  background: var(--mac-accent);
+}
+
+.toggleIcon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.toggleName {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.toggleState {
+  font-size: 11px;
+  color: var(--mac-text-secondary);
+}
+
+.cardTitle {
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.sliderRow {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  border-radius: 11px;
+  background: rgba(128, 128, 135, 0.35);
+  outline: none;
+  overflow: hidden;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  box-shadow: -407px 0 0 398px rgba(255, 255, 255, 0.92);
+  cursor: default;
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  cursor: default;
+}
+
+.slider::-moz-range-progress {
+  background: rgba(255, 255, 255, 0.92);
+  height: 22px;
+  border-radius: 11px;
+}
+
+.appearanceRow {
+  display: flex;
+  gap: 8px;
+}
+
+.appearanceButton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 6px 7px;
+  border-radius: 11px;
+  border: 1.5px solid transparent;
+  background: var(--mac-hover);
+  color: inherit;
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: default;
+}
+
+.appearanceButton.selected {
+  border-color: var(--mac-accent);
+  background: rgba(10, 132, 255, 0.14);
+}
+
+.appearanceButton svg {
+  width: 18px;
+  height: 18px;
+}
+
+.batteryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.batteryDetail {
+  color: var(--mac-text-secondary);
+  font-weight: 400;
+  font-size: 11.5px;
+}

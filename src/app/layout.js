@@ -1,17 +1,14 @@
 import Script from 'next/script'
-import { Poppins } from 'next/font/google'
 import './globals.css'
 import { profile, SITE_URL } from '@/data/cv'
-
-const poppins = Poppins({ subsets: ['latin'], weight: ['300'] })
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${profile.name} — ${profile.jobTitle} | Maxence OS`,
+    default: `${profile.name} — Ingénieur logiciel & DevOps freelance`,
     template: '%s | Maxence OS',
   },
-  description: `CV interactif de ${profile.name}, ${profile.jobTitle.toLowerCase()} : expériences chez ArcelorMittal et Stellantis, compétences en développement, GenAI, DevOps et réseaux.`,
+  description: `CV interactif de ${profile.name}, ingénieur informatique freelance (Maxadev) : GenAI, DevOps, Kubernetes, micro-services. Expériences ArcelorMittal & Stellantis.`,
   alternates: {
     canonical: '/',
   },
@@ -49,7 +46,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="fr">
-      <body className={poppins.className}>
+      <body>
         <Script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-0PT1GT03VC"

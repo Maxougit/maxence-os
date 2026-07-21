@@ -22,8 +22,9 @@ const securityHeaders = [
       "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",
-      // 'self' requis pour le viewer PDF (iframe interne)
-      "frame-src 'self'",
+      // 'self' : viewer PDF ; openstreetmap : plan embarqué dans Safari ;
+      // maxadev : aperçu du site perso (nécessite aussi que maxadev.fr autorise le framing)
+      "frame-src 'self' https://www.openstreetmap.org https://maxadev.fr https://www.maxadev.fr",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",

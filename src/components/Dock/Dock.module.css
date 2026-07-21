@@ -1,0 +1,158 @@
+.dockWrapper {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: 97vw;
+  animation: mac-dock-rise 0.55s cubic-bezier(0.2, 0.85, 0.3, 1.05);
+}
+
+.dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 24px;
+  background: var(--mac-dock-bg);
+  backdrop-filter: blur(36px) saturate(1.8);
+  -webkit-backdrop-filter: blur(36px) saturate(1.8);
+  border: 1px solid var(--mac-border);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35), inset 0 0 0 0.5px rgba(255, 255, 255, 0.08);
+  /* visible : les icônes magnifiées débordent au-dessus de la barre, comme macOS */
+  overflow: visible;
+}
+
+/* Sur écran tactile / étroit : pas de magnification, on autorise le défilement */
+@media (hover: none), (max-width: 820px) {
+  .dock {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .dock::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.iconButton {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: default;
+  transform-origin: bottom center;
+  transition: transform 0.16s cubic-bezier(0.25, 0.6, 0.3, 1);
+  will-change: transform;
+}
+
+/* Pendant la magnification (piloté en JS) on coupe la transition pour un suivi 1:1 */
+.dock.magnifying .iconButton {
+  transition: none;
+}
+
+.iconButton.bouncing {
+  animation: mac-dock-bounce 0.85s cubic-bezier(0.28, 0.6, 0.4, 1);
+}
+
+.dot {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--mac-text-secondary);
+  opacity: 0;
+}
+
+.dot.running {
+  opacity: 1;
+}
+
+.badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ff5146 0%, #e02e24 100%);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 19px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 11px;
+  border-radius: 8px;
+  background: var(--mac-glass-strong);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--mac-border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  color: var(--mac-text);
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  z-index: 5;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--mac-glass-strong);
+}
+
+@media (hover: hover) {
+  .item:hover .tooltip {
+    opacity: 1;
+  }
+}
+
+.separator {
+  align-self: center;
+  width: 1px;
+  height: 38px;
+  margin: 0 5px;
+  background: var(--mac-border-strong);
+  flex-shrink: 0;
+}
+
+@media (max-width: 700px) {
+  .iconButton {
+    width: 46px;
+    height: 46px;
+  }
+
+  .dockWrapper {
+    bottom: 8px;
+  }
+}

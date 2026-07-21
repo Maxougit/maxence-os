@@ -1,66 +1,122 @@
-
-.mainContainer {
-  display: flex;
-  flex-direction: column;
+.shell {
+  position: relative;
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
-  background-size: cover;
-  background-position: center;
   user-select: none;
 }
 
-
-.content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  box-sizing: border-box;
-}
-
-
-.iconContainer {
+.wallpaper {
   position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 5px;
-  padding: 2px;
-  transition: all 0.3s ease-in-out;
-  margin: 16px;
-  cursor: pointer;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: background 0.6s ease;
 }
 
+/* Icônes du bureau (colonne droite, comme macOS) */
 
-.icon {
-  align-items: center;
-  justify-content: center;
+.desktopIcons {
+  position: absolute;
+  top: calc(var(--menubar-height) + 14px);
+  right: 10px;
   display: flex;
   flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  z-index: 1;
 }
 
-
-.iconContainer:hover {
-  transform: scale(1.1);
-  background-color: #10101011;
+.desktopIcon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 96px;
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  cursor: default;
+  font-family: inherit;
 }
+
+.desktopIconImage {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  padding: 2px;
+  border: 1.5px solid transparent;
+}
+
+.desktopIcon.selected .desktopIconImage {
+  background: rgba(120, 120, 130, 0.32);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.desktopIconLabel {
+  font-size: 12px;
+  line-height: 1.25;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  text-align: center;
+  word-break: break-word;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+
+.desktopIcon.selected .desktopIconLabel {
+  background: var(--mac-accent);
+  text-shadow: none;
+}
+
+/* Lien vers la version texte du CV (SEO + accessibilité) */
 
 .scrollHint {
   position: absolute;
-  bottom: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.85rem;
-  padding: 6px 14px;
-  border-radius: 9999px;
-  background-color: #10101055;
-  color: #fff;
+  bottom: 88px;
+  right: 16px;
+  z-index: 2;
+  font-size: 12.5px;
+  white-space: nowrap;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--mac-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--mac-border);
+  color: var(--mac-text);
   text-decoration: none;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .scrollHint:hover {
-  background-color: #101010aa;
+  transform: translateY(-1px);
+  background: var(--mac-glass-strong);
+}
+
+@media (max-width: 700px) {
+  .scrollHint {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 78px;
+  }
+
+  .scrollHint:hover {
+    transform: translateX(50%);
+  }
+}
+
+/* Voile de luminosité (Control Center) */
+
+.brightnessOverlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  pointer-events: none;
+  z-index: 200;
+  transition: opacity 0.2s ease;
 }

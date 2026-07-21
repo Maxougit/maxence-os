@@ -1,63 +1,87 @@
 .terminal {
-    background-color: black;
-    color: limegreen;
-    font-family: 'Courier New', Courier, monospace;
-    padding: 20px;
-    border-radius: 5px;
-    overflow: auto;
-    height: 100%;
+  background-color: rgba(18, 18, 24, 0.96);
+  color: #e8e8ec;
+  font-family: var(--mac-font-mono);
+  font-size: 12.5px;
+  line-height: 1.5;
+  padding: 12px 14px;
+  overflow: auto;
+  height: 100%;
+  cursor: text;
 }
 
 .output {
-    white-space: pre-wrap;
-    word-wrap: break-word;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.output p {
+  margin: 0;
 }
 
 .commandLine {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
 }
 
 .prompt {
-    color: #00ff00;
+  color: #e8e8ec;
+  white-space: nowrap;
+}
+
+.promptUser {
+  color: #30d158;
+  font-weight: 600;
+}
+
+.promptPath {
+  color: #64d2ff;
+  font-weight: 600;
 }
 
 .commandInput {
-    background: transparent;
-    border: none;
-    color: limegreen;
-    outline: none;
-    caret-color: limegreen;
-    margin-left: 5px;
-    padding-right: 5px;
+  flex: 1;
+  min-width: 120px;
+  background: transparent;
+  border: none;
+  color: #e8e8ec;
+  outline: none;
+  caret-color: #30d158;
+  margin-left: 7px;
+  font-family: inherit;
+  font-size: inherit;
 }
 
-/* Blinking animation */
-@keyframes blink {
+.neofetch {
+  display: flex;
+  gap: 18px;
+  margin: 6px 0;
+}
 
-    0%,
-    100% {
-        opacity: 1;
-    }
+.neofetchArt {
+  color: #30d158;
+  white-space: pre;
+  line-height: 1.15;
+  font-size: 11.5px;
+}
 
-    50% {
-        opacity: 0;
-    }
+.neofetchInfo {
+  white-space: pre-wrap;
+}
+
+.neofetchKey {
+  color: #64d2ff;
+  font-weight: 600;
 }
 
 @media (max-width: 600px) {
-    .terminal {
-        padding: 2px;
-        overflow: auto;
-    }
+  .terminal {
+    padding: 8px;
+  }
 
-    .commandLine {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .commandInput {
-        margin-top: 5px;
-        padding-right: 0;
-    }
+  .neofetch {
+    flex-direction: column;
+    gap: 8px;
+  }
 }

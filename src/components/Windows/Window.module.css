@@ -1,62 +1,224 @@
 .window {
-  display: flex; 
-  flex-direction: column;
   position: absolute;
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-b1,oklch(var(--b1)/var(--tw-bg-opacity)));
-  z-index: 40;
-  border-radius: 5px;
-  overflow: hidden; 
-  resize: both;
-  max-height: 95vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mac-window-bg);
+  color: var(--mac-text);
+  border-radius: 12px;
+  border: 1px solid var(--mac-border);
+  box-shadow: var(--mac-shadow-window);
+  overflow: hidden;
+  min-width: 320px;
+  min-height: 200px;
+  max-width: 100vw;
+  transition:
+    left 0.35s cubic-bezier(0.32, 0.72, 0.22, 1),
+    top 0.35s cubic-bezier(0.32, 0.72, 0.22, 1),
+    width 0.35s cubic-bezier(0.32, 0.72, 0.22, 1),
+    height 0.35s cubic-bezier(0.32, 0.72, 0.22, 1),
+    box-shadow 0.2s ease;
+  will-change: transform, opacity;
 }
 
-.content {
-  padding: 1px;
-  overflow: auto;
-  flex-grow: 1;
+.window.unfocused {
+  box-shadow: var(--mac-shadow-window-inactive);
 }
+
+.window.dragging,
+.window.resizing {
+  transition: box-shadow 0.2s ease;
+}
+
+.window.opening {
+  animation: mac-window-open 0.34s cubic-bezier(0.18, 0.89, 0.32, 1.12);
+}
+
+.window.closing {
+  animation: mac-window-close 0.2s ease-in forwards;
+  pointer-events: none;
+}
+
+.window.minimizing {
+  transition:
+    transform 0.38s cubic-bezier(0.6, 0.05, 0.9, 0.5),
+    opacity 0.38s ease-in;
+  transform: translate(var(--min-tx, 0px), var(--min-ty, 60vh)) scale(0.08);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.window.restoring {
+  animation: mac-window-open 0.32s cubic-bezier(0.18, 0.89, 0.32, 1.12);
+}
+
+.window.hidden {
+  display: none;
+}
+
+.window.maximized {
+  left: 0 !important;
+  top: var(--menubar-height) !important;
+  width: 100vw !important;
+  height: calc(100dvh - var(--menubar-height)) !important;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+
+.window.mobileWindow {
+  left: 2vw !important;
+  top: calc(var(--menubar-height) + 8px) !important;
+  width: 96vw !important;
+  height: calc(100dvh - var(--menubar-height) - 96px) !important;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Barre de titre                                                      */
+/* ------------------------------------------------------------------ */
 
 .titleBar {
-  padding: 2px;
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  /* cursor: grab;  */
+  align-items: center;
+  flex-shrink: 0;
+  height: 34px;
+  padding: 0 12px;
+  background: var(--mac-titlebar-bg);
+  border-bottom: 1px solid var(--mac-border);
+  cursor: default;
+  user-select: none;
+  touch-action: none;
 }
 
 .titleBar:active {
   cursor: grabbing;
 }
 
-.closeButton {
-  position: relative;
-  width: 25px; /* Taille du bouton */
-  height: 25px;
-  border-radius: 5px;
-  background-color: transparent; /* Fond transparent */
-  border: none; /* Supprime la bordure par défaut */
-  cursor: pointer;
-  outline: none; /* Supprime le contour lors du focus */
-}
-
-.closeButton:hover {
-  background-color: #f2f2f2; /* Léger changement de couleur au survol */
-}
-
-.closeButton::before, .closeButton::after {
-  content: '';
+.title {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 15px; /* Longueur des bandes */
-  height: 2px; /* Épaisseur des bandes */
-  background-color: #333; /* Couleur des bandes */
+  left: 76px;
+  right: 76px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
 }
 
-.closeButton::before {
-  transform: translate(-50%, -50%) rotate(45deg); /* Tourne une bande pour former la croix */
+.unfocused .title {
+  color: var(--mac-text-tertiary);
 }
 
-.closeButton::after {
-  transform: translate(-50%, -50%) rotate(-45deg); /* Tourne l'autre bande dans la direction opposée */
+/* Feux tricolores */
+
+.lights {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 1;
+}
+
+.light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: default;
+}
+
+.lightClose {
+  background: var(--mac-red);
+}
+
+.lightMin {
+  background: var(--mac-yellow);
+}
+
+.lightMax {
+  background: var(--mac-green);
+}
+
+.unfocused .light {
+  background: rgba(140, 140, 145, 0.5);
+}
+
+.unfocused .lights:hover .lightClose {
+  background: var(--mac-red);
+}
+
+.unfocused .lights:hover .lightMin {
+  background: var(--mac-yellow);
+}
+
+.unfocused .lights:hover .lightMax {
+  background: var(--mac-green);
+}
+
+.light svg {
+  width: 8px;
+  height: 8px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.lights:hover .light svg {
+  opacity: 1;
+}
+
+.lightMin:active,
+.lightClose:active,
+.lightMax:active {
+  filter: brightness(0.8);
+}
+
+/* ------------------------------------------------------------------ */
+/* Contenu + resize                                                    */
+/* ------------------------------------------------------------------ */
+
+.content {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  overscroll-behavior: contain;
+}
+
+.resizeHandle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 18px;
+  height: 18px;
+  cursor: nwse-resize;
+  z-index: 2;
+  touch-action: none;
+}
+
+.maximized .resizeHandle,
+.mobileWindow .resizeHandle {
+  display: none;
+}
+
+/* Chrome sombre (Terminal) quel que soit le thème */
+
+.darkChrome {
+  background-color: rgba(24, 24, 28, 0.97);
+  color: #f5f5f7;
+}
+
+.darkChrome .titleBar {
+  background: rgba(38, 38, 42, 0.95);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.darkChrome.unfocused .title {
+  color: rgba(235, 235, 245, 0.3);
 }

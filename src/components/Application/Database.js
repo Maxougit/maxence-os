@@ -1,92 +1,158 @@
-import React, { useState } from 'react';
-import SkillsUniverse from './SkillsUniverse';
+'use client';
+import React, { useState, useEffect } from 'react';
+import SkillsHologram from './SkillsHologram';
+import styles from './Database.module.css';
 import { skillsData } from '@/data/cv';
 
+const TABS = ['Schema', ...Object.keys(skillsData)];
+
+const TAB_LABELS = {
+  Schema: 'Schema',
+  Programation: 'Langages',
+  Technologies: 'Technos',
+  Concepts: 'Concepts',
+  Experiences: 'Parcours',
+};
+
+const totalSkills = Object.values(skillsData).reduce((sum, arr) => sum + arr.length, 0);
+
 const Database = () => {
-  const [selectedCategory, setSelectedCategory] = useState('Schema');
-
-  const handleSelectCategory = (category) => {
-    setSelectedCategory(category);
-  };
-
-  const generateSQLQuery = (category) => {
-    return [`SELECT name, details FROM ${category}`, `WHERE person = 'Maxence';`];
-  };
+  const [tab, setTab] = useState('Schema');
+  const [hovered, setHovered] = useState(null);
 
   return (
-    <div className="flex flex-col w-auto p-4 justify-center items-center h-full">
-      <ul className="menu w-full menu-vertical lg:menu-horizontal bg-base-200 rounded-box mb-4">
-        {['Schema', 'Programation', 'Technologies', 'Concepts', 'Experiences'].map(
-          (tab, index) => (
-            <li key={index}>
-              <a
-                className={`px-4 py-2 text-sm font-semibold rounded-md ${
-                  selectedCategory === tab ? ' text-blue-500' : 'none'
-                }`}
-                onClick={() => handleSelectCategory(tab)}
-              >
-                {tab}
-              </a>
-            </li>
-          )
-        )}
-      </ul>
+    <div className={styles.console}>
+      <div className={styles.hudTop}>
+        <span className={styles.brand}>MAXENCE.DB</span>
+        <span className={styles.subtitle}>Neural Skill Core</span>
+        <span className={styles.status}>
+          <span className={styles.statusDot} />
+          ONLINE
+        </span>
+      </div>
 
-      {selectedCategory !== 'Schema' && (
+      <div className={styles.tabs} role="tablist">
+        {TABS.map((name) => (
+          <button
+            key={name}
+            type="button"
+            role="tab"
+            aria-selected={tab === name}
+            className={`${styles.tab} ${tab === name ? styles.active : ''}`}
+            onClick={() => setTab(name)}
+          >
+            {TAB_LABELS[name] || name}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.stage}>
+        {tab === 'Schema' ? (
+          <SchemaView hovered={hovered} onHover={setHovered} />
+        ) : (
+          <QueryConsole key={tab} category={tab} rows={skillsData[tab]} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+const SchemaView = ({ hovered, onHover }) => (
+  <>
+    <div className={styles.canvasWrap}>
+      <SkillsHologram skillsData={skillsData} onHover={onHover} />
+    </div>
+
+    <span className={`${styles.corner} ${styles.cornerTL}`} />
+    <span className={`${styles.corner} ${styles.cornerTR}`} />
+    <span className={`${styles.corner} ${styles.cornerBL}`} />
+    <span className={`${styles.corner} ${styles.cornerBR}`} />
+    <span className={styles.reticle} />
+
+    <div className={styles.hudStats}>
+      <div>
+        NODES <b>{totalSkills}</b>
+      </div>
+      <div>
+        CLUSTERS <b>{Object.keys(skillsData).length}</b>
+      </div>
+      <div>
+        MODE <b>ORBIT</b>
+      </div>
+    </div>
+
+    <div className={styles.readout}>
+      {hovered ? (
         <>
-          <div className="mb-4 w-full">
-            <div className="mt-5">
-              <pre className="bg-gray-800 text-green-400 p-5 rounded-lg overflow-x-auto">
-                {generateSQLQuery(selectedCategory).map((query, i) => (
-                  <React.Fragment key={i}>
-                    {i === 0 && <span className="text-blue-500 mr-2">$</span>}
-                    <code>{query}</code>
-                    {i < generateSQLQuery(selectedCategory).length - 1 && <br />}
-                  </React.Fragment>
-                ))}
-              </pre>
-            </div>
-          </div>
-          <div className="flex-grow bg-white border rounded-md overflow-hidden h-64 w-full md:w-96">
-            <div className="overflow-y-auto h-full">
-              <table className="min-w-full divide-y">
-                <thead>
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Id
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Details
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {skillsData[selectedCategory]?.map((skill, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
-                        {index + 1}
-                      </td>
-                      <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
-                        {skill.Name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-wrap text-sm text-gray-900">
-                        {skill.Details.join(', ')}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <span className={styles.readoutCat}>
+            {hovered.type === 'category' ? 'CLUSTER' : hovered.category}
+          </span>
+          <div className={styles.readoutName}>{hovered.name}</div>
+          <div className={styles.readoutDetails}>
+            {hovered.type === 'category'
+              ? `${hovered.count} compétences indexées`
+              : hovered.details}
           </div>
         </>
+      ) : (
+        <div className={styles.readoutHint}>‹ survolez un nœud pour l’inspecter ›</div>
       )}
-      {selectedCategory === 'Schema' && (
-        <div className="w-96 h-80 rounded-box">
-          <SkillsUniverse skillsData={skillsData} />
-        </div>
+    </div>
+  </>
+);
+
+const QueryConsole = ({ category, rows }) => {
+  const query = `SELECT name, details FROM ${category}\nWHERE owner = 'maxence' ORDER BY level DESC;`;
+  const [typed, setTyped] = useState('');
+  const done = typed.length >= query.length;
+
+  useEffect(() => {
+    let i = 0;
+    const id = setInterval(() => {
+      i += 2;
+      setTyped(query.slice(0, i));
+      if (i >= query.length) clearInterval(id);
+    }, 16);
+    return () => clearInterval(id);
+  }, [query]);
+
+  return (
+    <div className={styles.query}>
+      <pre className={styles.queryLine}>
+        <span className={styles.prompt}>SQL▸</span>
+        {typed}
+        {!done && <span className={styles.caret}>█</span>}
+      </pre>
+
+      {done && (
+        <>
+          <div className={styles.tableWrap}>
+            <table className={styles.rowsTable}>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>name</th>
+                  <th>details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((skill, index) => (
+                  <tr key={skill.Name} style={{ animationDelay: `${index * 0.04}s` }}>
+                    <td>{String(index + 1).padStart(2, '0')}</td>
+                    <td>{skill.Name}</td>
+                    <td>{skill.Details.join(' · ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className={styles.queryFooter}>
+            <span>
+              ▸ <b>{rows.length}</b> rows returned
+            </span>
+            <span>exec {(rows.length * 0.7 + 1.3).toFixed(1)} ms</span>
+          </div>
+        </>
       )}
     </div>
   );
