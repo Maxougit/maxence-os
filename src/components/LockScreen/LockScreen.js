@@ -55,7 +55,8 @@ const LockScreen = ({ wallpaperStyle, unlocking, onUnlock }) => {
           width={92}
           height={92}
           className={styles.avatar}
-          priority
+          loading="eager"
+          fetchPriority="high"
         />
         <p className={styles.name}>{profile.name}</p>
         <p className={styles.hint}>Cliquez pour ouvrir une session</p>

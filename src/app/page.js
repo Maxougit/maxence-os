@@ -65,6 +65,7 @@ export default function Home() {
               width={112}
               height={112}
               className="rounded-full object-cover"
+              loading="eager"
             />
             <div>
               <h1 className="text-3xl font-bold">{profile.name}</h1>
