@@ -16,6 +16,54 @@ const textStyle = {
 };
 
 /**
+ * PDF : iframe intégrée sur desktop ; sur mobile (Android surtout), les
+ * navigateurs refusent d'afficher un PDF en iframe → repli avec ouverture /
+ * téléchargement natif. Viewer est chargé côté client (ssr:false), donc window
+ * est disponible dès l'initialisation du state.
+ */
+const PdfViewer = ({ file }) => {
+  const [inlineBlocked] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      (window.matchMedia('(max-width: 768px)').matches ||
+        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))
+  );
+
+  if (inlineBlocked) {
+    return (
+      <div className={styles.pdfFallback}>
+        <span className={styles.pdfBadge}>PDF</span>
+        <p className={styles.pdfName}>{file.name}</p>
+        <p className={styles.pdfHint}>
+          L’aperçu intégré des PDF n’est pas pris en charge par les navigateurs mobiles.
+        </p>
+        <div className={styles.pdfActions}>
+          <a
+            className={styles.pdfPrimary}
+            href={file.path}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Ouvrir le PDF ↗
+          </a>
+          <a className={styles.pdfGhost} href={file.path} download>
+            Télécharger
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <iframe
+      src={file.path}
+      title={file.name}
+      style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+    />
+  );
+};
+
+/**
  * Aperçu : PDF, images, vidéos et texte/markdown.
  */
 const FileViewer = ({ file }) => {
@@ -64,13 +112,7 @@ const FileViewer = ({ file }) => {
     (loadedDocument.path === file.path ? loadedDocument.content : 'Chargement…');
 
   if (file.extension === 'pdf') {
-    return (
-      <iframe
-        src={file.path}
-        title={file.name}
-        style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-      />
-    );
+    return <PdfViewer file={file} />;
   }
 
   if (['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'].includes(file.extension)) {

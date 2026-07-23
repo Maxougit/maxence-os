@@ -76,8 +76,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Scroll figé par défaut (verrou posé sur <html>, le conteneur de scroll du
+   viewport) : couvre l'écran verrouillé sur tous les appareils. Le CV texte
+   reste dans le DOM (SEO, en dessous). La classe .scrollable est ajoutée par
+   le bureau quand le scroll est autorisé : PC déverrouillé (scroll libre vers
+   le CV) ou mobile après « Voir le CV en version texte ». */
 html {
-  overflow-x: hidden;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+html.scrollable {
+  overflow-y: auto;
 }
 
 body {

@@ -84,6 +84,7 @@
   bottom: 88px;
   right: 16px;
   z-index: 2;
+  font-family: inherit;
   font-size: 12.5px;
   white-space: nowrap;
   padding: 7px 14px;
@@ -94,12 +95,35 @@
   border: 1px solid var(--mac-border);
   color: var(--mac-text);
   text-decoration: none;
+  cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .scrollHint:hover {
   transform: translateY(-1px);
   background: var(--mac-glass-strong);
+}
+
+/* Bouton flottant de retour au bureau, visible quand le CV texte est ouvert */
+.cvBack {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 95;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(20, 20, 24, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  animation: mac-pop-in 0.3s ease;
 }
 
 @media (max-width: 768px) {

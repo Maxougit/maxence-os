@@ -83,6 +83,7 @@ export default function Desktop() {
   const [selectedIcon, setSelectedIcon] = useState(null);
   const [bouncingId, setBouncingId] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [cvOpen, setCvOpen] = useState(false);
 
   const notificationShown = useRef(false);
   const bounceTimer = useRef(null);
@@ -273,8 +274,40 @@ export default function Desktop() {
     setControlCenterOpen(false);
     setSpotlightOpen(false);
     setContextMenu(null);
+    setCvOpen(false);
     setLockState('locked');
   }, []);
+
+  // Scroll autorisé : PC déverrouillé (scroll libre vers le CV) OU mobile après
+  // clic sur « Voir le CV ». L'écran verrouillé reste toujours figé.
+  useEffect(() => {
+    const scrollable = lockState === 'unlocked' && (!isMobile || cvOpen);
+    document.documentElement.classList.toggle('scrollable', scrollable);
+  }, [lockState, isMobile, cvOpen]);
+
+  // Défile jusqu'au CV à l'ouverture ; remonte au bureau à la fermeture.
+  useEffect(() => {
+    if (cvOpen) {
+      const raf = requestAnimationFrame(() =>
+        document.getElementById('cv')?.scrollIntoView({ behavior: 'smooth' })
+      );
+      return () => cancelAnimationFrame(raf);
+    }
+    window.scrollTo(0, 0);
+    return undefined;
+  }, [cvOpen]);
+
+  // Referme le CV (et re-fige sur mobile) quand on remonte tout en haut.
+  useEffect(() => {
+    if (!cvOpen) return undefined;
+    let leftTop = false;
+    const onScroll = () => {
+      if (window.scrollY > 40) leftTop = true;
+      else if (leftTop && window.scrollY <= 1) setCvOpen(false);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [cvOpen]);
 
   const unlock = useCallback(() => {
     setLockState((state) => (state === 'locked' ? 'unlocking' : state));
@@ -511,7 +544,7 @@ export default function Desktop() {
           { divider: true },
           {
             label: 'Voir le CV en version texte',
-            onSelect: () => document.getElementById('cv')?.scrollIntoView({ behavior: 'smooth' }),
+            onSelect: () => setCvOpen(true),
           },
           {
             label: 'Télécharger le CV (PDF)',
@@ -724,11 +757,21 @@ export default function Desktop() {
               ))}
             </div>
 
-            <a href="#cv" className={styles.scrollHint}>
+            <button
+              type="button"
+              className={styles.scrollHint}
+              onClick={() => setCvOpen(true)}
+            >
               Voir le CV en version texte ↓
-            </a>
+            </button>
           </main>
         </>
+      )}
+
+      {cvOpen && (
+        <button type="button" className={styles.cvBack} onClick={() => setCvOpen(false)}>
+          ↑ Retour à Maxence OS
+        </button>
       )}
 
       {windows.map((win, index) => (
