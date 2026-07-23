@@ -55,12 +55,15 @@ const PdfViewer = ({ file }) => {
     );
   }
 
+  // Ailleurs (iOS Safari, desktop) : aperçu inline. On garde une échappatoire
+  // « Ouvrir ↗ » sur tactile au cas où un navigateur rendrait l'iframe vide.
   return (
-    <iframe
-      src={file.path}
-      title={file.name}
-      style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-    />
+    <div className={styles.pdfFrameWrap}>
+      <iframe className={styles.pdfFrame} src={file.path} title={file.name} />
+      <a className={styles.pdfOpenFloat} href={file.path} target="_blank" rel="noreferrer">
+        Ouvrir ↗
+      </a>
+    </div>
   );
 };
 

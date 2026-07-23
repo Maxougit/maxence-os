@@ -42,7 +42,44 @@
   line-height: 1.4;
 }
 
-/* -------- Repli PDF (mobile) -------- */
+/* -------- Aperçu PDF inline (iOS Safari, desktop) -------- */
+.pdfFrameWrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.pdfFrame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.pdfOpenFloat {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(20, 20, 24, 0.82);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Sur desktop, le lecteur PDF a déjà ses propres contrôles → pas de bouton flottant. */
+@media (hover: hover) and (pointer: fine) {
+  .pdfOpenFloat {
+    display: none;
+  }
+}
+
+/* -------- Repli PDF (Chrome/Android) -------- */
 .pdfFallback {
   display: flex;
   flex-direction: column;
