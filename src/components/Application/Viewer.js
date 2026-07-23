@@ -16,17 +16,18 @@ const textStyle = {
 };
 
 /**
- * PDF : iframe intégrée sur desktop ; sur mobile (Android surtout), les
- * navigateurs refusent d'afficher un PDF en iframe → repli avec ouverture /
- * téléchargement natif. Viewer est chargé côté client (ssr:false), donc window
- * est disponible dès l'initialisation du state.
+ * PDF : l'iframe intégrée fonctionne sur desktop ET sur iOS/Safari mobile
+ * (moteur WebKit). En revanche Chrome/Android (Blink) refuse d'afficher un PDF
+ * en iframe (« contenu bloqué ») → on n'y bascule le repli (ouverture /
+ * téléchargement natif) que là. Viewer est chargé côté client (ssr:false), donc
+ * window est disponible dès l'initialisation du state.
  */
 const PdfViewer = ({ file }) => {
   const [inlineBlocked] = useState(
     () =>
-      typeof window !== 'undefined' &&
-      (window.matchMedia('(max-width: 768px)').matches ||
-        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))
+      typeof navigator !== 'undefined' &&
+      /Android/i.test(navigator.userAgent) &&
+      !/Firefox|FxiOS/i.test(navigator.userAgent)
   );
 
   if (inlineBlocked) {
@@ -35,7 +36,7 @@ const PdfViewer = ({ file }) => {
         <span className={styles.pdfBadge}>PDF</span>
         <p className={styles.pdfName}>{file.name}</p>
         <p className={styles.pdfHint}>
-          L’aperçu intégré des PDF n’est pas pris en charge par les navigateurs mobiles.
+          Ce navigateur n’affiche pas les PDF intégrés. Ouvrez-le dans un onglet ou téléchargez-le.
         </p>
         <div className={styles.pdfActions}>
           <a
