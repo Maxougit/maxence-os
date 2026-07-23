@@ -16,19 +16,23 @@ const textStyle = {
 };
 
 /**
- * PDF : l'iframe intégrée fonctionne sur desktop ET sur iOS/Safari mobile
- * (moteur WebKit). En revanche Chrome/Android (Blink) refuse d'afficher un PDF
- * en iframe (« contenu bloqué ») → on n'y bascule le repli (ouverture /
- * téléchargement natif) que là. Viewer est chargé côté client (ssr:false), donc
- * window est disponible dès l'initialisation du state.
+ * PDF : on détecte la CAPACITÉ réelle du moteur à afficher un PDF en iframe via
+ * `navigator.pdfViewerEnabled` (fiable même en mode responsive/DevTools, où le
+ * moteur reste desktop) plutôt que de deviner via l'UA. iOS/iPadOS (WebKit)
+ * rendent les PDF en iframe même si l'API répond non → on force l'inline là.
+ * Sinon (typiquement Chrome/Android sans lecteur PDF) → repli ouverture /
+ * téléchargement. Viewer est chargé côté client (ssr:false).
  */
 const PdfViewer = ({ file }) => {
-  const [inlineBlocked] = useState(
-    () =>
-      typeof navigator !== 'undefined' &&
-      /Android/i.test(navigator.userAgent) &&
-      !/Firefox|FxiOS/i.test(navigator.userAgent)
-  );
+  const [inlineBlocked] = useState(() => {
+    if (typeof navigator === 'undefined') return false;
+    const ua = navigator.userAgent;
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const canInline = navigator.pdfViewerEnabled === true || isIOS;
+    return !canInline;
+  });
 
   if (inlineBlocked) {
     return (
