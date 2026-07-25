@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -71,6 +71,154 @@ const PdfViewer = ({ file }) => {
   );
 };
 
+const ZOOM_MIN = 0.2;
+const ZOOM_MAX = 8;
+const ZOOM_STEP = 1.4;
+
+/**
+ * Visionneuse plein écran avec zoom : indispensable pour les grands documents
+ * (poster A0, schémas larges) qu'un simple « ajusté à l'écran » rend illisibles.
+ * Le facteur de zoom est relatif à la taille ajustée ; on affiche le rapport
+ * réel par rapport à la taille native (100 % = 1:1).
+ */
+const ImageLightbox = ({ image, onClose }) => {
+  const stageRef = useRef(null);
+  const imgRef = useRef(null);
+  const [fitWidth, setFitWidth] = useState(0);
+  const [naturalWidth, setNaturalWidth] = useState(0);
+  const [zoom, setZoom] = useState(1);
+
+  // Largeur d'affichage quand l'image est ajustée à la zone (sans agrandir).
+  const measure = useCallback(() => {
+    const stage = stageRef.current;
+    const img = imgRef.current;
+    if (!stage || !img?.naturalWidth) return;
+    const available = { w: stage.clientWidth - 32, h: stage.clientHeight - 32 };
+    // Zone pas encore dimensionnée (onglet masqué, premier rendu) : on laisse
+    // le CSS gérer l'ajustement plutôt que de calculer une taille aberrante.
+    if (available.w <= 0 || available.h <= 0) return;
+    const scale = Math.min(
+      available.w / img.naturalWidth,
+      available.h / img.naturalHeight,
+      1
+    );
+    setNaturalWidth(img.naturalWidth);
+    setFitWidth(Math.max(1, Math.round(img.naturalWidth * scale)));
+  }, []);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return undefined;
+    const observer = new ResizeObserver(measure);
+    observer.observe(stage);
+    return () => observer.disconnect();
+  }, [measure]);
+
+  // Une image déjà en cache est `complete` dès le montage : `onLoad` ne se
+  // déclenchera pas, il faut donc mesurer nous-mêmes (sinon zoom inopérant).
+  useEffect(() => {
+    if (imgRef.current?.complete) measure();
+  }, [measure, image.src]);
+
+  const zoomBy = useCallback((factor) => {
+    setZoom((current) =>
+      Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Number((current * factor).toFixed(3))))
+    );
+  }, []);
+
+  useEffect(() => {
+    const onKey = (event) => {
+      if (event.key === 'Escape') onClose();
+      else if (event.key === '+' || event.key === '=') zoomBy(ZOOM_STEP);
+      else if (event.key === '-' || event.key === '_') zoomBy(1 / ZOOM_STEP);
+      else if (event.key === '0') setZoom(1);
+      else return;
+      event.preventDefault();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose, zoomBy]);
+
+  // Molette : défilement normal pour se déplacer, ⌘/Ctrl + molette pour zoomer.
+  const onWheel = (event) => {
+    if (!event.ctrlKey && !event.metaKey) return;
+    event.preventDefault();
+    zoomBy(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
+  };
+
+  const displayedWidth = fitWidth ? Math.round(fitWidth * zoom) : null;
+  const percent = naturalWidth && displayedWidth
+    ? Math.round((displayedWidth / naturalWidth) * 100)
+    : 100;
+
+  return (
+    <div
+      className={styles.imageLightbox}
+      role="dialog"
+      aria-modal="true"
+      aria-label={image.alt || 'Illustration agrandie'}
+      onClick={onClose}
+    >
+      <div className={styles.lightboxBar} onClick={(event) => event.stopPropagation()}>
+        <button
+          type="button"
+          className={styles.lightboxTool}
+          onClick={() => zoomBy(1 / ZOOM_STEP)}
+          disabled={zoom <= ZOOM_MIN}
+          aria-label="Réduire"
+        >
+          −
+        </button>
+        <span className={styles.lightboxZoomValue}>{percent} %</span>
+        <button
+          type="button"
+          className={styles.lightboxTool}
+          onClick={() => zoomBy(ZOOM_STEP)}
+          disabled={zoom >= ZOOM_MAX}
+          aria-label="Agrandir"
+        >
+          +
+        </button>
+        <button type="button" className={styles.lightboxTool} onClick={() => setZoom(1)}>
+          Ajusté
+        </button>
+        <button
+          type="button"
+          className={styles.lightboxTool}
+          onClick={() => fitWidth && setZoom(naturalWidth / fitWidth)}
+        >
+          1:1
+        </button>
+        <button
+          type="button"
+          className={`${styles.lightboxTool} ${styles.lightboxCloseTool}`}
+          onClick={onClose}
+          aria-label="Fermer l’illustration"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className={styles.lightboxStage} ref={stageRef} onWheel={onWheel}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          ref={imgRef}
+          className={`${styles.lightboxImage} ${
+            displayedWidth ? styles.lightboxImageSized : ''
+          }`}
+          style={displayedWidth ? { width: displayedWidth } : undefined}
+          src={image.src}
+          alt={image.alt}
+          title={image.title}
+          onLoad={measure}
+          onClick={(event) => event.stopPropagation()}
+          onDoubleClick={() => setZoom((z) => (z === 1 ? 2 : 1))}
+        />
+      </div>
+    </div>
+  );
+};
+
 /**
  * Aperçu : PDF, images, vidéos et texte/markdown.
  */
@@ -104,16 +252,6 @@ const FileViewer = ({ file }) => {
       };
     }
   }, [file]);
-
-  useEffect(() => {
-    if (!zoomedImage) return undefined;
-
-    const closeOnEscape = (event) => {
-      if (event.key === 'Escape') setZoomedImage(null);
-    };
-    window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [zoomedImage]);
 
   const textContent =
     file.content ||
@@ -229,30 +367,7 @@ const FileViewer = ({ file }) => {
         </article>
 
         {zoomedImage && (
-          <div
-            className={styles.imageLightbox}
-            role="dialog"
-            aria-modal="true"
-            aria-label={zoomedImage.alt || 'Illustration agrandie'}
-            onClick={() => setZoomedImage(null)}
-          >
-            <button
-              type="button"
-              className={styles.lightboxClose}
-              onClick={() => setZoomedImage(null)}
-              aria-label="Fermer l’illustration"
-            >
-              ×
-            </button>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              className={styles.lightboxImage}
-              src={zoomedImage.src}
-              alt={zoomedImage.alt}
-              title={zoomedImage.title}
-              onClick={(event) => event.stopPropagation()}
-            />
-          </div>
+          <ImageLightbox image={zoomedImage} onClose={() => setZoomedImage(null)} />
         )}
       </div>
     );

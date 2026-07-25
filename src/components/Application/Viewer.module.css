@@ -294,9 +294,14 @@
 
 .markdownImage {
   display: block;
-  width: 100%;
+  /* Jamais d'agrandissement au-delà de la taille native : les petites
+     illustrations resteraient nettes plutôt qu'étirées (donc floues).
+     Les grandes figures sont, elles, réduites à la largeur disponible. */
+  width: auto;
+  max-width: 100%;
   height: auto;
   max-height: 620px;
+  margin: 0 auto;
   object-fit: contain;
 }
 
@@ -346,45 +351,96 @@
   inset: 0;
   z-index: 5;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 22px;
+  flex-direction: column;
   background: rgb(5 7 12 / 90%);
   backdrop-filter: blur(16px);
   animation: viewer-lightbox-in 0.18s ease-out;
 }
 
-.lightboxImage {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 14px;
-  background: #10121a;
-  box-shadow: 0 22px 70px rgb(0 0 0 / 55%);
-  object-fit: contain;
-}
-
-.lightboxClose {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 1;
+/* Barre d'outils : zoom −/+, ajusté, 1:1, fermeture */
+.lightboxBar {
   display: flex;
-  width: 32px;
-  height: 32px;
   align-items: center;
   justify-content: center;
-  padding: 0 0 2px;
-  border: 1px solid rgb(255 255 255 / 18%);
-  border-radius: 50%;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+}
+
+.lightboxTool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 34px;
+  padding: 0 11px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 9px;
   background: rgb(24 26 34 / 82%);
   color: #fff;
   font-family: inherit;
-  font-size: 24px;
+  font-size: 14px;
+  font-weight: 600;
   line-height: 1;
   cursor: pointer;
+  touch-action: manipulation;
+}
+
+.lightboxTool:hover:not(:disabled) {
+  background: rgb(52 56 70 / 92%);
+}
+
+.lightboxTool:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.lightboxCloseTool {
+  margin-left: 10px;
+  font-size: 21px;
+  padding-bottom: 3px;
+}
+
+.lightboxZoomValue {
+  min-width: 62px;
+  color: #fff;
+  font-family: var(--mac-font-mono);
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  user-select: none;
+}
+
+/* Zone de visualisation : défile quand l'image dépasse (déplacement) */
+.lightboxStage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  overflow: auto;
+  padding: 16px;
+  overscroll-behavior: contain;
+}
+
+.lightboxImage {
+  display: block;
+  /* `margin: auto` centre l'image sans rogner ses bords quand elle déborde
+     de la zone (ce que ferait un centrage flex). */
+  margin: auto;
+  width: auto;
+  height: auto;
+  /* Repli tant que la taille ajustée n'est pas mesurée : image contenue. */
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+  background: #10121a;
+  box-shadow: 0 22px 70px rgb(0 0 0 / 55%);
+}
+
+/* Une fois la largeur calculée, c'est le zoom qui pilote la taille. */
+.lightboxImageSized {
+  max-width: none;
+  max-height: none;
 }
 
 @keyframes viewer-lightbox-in {
@@ -417,19 +473,32 @@
     touch-action: manipulation;
   }
 
-  .imageLightbox {
+  /* Cibles tactiles ≥ 44 px dans la visionneuse. */
+  .lightboxBar {
+    padding: 8px 6px;
+    gap: 5px;
+  }
+
+  .lightboxTool {
+    min-width: 42px;
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .lightboxCloseTool {
+    margin-left: 4px;
+  }
+
+  .lightboxZoomValue {
+    min-width: 50px;
+  }
+
+  .lightboxStage {
     padding: 10px;
   }
 
   .lightboxImage {
     border-radius: 10px;
-  }
-
-  .lightboxClose {
-    top: 10px;
-    right: 10px;
-    width: 44px;
-    height: 44px;
   }
 
   .zoomHint {
