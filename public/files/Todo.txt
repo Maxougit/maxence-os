@@ -1,6 +1,18 @@
-- Mission en freelance                         
-- Opportunités post BAC+5
+TODO — Maxence
+================================
 
+Fait
+  [x] Diplôme d'ingénieur informatique — CESI (2025)
+  [x] Publier un article scientifique — CONFERE 2024, Porto
+  [x] Créer Maxadev, mon activité freelance
+  [x] Monter un homelab et y faire tourner mes propres LLM
+  [x] Refaire ce CV en version macOS
 
+En cours
+  [ ] Industrialiser la plateforme GenAI chez ArcelorMittal
+  [ ] Nouvelles missions freelance : IA générative, DevOps, micro-services
+  [ ] Agrandir le homelab (et résister à l'achat d'un serveur de plus)
+  [ ] Vider la corbeille
 
-
+Un projet en tête ? Parlons-en :
+  contact@maxenceleroux.fr — maxadev.fr
