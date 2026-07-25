@@ -48,10 +48,15 @@ const Window = ({
   // Cette fenêtre n'est montée que côté client (après interaction) :
   // l'initialiseur peut lire le viewport directement.
   const [geometry, setGeometry] = useState(() => {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const width = Math.min(defaultSize?.width || 680, vw - 24);
-    const height = Math.min(defaultSize?.height || 460, vh - MENUBAR_HEIGHT - 110);
+    // Garde-fous : un viewport mesuré à 0 (onglet en arrière-plan, webview
+    // masquée) donnerait des dimensions négatives, donc une fenêtre écrasée.
+    const vw = window.innerWidth || 1024;
+    const vh = window.innerHeight || 768;
+    const width = Math.max(320, Math.min(defaultSize?.width || 680, vw - 24));
+    const height = Math.max(
+      220,
+      Math.min(defaultSize?.height || 460, vh - MENUBAR_HEIGHT - 110)
+    );
     const step = index % 6;
     const x = Math.max(12, Math.round((vw - width) / 2 - 90 + step * 44));
     const y = Math.max(
