@@ -508,6 +508,14 @@ export default function Desktop() {
             label: 'Projets',
             onSelect: () => api.openApp('finder', { instanceId: 'finder-Projets', folder: 'Projets' }),
           },
+          {
+            label: 'Publications',
+            onSelect: () =>
+              api.openApp('finder', {
+                instanceId: 'finder-Publications',
+                folder: 'Publications',
+              }),
+          },
         ],
       },
       {

@@ -27,6 +27,43 @@ export const education = [
 
 export const certifications = ['CCNAv7 (Cisco)'];
 
+export const publications = [
+  {
+    id: 'confere-2024-digital-trust',
+    title:
+      'Establishing Digital Trust: A Certification System for Verifying AI-Generated Content and Ensuring Information Integrity',
+    titleFr:
+      "Établir la confiance numérique : un système de certification pour vérifier le contenu généré par l'IA et garantir l'intégrité de l'information",
+    // Ordre imprimé sur l'article (la notice HAL, elle, omet Maxence Leroux).
+    authors: [
+      'Benoit Blee',
+      'Abdallah Didi',
+      'Vincent Leclercq',
+      'Maxence Leroux',
+      'Ilyass Abouelaziz',
+    ],
+    // Preuve de concept citée en référence [6] de l'article.
+    contribution:
+      'Preuve de concept du système de certification (référence [6] de l’article)',
+    repository: 'https://github.com/Maxougit/POC-AI-Detection-structure',
+    fullTextPath: '/files/confere-2024-establishing-digital-trust.md',
+    licence: 'Licence Ouverte ETALAB',
+    venue: 'CONFERE 2024',
+    venueLong: '30e colloque des Sciences de la Conception et de l’Innovation (CONFERE)',
+    location: 'Porto, Portugal',
+    date: '2024-07-04',
+    year: '2024',
+    type: 'Communication en conférence',
+    lab: 'CESI École d’ingénieurs — laboratoire LINEACT',
+    url: 'https://hal.science/hal-05587060v1',
+    pdf: 'https://hal.science/hal-05587060/document',
+    halId: 'hal-05587060',
+    keywords: ['Certificate', 'Trust Authority', 'Differentiation', 'Generative AI'],
+    abstract:
+      "Système d'authentification permettant de vérifier la provenance d'un contenu numérique et de distinguer les contenus générés par IA de ceux créés par des humains, accompagné d'une preuve de concept et d'une analyse des enjeux de passage à l'échelle, d'adaptabilité et de précision.",
+  },
+];
+
 export const languages = [
   { name: 'Français', level: 'Langue natale' },
   { name: 'Anglais', level: 'TOEIC 850 (B2)' },
@@ -56,6 +93,8 @@ Référent architecture applicative, GenAI et industrialisation
     slug: 'maxence-os',
     name: 'Maxence OS.md',
     title: 'Maxence OS — ce site',
+    repository: 'https://github.com/Maxougit/maxence-os',
+    website: SITE_URL,
     content: `# Maxence OS
 
 Le site que vous êtes en train d'utiliser :
@@ -133,6 +172,111 @@ Stack : Unraid / KVM, Ubuntu, Kubernetes, Docker,
 GitLab Runner, réseaux virtuels et administration Linux.`,
   },
   {
+    slug: 'pa1llama',
+    name: 'Pa1Llama — LLM local & confidentialité.md',
+    title: 'Pa1Llama — LLM 100 % local et confidentialité des données',
+    repository: 'https://github.com/Maxougit/Pa1Llama',
+    content: `# Pa1Llama — LLM 100 % local et confidentialité des données
+
+Preuve de concept réalisée pour mon travail de recherche au CESI :
+« Grands modèles de langages locaux pour la
+confidentialité des données dans les applications personnelles et
+professionnelles ».
+
+## Principe
+Une application d'IA conversationnelle qui interroge vos propres documents
+**sans aucune requête vers Internet** : les modèles tournent en local via
+Ollama, les données ne quittent jamais la machine.
+
+## Stack
+- **LLM local** : llama3 + snowflake-arctic-embed (Ollama)
+- **RAG** : ChromaDB (base vectorielle) et ingestion PDF via PyPDF2
+- **Back-end** : Flask, JWT (authentification), chiffrement (cryptography)
+- **Front-end** : Next.js
+- **Déploiement** : Docker Compose (Flask + Next.js)
+
+## Objectif
+Démocratiser l'accès aux LLM modernes en garantissant confidentialité,
+sécurité et transparence — une alternative open source aux services cloud
+pour les usages sensibles.
+
+## Résultats mesurés
+Comparaison des solutions propriétaires (Google AI, Anthropic, OpenAI —
+traitement des données chez le fournisseur, code fermé, coûteux) face à
+l'écosystème ouvert (Hugging Face, Mistral, Meta Llama, Ollama).
+
+| Étape | Temps de réponse moyen |
+| --- | --- |
+| RAG | 0,845 s |
+| LLM | 4,45 s |
+| **Total** | **5,295 s** |
+
+**Conclusion** : une solution locale rivalise en rapidité avec les services
+en ligne, tout en offrant davantage de sécurité et d'accessibilité.
+Prérequis matériel : 8 Go de RAM minimum, quel que soit le système.
+Retours utilisateurs majoritairement positifs, l'interface restant le
+principal axe d'amélioration.
+
+## Poster scientifique
+
+![Poster scientifique — Grands modèles de langages locaux pour la confidentialité des données](/images/projects/poster-pa1llama.jpg)
+
+_Poster A0 présenté au CESI._
+[Télécharger le poster (PDF) ↗](/files/poster-pa1llama.pdf)
+
+## Perspectives
+- Boîte à outils intégrée : analyse prédictive et traitement d'image
+- Amélioration de l'interface utilisateur
+- Collaboration avec la communauté open source`,
+  },
+  {
+    slug: 'yolo-object-detection',
+    name: 'Détection d’objets YOLO.md',
+    title: 'Détection d’objets par YOLO — entraînement personnalisé',
+    repository: 'https://github.com/Maxougit/Objects-detection-Yolo',
+    content: `# Détection d'objets par YOLO — entraînement personnalisé
+
+Travaux de computer vision autour de YOLO : entraînement de modèles sur
+jeux de données personnalisés, puis inférence sur images et vidéos.
+
+## Réalisations
+- Entraînement personnalisé **en local sur GPU NVIDIA** (CUDA, cuDNN, PyTorch)
+- Variante d'entraînement **sur Google Colab** pour s'affranchir du matériel
+- Détection appliquée à des flux vidéo
+- Annotation des jeux de données avec **Label Studio**
+- Gestion des poids de modèles et de la chaîne d'inférence
+
+## Stack
+Python, Jupyter Notebook, Ultralytics YOLO, PyTorch, OpenCV,
+CUDA / cuDNN, Label Studio.
+
+Ces travaux prolongent la computer vision mise en œuvre chez Stellantis
+(monitoring qualité par IA, YOLOv8, OpenCV).`,
+  },
+  {
+    slug: 'reefboxos',
+    name: 'Reefbox OS — supervision Freebox.md',
+    title: 'Reefbox OS — tableau de bord de supervision Freebox',
+    repository: 'https://github.com/Maxougit/reefboxos',
+    content: `# Reefbox OS — tableau de bord de supervision Freebox
+
+Application web personnelle qui interroge l'API de la Freebox pour
+superviser la connexion et le réseau domestique depuis une interface unique.
+
+## Fonctionnalités
+- Consommation de l'**API Freebox** (authentification par jeton applicatif)
+- Suivi de la connexion et tests de latence (ping)
+- Visualisation des données : graphiques et tableaux
+- Gestion des données utilisateur côté serveur
+
+## Stack
+- **Front-end** : React, Material UI (MUI X Charts, MUI X Data Grid), Axios
+- **Back-end** : Node.js / Express, chiffrement des jetons (crypto-js)
+
+Un projet dans la continuité de mon intérêt pour l'auto-hébergement et la
+maîtrise de mon infrastructure personnelle.`,
+  },
+  {
     slug: 'axocare',
     name: 'AxoCare e-santé.md',
     title: 'AxoCare — logiciels e-santé',
@@ -150,6 +294,8 @@ Développement de logiciels médicaux (2023).
     slug: 'hand-esport',
     name: 'Hand E-Sport — gaming inclusif.md',
     title: 'Hand E-Sport — gaming inclusif',
+    repository: 'https://github.com/Maxougit/Hand-E-Sport',
+    website: 'https://handesport.fr/',
     content: `# Hand E-Sport — gaming inclusif
 
 Projet CESI mené de 2023 à 2025 autour de l'accessibilité

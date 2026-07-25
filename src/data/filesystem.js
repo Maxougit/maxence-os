@@ -1,4 +1,40 @@
-import { projects, aboutText } from './cv';
+import { projects, publications, aboutText } from './cv';
+
+// Ajoute une section « Liens » homogène aux fiches projet qui en déclarent.
+const withProjectLinks = (project) => {
+  const links = [
+    project.repository && `- [Dépôt GitHub ↗](${project.repository})`,
+    project.website && `- [Site en ligne ↗](${project.website})`,
+  ].filter(Boolean);
+  return links.length ? `${project.content}\n\n## Liens\n${links.join('\n')}` : project.content;
+};
+
+// Fiche Markdown d'une publication, générée depuis les données structurées.
+const publicationMarkdown = (publication) => `# ${publication.title}
+
+*${publication.titleFr}*
+
+## Référence
+- **Auteurs** : ${publication.authors.join(', ')}
+- **Conférence** : ${publication.venueLong} — ${publication.venue}
+- **Lieu / date** : ${publication.location}, ${new Date(publication.date).toLocaleDateString(
+  'fr-FR',
+  { day: 'numeric', month: 'long', year: 'numeric' }
+)}
+- **Laboratoire** : ${publication.lab}
+- **HAL** : [${publication.halId}](${publication.url}) — ${publication.licence}
+
+## Ma contribution
+${publication.contribution}
+→ [${publication.repository}](${publication.repository})
+
+## Résumé
+${publication.abstract}
+
+## Mots-clés
+${publication.keywords.join(' · ')}
+
+[Consulter l'article sur HAL ↗](${publication.url})`;
 
 // Arborescence virtuelle affichée dans le Finder, le Bureau et Spotlight.
 // Un fichier a soit un `path` (fichier réel dans /public), soit un `content` inline.
@@ -36,6 +72,17 @@ export const FILES = {
     content: aboutText,
     size: '2 Ko',
   },
+  posterPa1llama: {
+    id: 107,
+    type: 'file',
+    extension: 'pdf',
+    name: 'Poster scientifique — Pa1Llama.pdf',
+    title: 'Poster scientifique — Pa1Llama',
+    description:
+      'Poster A0 : grands modèles de langages locaux pour la confidentialité des données.',
+    path: '/files/poster-pa1llama.pdf',
+    size: '898 Ko',
+  },
   chatbotCommercialVideo: {
     id: 106,
     type: 'file',
@@ -54,9 +101,37 @@ export const FILES = {
         type: 'file',
         extension: 'md',
         name: project.name,
-        content: project.content,
+        content: withProjectLinks(project),
         size: '3 Ko',
       },
+    ])
+  ),
+  // Deux fichiers par publication : la fiche de référence (générée) et le
+  // texte intégral (fichier statique, chargé à la demande — hors bundle JS).
+  ...Object.fromEntries(
+    publications.flatMap((publication, index) => [
+      [
+        publication.id,
+        {
+          id: 140 + index * 2,
+          type: 'file',
+          extension: 'md',
+          name: `${publication.venue} — Référence.md`,
+          content: publicationMarkdown(publication),
+          size: '4 Ko',
+        },
+      ],
+      [
+        `${publication.id}-fulltext`,
+        {
+          id: 141 + index * 2,
+          type: 'file',
+          extension: 'md',
+          name: `${publication.title.split(':')[0].trim()} — article complet.md`,
+          path: publication.fullTextPath,
+          size: '26 Ko',
+        },
+      ],
     ])
   ),
 };
@@ -78,7 +153,16 @@ export const FILE_TREE = {
     {
       type: 'folder',
       name: 'Projets',
-      children: [...projects.map((p) => FILES[p.slug]), FILES.chatbotCommercialVideo],
+      children: [
+        ...projects.map((p) => FILES[p.slug]),
+        FILES.posterPa1llama,
+        FILES.chatbotCommercialVideo,
+      ],
+    },
+    {
+      type: 'folder',
+      name: 'Publications',
+      children: publications.flatMap((p) => [FILES[p.id], FILES[`${p.id}-fulltext`]]),
     },
     FILES.about,
   ],

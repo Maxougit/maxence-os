@@ -157,6 +157,12 @@ const Finder = ({ openFile, initialFolder }) => {
     { id: 'documents', label: 'Documents', glyph: <FolderGlyph />, view: { type: 'folder', name: 'Documents' } },
     { id: 'images', label: 'Images', glyph: <FolderGlyph />, view: { type: 'folder', name: 'Images' } },
     { id: 'projets', label: 'Projets', glyph: <FolderGlyph />, view: { type: 'folder', name: 'Projets' } },
+    {
+      id: 'publications',
+      label: 'Publications',
+      glyph: <FolderGlyph />,
+      view: { type: 'folder', name: 'Publications' },
+    },
   ];
 
   const isActive = (entry) =>

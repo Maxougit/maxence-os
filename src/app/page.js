@@ -6,6 +6,8 @@ import {
   education,
   certifications,
   languages,
+  publications,
+  projects,
   SITE_URL,
 } from '@/data/cv';
 
@@ -42,6 +44,46 @@ const jsonLd = {
   },
 };
 
+// Les publications sont modélisées à part : en schema.org, c'est l'article qui
+// porte ses auteurs (CreativeWork.author), pas l'inverse.
+const publicationsJsonLd = publications.map((publication) => ({
+  '@context': 'https://schema.org',
+  '@type': 'ScholarlyArticle',
+  headline: publication.title,
+  name: publication.title,
+  inLanguage: 'en',
+  datePublished: publication.date,
+  abstract: publication.abstract,
+  keywords: publication.keywords,
+  url: publication.url,
+  sameAs: publication.url,
+  author: publication.authors.map((name) => ({ '@type': 'Person', name })),
+  publisher: { '@type': 'Organization', name: 'HAL — Archives ouvertes' },
+  isPartOf: {
+    '@type': 'PublicationEvent',
+    name: publication.venueLong,
+    startDate: publication.date,
+    location: { '@type': 'Place', name: publication.location },
+  },
+}));
+
+// Résumé d'un projet pour la version texte : le premier paragraphe de sa fiche
+// Markdown (après le titre), nettoyé de la syntaxe Markdown résiduelle.
+const projectSummary = (project) => {
+  const lines = project.content.split('\n');
+  const paragraph = [];
+  for (const line of lines.slice(1)) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('#') || trimmed.startsWith('![')) continue;
+    if (!trimmed) {
+      if (paragraph.length) break;
+      continue;
+    }
+    paragraph.push(trimmed);
+  }
+  return paragraph.join(' ').replace(/\*\*/g, '').replace(/[_`]/g, '');
+};
+
 const skillSections = [
   { id: 'langages', title: 'Langages de programmation', items: skillsData.Programation },
   { id: 'technologies', title: 'Technologies & outils', items: skillsData.Technologies },
@@ -55,6 +97,13 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      {publicationsJsonLd.map((article) => (
+        <script
+          key={article.url}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }}
+        />
+      ))}
       <Desktop />
       <section id="cv" className="select-text bg-neutral-950 text-neutral-100">
         <div className="mx-auto max-w-3xl px-6 py-16">
@@ -103,6 +152,92 @@ export default function Home() {
                   {diploma.year} — {diploma.title}
                 </h3>
                 <p className="text-sm text-neutral-400">{diploma.school}</p>
+              </li>
+            ))}
+          </ul>
+
+          <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
+            Publications scientifiques
+          </h2>
+          <ul className="mt-6 space-y-6">
+            {publications.map((publication) => (
+              <li key={publication.id}>
+                <h3 className="text-lg font-medium">
+                  <a
+                    href={publication.url}
+                    rel="noopener"
+                    className="text-blue-400 hover:underline"
+                  >
+                    {publication.title}
+                  </a>
+                </h3>
+                <p className="mt-1 text-sm text-neutral-300">
+                  {publication.authors.map((author, index) => (
+                    <span key={author}>
+                      {index > 0 && ', '}
+                      {author === profile.name ? <strong>{author}</strong> : author}
+                    </span>
+                  ))}
+                </p>
+                <p className="mt-1 text-sm text-neutral-400">
+                  {publication.type} — {publication.venue}, {publication.location} (
+                  {publication.year}) · {publication.lab}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-neutral-400">
+                  {publication.abstract}
+                </p>
+                <p className="mt-2 text-sm text-neutral-400">
+                  Contribution : {publication.contribution} —{' '}
+                  <a
+                    href={publication.repository}
+                    rel="noopener"
+                    className="text-blue-400 hover:underline"
+                  >
+                    dépôt GitHub
+                  </a>
+                </p>
+                <p className="mt-1 text-sm text-neutral-500">
+                  HAL : {publication.halId} · {publication.licence}
+                </p>
+              </li>
+            ))}
+          </ul>
+
+          <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
+            Projets
+          </h2>
+          <ul className="mt-6 space-y-5">
+            {projects.map((project) => (
+              <li key={project.slug}>
+                <h3 className="text-lg font-medium">{project.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-neutral-400">
+                  {projectSummary(project)}
+                </p>
+                {(project.repository || project.website) && (
+                  <p className="mt-1 text-sm">
+                    {project.repository && (
+                      <a
+                        href={project.repository}
+                        rel="noopener"
+                        className="text-blue-400 hover:underline"
+                      >
+                        Code source
+                      </a>
+                    )}
+                    {project.repository && project.website && (
+                      <span className="text-neutral-600"> · </span>
+                    )}
+                    {project.website && (
+                      <a
+                        href={project.website}
+                        rel="noopener"
+                        className="text-blue-400 hover:underline"
+                      >
+                        Site en ligne
+                      </a>
+                    )}
+                  </p>
+                )}
               </li>
             ))}
           </ul>
