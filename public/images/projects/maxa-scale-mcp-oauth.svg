@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Figure issue de la spécification maxa-scale (docs/assets/fig6.svg),
+     fond clair ajouté pour lisibilité sur interface sombre. -->
+<svg width="185pt" height="434pt"
+ viewBox="0.00 0.00 185.00 434.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect x="0" y="0" width="185" height="434" fill="#f8fafc"/>
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 430)">
+<title>fig6</title>
+<!-- claude -->
+<g id="node1" class="node">
+<title>claude</title>
+<path fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" d="M163,-426C163,-426 14,-426 14,-426 8,-426 2,-420 2,-414 2,-414 2,-402 2,-402 2,-396 8,-390 14,-390 14,-390 163,-390 163,-390 169,-390 175,-396 175,-402 175,-402 175,-414 175,-414 175,-420 169,-426 163,-426"/>
+<text text-anchor="start" x="14" y="-406.5" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#0c4a6e">Agent Claude (client MCP)</text>
+</g>
+<!-- s1 -->
+<g id="node2" class="node">
+<title>s1</title>
+<path fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5" d="M155,-361C155,-361 22,-361 22,-361 16,-361 10,-355 10,-349 10,-349 10,-337 10,-337 10,-331 16,-325 22,-325 22,-325 155,-325 155,-325 161,-325 167,-331 167,-337 167,-337 167,-349 167,-349 167,-355 161,-361 155,-361"/>
+<text text-anchor="start" x="22" y="-345" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#b45309">1. GET /mcp sans token</text>
+<text text-anchor="start" x="30.5" y="-336.6" font-family="DejaVu Sans" font-size="8.00" fill="#b45309">→ 401 + WWW&#45;Authenticate</text>
+</g>
+<!-- claude&#45;&gt;s1 -->
+<g id="edge1" class="edge">
+<title>claude&#45;&gt;s1</title>
+<path fill="none" stroke="#94a3b8" stroke-width="1.3" d="M88.5,-389.78C88.5,-383.4 88.5,-376.01 88.5,-369.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="1.3" points="91.13,-368.69 88.5,-361.19 85.88,-368.69 91.13,-368.69"/>
+</g>
+<!-- s2 -->
+<g id="node3" class="node">
+<title>s2</title>
+<path fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5" d="M130,-296C130,-296 47,-296 47,-296 41,-296 35,-290 35,-284 35,-284 35,-272 35,-272 35,-266 41,-260 47,-260 47,-260 130,-260 130,-260 136,-260 142,-266 142,-272 142,-272 142,-284 142,-284 142,-290 136,-296 130,-296"/>
+<text text-anchor="start" x="49" y="-280" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#b45309">2. Découverte</text>
+<text text-anchor="start" x="47" y="-271.6" font-family="DejaVu Sans" font-size="8.00" fill="#b45309">.well&#45;known/oauth&#45;*</text>
+</g>
+<!-- s1&#45;&gt;s2 -->
+<g id="edge2" class="edge">
+<title>s1&#45;&gt;s2</title>
+<path fill="none" stroke="#94a3b8" stroke-width="1.3" d="M88.5,-324.78C88.5,-318.4 88.5,-311.01 88.5,-304.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="1.3" points="91.13,-303.69 88.5,-296.19 85.88,-303.69 91.13,-303.69"/>
+</g>
+<!-- s3 -->
+<g id="node4" class="node">
+<title>s3</title>
+<path fill="#fffbeb" stroke="#f59e0b" stroke-width="1.5" d="M155,-231C155,-231 22,-231 22,-231 16,-231 10,-225 10,-219 10,-219 10,-207 10,-207 10,-201 16,-195 22,-195 22,-195 155,-195 155,-195 161,-195 167,-201 167,-207 167,-207 167,-219 167,-219 167,-225 161,-231 155,-231"/>
+<text text-anchor="start" x="22" y="-215" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#b45309">3. POST /oauth/register</text>
+<text text-anchor="start" x="38" y="-206.6" font-family="DejaVu Sans" font-size="8.00" fill="#b45309">DCR — client public PKCE</text>
+</g>
+<!-- s2&#45;&gt;s3 -->
+<g id="edge3" class="edge">
+<title>s2&#45;&gt;s3</title>
+<path fill="none" stroke="#94a3b8" stroke-width="1.3" d="M88.5,-259.78C88.5,-253.4 88.5,-246.01 88.5,-239.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="1.3" points="91.13,-238.69 88.5,-231.19 85.88,-238.69 91.13,-238.69"/>
+</g>
+<!-- s4 -->
+<g id="node5" class="node">
+<title>s4</title>
+<path fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5" d="M165,-166C165,-166 12,-166 12,-166 6,-166 0,-160 0,-154 0,-154 0,-142 0,-142 0,-136 6,-130 12,-130 12,-130 165,-130 165,-130 171,-130 177,-136 177,-142 177,-142 177,-154 177,-154 177,-160 171,-166 165,-166"/>
+<text text-anchor="start" x="22" y="-150" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#1d4ed8">4. GET /oauth/authorize</text>
+<text text-anchor="start" x="12" y="-141.6" font-family="DejaVu Sans" font-size="8.00" fill="#1d4ed8">LOGIN + 2FA + consentement → code</text>
+</g>
+<!-- s3&#45;&gt;s4 -->
+<g id="edge4" class="edge">
+<title>s3&#45;&gt;s4</title>
+<path fill="none" stroke="#94a3b8" stroke-width="1.3" d="M88.5,-194.78C88.5,-188.4 88.5,-181.01 88.5,-174.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="1.3" points="91.13,-173.69 88.5,-166.19 85.88,-173.69 91.13,-173.69"/>
+</g>
+<!-- s5 -->
+<g id="node6" class="node">
+<title>s5</title>
+<path fill="#ecfeff" stroke="#06b6d4" stroke-width="1.5" d="M162,-101C162,-101 15,-101 15,-101 9,-101 3,-95 3,-89 3,-89 3,-77 3,-77 3,-71 9,-65 15,-65 15,-65 162,-65 162,-65 168,-65 174,-71 174,-77 174,-77 174,-89 174,-89 174,-95 168,-101 162,-101"/>
+<text text-anchor="start" x="29" y="-85" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#0e7490">5. POST /oauth/token</text>
+<text text-anchor="start" x="15" y="-76.6" font-family="DejaVu Sans" font-size="8.00" fill="#0e7490">code + PKCE → access 1 h + refresh</text>
+</g>
+<!-- s4&#45;&gt;s5 -->
+<g id="edge5" class="edge">
+<title>s4&#45;&gt;s5</title>
+<path fill="none" stroke="#94a3b8" stroke-width="1.3" d="M88.5,-129.78C88.5,-123.4 88.5,-116.01 88.5,-109.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="1.3" points="91.13,-108.69 88.5,-101.19 85.88,-108.69 91.13,-108.69"/>
+</g>
+<!-- s6 -->
+<g id="node7" class="node">
+<title>s6</title>
+<path fill="#ecfdf5" stroke="#16a34a" stroke-width="1.5" d="M153.5,-36C153.5,-36 23.5,-36 23.5,-36 17.5,-36 11.5,-30 11.5,-24 11.5,-24 11.5,-12 11.5,-12 11.5,-6 17.5,0 23.5,0 23.5,0 153.5,0 153.5,0 159.5,0 165.5,-6 165.5,-12 165.5,-12 165.5,-24 165.5,-24 165.5,-30 159.5,-36 153.5,-36"/>
+<text text-anchor="start" x="25" y="-20" font-family="DejaVu Sans" font-weight="bold" font-size="10.00" fill="#166534">6. POST /mcp (Bearer)</text>
+<text text-anchor="start" x="23.5" y="-11.6" font-family="DejaVu Sans" font-size="8.00" fill="#166534">résout ownerId → exécute l&#39;outil</text>
+</g>
+<!-- s5&#45;&gt;s6 -->
+<g id="edge6" class="edge">
+<title>s5&#45;&gt;s6</title>
+<path fill="none" stroke="#94a3b8" stroke-width="1.3" d="M88.5,-64.78C88.5,-58.4 88.5,-51.01 88.5,-44.06"/>
+<polygon fill="#94a3b8" stroke="#94a3b8" stroke-width="1.3" points="91.13,-43.69 88.5,-36.19 85.88,-43.69 91.13,-43.69"/>
+</g>
+</g>
+</svg>

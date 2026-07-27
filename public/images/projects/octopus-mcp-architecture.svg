@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="2400" height="1240" role="img" aria-labelledby="title desc">
+  <title id="title">Architecture d'Octopus</title>
+  <desc id="desc">Le cockpit conversationnel Octopus appelle un serveur MCP connecté à tous les services métier du pipeline Quotes Automation, et affiche des interfaces interactives générées dans le chat.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#10131d"/>
+      <stop offset="1" stop-color="#171b2a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+    <marker id="tipGris" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto">
+      <path d="M0 1l8 4-8 4z" fill="#94a3b8"/>
+    </marker>
+    <marker id="tipVert" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto">
+      <path d="M0 1l8 4-8 4z" fill="#5ee27a"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="620" rx="30" fill="url(#bg)"/>
+  <circle cx="1080" cy="80" r="150" fill="#bf5af2" opacity=".06"/>
+  <circle cx="90" cy="570" r="180" fill="#ff6b35" opacity=".05"/>
+
+  <text x="56" y="60" fill="#f7f8fc" font-family="system-ui, sans-serif" font-size="28" font-weight="700">Octopus — agent branché sur le pipeline</text>
+  <text x="56" y="89" fill="#99a2b8" font-family="system-ui, sans-serif" font-size="15">Le même socle métier que Quotes Automation, mais piloté par la conversation via MCP</text>
+
+  <g font-family="system-ui, sans-serif" filter="url(#shadow)">
+    <!-- Cockpit -->
+    <g>
+      <rect x="56" y="128" width="270" height="120" rx="18" fill="#202637" stroke="#343c51"/>
+      <circle cx="94" cy="188" r="22" fill="#ff6b35" opacity=".2"/>
+      <path d="M94 178a10 10 0 0 1 10 10v6h-20v-6a10 10 0 0 1 10-10zM86 200v6M94 200v8M102 200v6" stroke="#ff9066" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <text x="128" y="172" fill="#f7f8fc" font-size="16" font-weight="700">Cockpit Octopus</text>
+      <text x="128" y="195" fill="#aeb7ca" font-size="12.5">chat en self-service</text>
+      <text x="128" y="214" fill="#aeb7ca" font-size="12.5">réponses en streaming</text>
+      <text x="128" y="233" fill="#aeb7ca" font-size="12.5">panier synchronisé</text>
+    </g>
+
+    <!-- Serveur MCP -->
+    <g>
+      <rect x="392" y="128" width="274" height="120" rx="18" fill="#202637" stroke="#4a5570"/>
+      <circle cx="430" cy="188" r="22" fill="#30d158" opacity=".2"/>
+      <path d="M419 181c11 0 11 7 22 7M419 195c11 0 11-7 22-7M438 184l4 4-4 4" stroke="#5ee27a" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <text x="464" y="172" fill="#f7f8fc" font-size="16" font-weight="700">Serveur MCP</text>
+      <text x="464" y="195" fill="#aeb7ca" font-size="12.5">expose les métiers en outils</text>
+      <text x="464" y="214" fill="#aeb7ca" font-size="12.5">appels exécutés côté serveur</text>
+      <text x="464" y="233" fill="#aeb7ca" font-size="12.5">jetons hors du navigateur</text>
+    </g>
+
+    <!-- Modèle -->
+    <g>
+      <rect x="736" y="128" width="270" height="120" rx="18" fill="#202637" stroke="#343c51"/>
+      <circle cx="774" cy="188" r="22" fill="#64d2ff" opacity=".18"/>
+      <path d="M766 180h16v16h-16zM762 184h4M762 192h4M786 184h4M786 192h4M770 176v4M778 176v4M770 200v4M778 200v4" stroke="#8fdcff" stroke-width="2.4" fill="none"/>
+      <text x="808" y="172" fill="#f7f8fc" font-size="16" font-weight="700">Modèle de langage</text>
+      <text x="808" y="195" fill="#aeb7ca" font-size="12.5">comprend la demande</text>
+      <text x="808" y="214" fill="#aeb7ca" font-size="12.5">choisit les outils à appeler</text>
+      <text x="808" y="233" fill="#aeb7ca" font-size="12.5">(Azure OpenAI, multi-LLM)</text>
+    </g>
+
+    <!-- Outils métier partagés -->
+    <g>
+      <rect x="56" y="306" width="950" height="150" rx="20" fill="#181e2d" stroke="#4a5570"/>
+      <text x="80" y="338" fill="#99a2b8" font-size="12.5" font-weight="700" letter-spacing="1.5">OUTILS MCP — LES SERVICES MÉTIER DE QUOTES AUTOMATION</text>
+
+      <g>
+        <rect x="80" y="354" width="212" height="82" rx="14" fill="#202637" stroke="#343c51"/>
+        <text x="100" y="382" fill="#f7f8fc" font-size="13.5" font-weight="700">Client &amp; produits</text>
+        <text x="100" y="404" fill="#aeb7ca" font-size="11.5">identification du client</text>
+        <text x="100" y="422" fill="#aeb7ca" font-size="11.5">recherche, caractéristiques</text>
+      </g>
+      <g>
+        <rect x="310" y="354" width="212" height="82" rx="14" fill="#202637" stroke="#343c51"/>
+        <text x="330" y="382" fill="#f7f8fc" font-size="13.5" font-weight="700">Faisabilité</text>
+        <text x="330" y="404" fill="#aeb7ca" font-size="11.5">règles de transformation</text>
+        <text x="330" y="422" fill="#aeb7ca" font-size="11.5">configuration des coupes</text>
+      </g>
+      <g>
+        <rect x="540" y="354" width="212" height="82" rx="14" fill="#202637" stroke="#343c51"/>
+        <text x="560" y="382" fill="#f7f8fc" font-size="13.5" font-weight="700">Stock &amp; prix</text>
+        <text x="560" y="404" fill="#aeb7ca" font-size="11.5">disponibilité et délais</text>
+        <text x="560" y="422" fill="#aeb7ca" font-size="11.5">tarification</text>
+      </g>
+      <g>
+        <rect x="770" y="354" width="212" height="82" rx="14" fill="#202637" stroke="#343c51"/>
+        <text x="790" y="382" fill="#f7f8fc" font-size="13.5" font-weight="700">Devis &amp; commandes</text>
+        <text x="790" y="404" fill="#aeb7ca" font-size="11.5">création du devis</text>
+        <text x="790" y="422" fill="#aeb7ca" font-size="11.5">suivi, historique, factures</text>
+      </g>
+    </g>
+
+    <!-- MCP-UI -->
+    <g>
+      <rect x="56" y="486" width="950" height="104" rx="20" fill="#202637" stroke="#bf5af2" stroke-opacity=".45"/>
+      <circle cx="102" cy="538" r="22" fill="#bf5af2" opacity=".2"/>
+      <path d="M92 528h20v20H92zM92 534h20M98 528v20" stroke="#d88cff" stroke-width="2.4" fill="none"/>
+      <text x="140" y="526" fill="#f7f8fc" font-size="16" font-weight="700">Interfaces générées dans le chat (MCP-UI)</text>
+      <text x="140" y="550" fill="#aeb7ca" font-size="12.5">Un outil ne renvoie pas qu'un texte : il renvoie une carte interactive — sélection de produits,</text>
+      <text x="140" y="570" fill="#aeb7ca" font-size="12.5">configuration de coupe d'angle — rendue en cadre isolé. Le clic du client relance l'agent.</text>
+    </g>
+
+    <!-- SAP -->
+    <g>
+      <rect x="1030" y="306" width="112" height="150" rx="18" fill="#202637" stroke="#343c51"/>
+      <circle cx="1086" cy="356" r="22" fill="#ff9f0a" opacity=".18"/>
+      <path d="M1077 347h18v18h-18zM1077 353h18M1083 347v18" stroke="#ffb340" stroke-width="2.6" fill="none" stroke-linejoin="round"/>
+      <text x="1086" y="402" fill="#f7f8fc" font-size="14" font-weight="700" text-anchor="middle">SAP</text>
+      <text x="1086" y="424" fill="#aeb7ca" font-size="11.5" text-anchor="middle">référentiel</text>
+      <text x="1086" y="441" fill="#aeb7ca" font-size="11.5" text-anchor="middle">et devis</text>
+    </g>
+  </g>
+
+  <!-- Échanges du haut : cockpit ⇄ MCP ⇄ modèle -->
+  <g stroke="#94a3b8" stroke-width="2.4" fill="none" opacity=".9">
+    <path d="M326 178 H384" marker-end="url(#tipGris)"/>
+    <path d="M392 208 H334" marker-end="url(#tipGris)"/>
+    <path d="M666 178 H728" marker-end="url(#tipGris)"/>
+    <path d="M736 208 H674" marker-end="url(#tipGris)"/>
+  </g>
+
+  <!-- Éventail MCP → services : un serveur, tous les métiers -->
+  <g stroke="#5ee27a" stroke-width="2.4" fill="none" opacity=".72">
+    <path d="M480 248 C440 282 260 300 190 348" marker-end="url(#tipVert)"/>
+    <path d="M510 248 C490 280 440 312 418 348" marker-end="url(#tipVert)"/>
+    <path d="M548 248 C570 280 620 312 644 348" marker-end="url(#tipVert)"/>
+    <path d="M580 248 C630 282 800 300 872 348" marker-end="url(#tipVert)"/>
+  </g>
+  <text x="529" y="292" fill="#5ee27a" font-family="system-ui, sans-serif" font-size="11.5" font-weight="600" text-anchor="middle" opacity=".9">appels d'outils</text>
+
+  <!-- Les outils renvoient aussi des cartes UI ; les devis vont dans SAP -->
+  <g stroke="#5ee27a" stroke-width="2.4" fill="none" opacity=".72">
+    <path d="M531 456 V478" marker-end="url(#tipVert)"/>
+  </g>
+  <g stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="6 7" fill="none" opacity=".75">
+    <path d="M982 395 H1022" marker-end="url(#tipGris)"/>
+  </g>
+</svg>

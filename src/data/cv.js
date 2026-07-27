@@ -74,20 +74,57 @@ export const projects = [
     slug: 'quotes-automation',
     name: 'Quotes Automation.md',
     title: 'Quotes Automation — ArcelorMittal',
+    featured: true,
     content: `# Quotes Automation — ArcelorMittal
 
-Plateforme d'automatisation de devis SAP par IA générative.
+Plateforme d'automatisation des demandes de devis chez ArcelorMittal
+Distribution Solutions : un client envoie sa demande par e-mail, une
+chaîne de micro-services la traite de bout en bout et le devis est
+créé dans SAP — sans ressaisie.
 
-## Rôle
-Référent architecture applicative, GenAI et industrialisation
-(LeadDev IA & DevOps, freelance depuis sept. 2025).
+![Pipeline de Quotes Automation : huit micro-services enchaînés par un bus de messages, de la réception de l'e-mail à la réponse au client, sur un socle Kubernetes](/images/projects/quotes-automation-architecture.svg)
 
-## Stack
-- Agents IA conversationnels, orchestration MCP
-- Azure OpenAI + load balancer multi-LLM
-- Micro-services Docker sur Kubernetes (AKS)
-- RabbitMQ, MongoDB, Solr
-- CI/CD GitLab, stack ELK (observabilité)`,
+_Pipeline événementiel : chaque étape publie son résultat, la suivante le consomme._
+
+## Le pipeline
+Une **chaîne linéaire** de micro-services, reliés par un bus de
+messages : chaque étape enrichit la demande puis passe la main.
+
+1. **Réception** — les e-mails sont récupérés depuis Office 365,
+   filtrés puis archivés
+2. **Identification du client** — rapprochement avec le compte et
+   l'agence commerciale
+3. **Pièces jointes** — extraction du texte des PDF et documents (OCR)
+4. **Recherche produit** — moteur d'index et IA générative pour
+   retrouver la bonne référence à partir d'une description libre
+5. **Évaluation des process** — règles de transformation applicables
+   (coupe, perçage, finitions)
+6. **Vérification du stock** — disponibilité, site source, délai
+7. **Création du devis** — écriture dans SAP via les API métier
+8. **Réponse** — le devis repart par e-mail
+
+Découpler les étapes par un bus de messages permet de rejouer une
+étape en échec sans reprendre toute la demande, et de faire monter
+en charge chaque service indépendamment.
+
+## Socle technique
+- Micro-services conteneurisés sur **Kubernetes (AKS)**
+- **RabbitMQ** entre chaque étape, **MongoDB** et **Redis**, index **Solr**
+- **Azure OpenAI** derrière un **load balancer multi-LLM**
+- Journalisation centralisée, tableaux de bord et **Power BI**
+- **CI/CD GitLab**
+
+## Impact
+−70 % de temps de traitement d'un devis, fiabilité accrue et erreurs
+humaines réduites.
+
+Le même socle métier est exposé en outils MCP et piloté par la
+conversation dans **Octopus** (voir la fiche dédiée).
+
+## Mon rôle
+Référent architecture applicative, GenAI et industrialisation —
+LeadDev IA & DevOps en freelance depuis sept. 2025, après y avoir
+travaillé en alternance BAC+5 puis CDD (2024 – 2025).`,
   },
   {
     slug: 'maxence-os',
@@ -109,6 +146,112 @@ un CV interactif qui reproduit macOS dans le navigateur.
 ## Détails
 Fenêtres draggables, Dock avec magnification, Spotlight,
 Control Center, terminal avec easter eggs (essayez « snake »).`,
+  },
+  {
+    slug: 'octopus',
+    name: 'Octopus — chatbot commercial.md',
+    title: 'Octopus — agent commercial IA (Maxadev)',
+    featured: true,
+    content: `# Octopus — agent commercial IA (Maxadev)
+
+Cockpit commercial conversationnel bâti sur le socle de
+**Quotes Automation** : là où le pipeline traite les demandes reçues
+par e-mail de bout en bout, Octopus rend ces mêmes services métier
+pilotables en conversation, en self-service.
+
+![Architecture d'Octopus : le cockpit appelle un serveur MCP qui expose les services métier de Quotes Automation en outils, avec des interfaces générées dans le chat](/images/projects/octopus-mcp-architecture.svg)
+
+_Le serveur MCP expose en outils les services du pipeline ; le modèle choisit lesquels appeler._
+
+## Le principe
+Le pipeline et l'agent partagent le **même socle métier** —
+identification client, recherche produit, règles de transformation,
+stock, prix, devis. Ce qui change, c'est la façon de l'actionner :
+
+- **Quotes Automation** : chaîne linéaire déclenchée par un e-mail
+- **Octopus** : le modèle de langage choisit lui-même quels outils
+  appeler, dans l'ordre dicté par la conversation
+
+Les outils sont exposés via **MCP** et appelés côté serveur : les
+jetons d'accès ne transitent jamais par le navigateur.
+
+## L'IA comprend la demande
+« Une poutre IPE 200 de 6 m, coupée à 45° à droite » : l'agent
+identifie la référence exacte par appels d'outils (recherche produit)
+et configure la coupe, en 3D, dans la conversation.
+
+![Octopus comprend la demande : le client décrit une poutre IPE 200 coupée à 45°, l'agent recherche le produit par appel d'outil](/images/projects/octopus-comprehension.jpg)
+
+_Le cockpit self-service suit les articles détectés au fil de la conversation._
+
+## Une interface générée par l'IA (MCP-UI)
+Pour une tôle acier, l'agent affiche dans le chat une interface
+interactive — nuance, dimensions, finition — générée via MCP-UI.
+Le client clique, l'agent continue avec ces choix.
+
+![Interface générée par l'IA dans le chat : nuances, dimensions et finitions sélectionnables, 19 produits correspondants](/images/projects/octopus-mcp-ui.jpg)
+
+_Nuances, dimensions, finition : l'UI naît dans la conversation, reliée au catalogue._
+
+## Le panier reste la source de vérité
+Les articles détectés s'accumulent dans un panier synchronisé au fil
+de l'échange. Les calculs sensibles — stock, délai, prix — sont
+déclenchés par le code à partir de ce panier, jamais laissés à
+l'appréciation du modèle.
+
+## Résultat
+Le socle industrialisé chez ArcelorMittal a réduit de 70 % le temps
+de traitement d'un devis (voir la fiche Quotes Automation).
+
+[Voir la démo vidéo ↗](/videos/maxadev-promo.mp4)
+Également disponible dans le Finder : Projets → Octopus — démo.mp4.
+
+## Stack
+- Application web Next.js, réponses en streaming
+- Serveur **MCP** exposant les outils métier du pipeline
+- **MCP-UI** : interfaces interactives rendues en cadre isolé
+- Modèles Azure OpenAI, visualisation 3D des découpes`,
+  },
+  {
+    slug: 'maxa-scale',
+    name: 'Maxa-Scale — CRM, IA & MCP.md',
+    title: 'Maxa-Scale — CRM de prospection avec tri LLM et accès agent (MCP)',
+    featured: true,
+    content: `# Maxa-Scale — CRM de prospection avec tri LLM et accès agent (MCP)
+
+CRM multi-canal auto-hébergé que j'ai conçu pour piloter ma prospection
+freelance : contacts, échanges et relances centralisés sur mon serveur,
+un LLM qui trie les e-mails entrants et un serveur MCP qui rend l'outil
+pilotable par un agent IA (dépôt privé).
+
+![Fonctionnement de Maxa-Scale : PWA, agent MCP et e-mails alimentent le serveur Docker (Next.js, worker, routeur LLM), qui s'appuie sur MongoDB, les fournisseurs LLM et les notifications](/images/projects/maxa-scale-architecture.svg)
+
+_Le flux : e-mails et agents entrent à gauche, le serveur trie et relance, les données restent chez moi._
+
+## Fonctionnalités clés
+- Pipeline de prospects (Kanban + liste), historique par canal
+  (e-mail, LinkedIn, téléphone, salon)
+- Réception e-mail en catch-all : chaque message entrant est classé
+  par le LLM — création de prospect, rattachement ou écartement
+- Relances automatiques planifiées, annulées dès que le prospect répond
+- Assistance IA : synthèse de fiche, brouillon de relance,
+  recherche en langage naturel
+
+## Accès agent (MCP)
+Serveur MCP protégé par OAuth 2.1 : un agent IA (Claude, ChatGPT…)
+peut consulter les fiches, consigner un échange ou planifier une
+relance directement depuis une conversation.
+
+![Flux OAuth 2.1 du serveur MCP : découverte, enregistrement dynamique PKCE, autorisation avec 2FA, jeton, puis appels outillés](/images/projects/maxa-scale-mcp-oauth.svg)
+
+_Figure issue de la spécification : le parcours OAuth 2.1 complet d'un agent, du 401 initial à l'exécution d'un outil._
+
+## Stack
+- Next.js (App Router) + TypeScript
+- MongoDB / Mongoose, worker Node (IMAP, planification cron)
+- LLM interchangeable : API cloud ou Ollama en local
+- Authentification 2FA (TOTP), notifications Web Push
+- Docker, auto-hébergé — les données de prospects restent chez moi`,
   },
   {
     slug: 'homelab-self-hosting',
@@ -332,13 +475,14 @@ croisé d'un système d'information d'entreprise en laboratoire.
 - Configuration de routeurs, switches et points d'accès Cisco
 
 ## Audit de sécurité
+- Audit offensif mené depuis **Kali Linux**, en environnement isolé
 - Cartographie réseau, analyse de trafic et scans de services
 - Tests web/API fondés sur les risques OWASP
 - Vérification de la segmentation et des configurations système
 - Matrice de risques et recommandations CIS, ANSSI et OWASP
 
-Outils : Nmap, Wireshark, Nessus, Burp Suite, OWASP ZAP,
-Metasploit et Ettercap, utilisés dans un environnement isolé.`,
+Outillage de la distribution Kali et compléments : Nmap, Wireshark,
+Burp Suite, OWASP ZAP, Metasploit, Ettercap, ainsi que Nessus.`,
   },
   {
     slug: 'human-for-you',
