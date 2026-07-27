@@ -448,7 +448,7 @@ dans le jeu vidéo et de la sensibilisation au handicap.
 Responsable développement au sein de l'équipe projet.
 
 ## Réalisations
-- Événements à Gaming Reims puis au CESI de Reims
+- Événements à Game In Reims puis au CESI de Reims
 - Tournoi multigaming et stands de découverte accessibles
 - PlayAbility, Xbox Adaptive Controller et options d'accessibilité
 - Diffusion en direct avec OBS, NDI, Mixline et Restream
