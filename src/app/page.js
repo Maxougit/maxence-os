@@ -84,6 +84,11 @@ const projectSummary = (project) => {
   return paragraph.join(' ').replace(/\*\*/g, '').replace(/[_`]/g, '');
 };
 
+// Projets phares (étoile dans le Finder) en tête, ordre stable pour le reste.
+const orderedProjects = [...projects].sort(
+  (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+);
+
 const skillSections = [
   { id: 'langages', title: 'Langages de programmation', items: skillsData.Programation },
   { id: 'technologies', title: 'Technologies & outils', items: skillsData.Technologies },
@@ -207,7 +212,7 @@ export default function Home() {
             Projets
           </h2>
           <ul className="mt-6 space-y-5">
-            {projects.map((project) => (
+            {orderedProjects.map((project) => (
               <li key={project.slug}>
                 <h3 className="text-lg font-medium">{project.title}</h3>
                 <p className="mt-1 text-sm leading-relaxed text-neutral-400">

@@ -194,11 +194,31 @@
 }
 
 .gridIcon {
+  position: relative;
   width: 56px;
   height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Étoile « projet phare » posée sur le coin de l'icône. */
+.gridStar {
+  position: absolute;
+  right: 1px;
+  bottom: -3px;
+  width: 19px;
+  height: 19px;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 45%));
+  pointer-events: none;
+}
+
+.listStar {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin-left: 6px;
+  vertical-align: -2px;
 }
 
 .gridThumb {

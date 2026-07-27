@@ -125,7 +125,10 @@ const Finder = ({ openFile, initialFolder }) => {
       const q = query.trim().toLowerCase();
       list = list.filter((item) => item.name.toLowerCase().includes(q));
     }
-    return list;
+    // Projets phares (étoile) en tête ; tri stable, le reste garde son ordre.
+    return [...list].sort(
+      (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+    );
   }, [current, query]);
 
   const currentName = current.type === 'special' ? SPECIAL_VIEWS[current.id].name : current.name;
@@ -149,6 +152,19 @@ const Finder = ({ openFile, initialFolder }) => {
     ) : (
       <FileIcon extension={item.extension} />
     );
+
+  // Étoile dorée signalant les projets phares dans les vues du Finder.
+  const featuredStar = (className) => (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <path
+        d="M12 3.2l2.6 5.4 5.9.8-4.3 4.1 1.1 5.8L12 16.5l-5.3 2.8 1.1-5.8-4.3-4.1 5.9-.8z"
+        fill="#ffd60a"
+        stroke="#8a6d00"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
 
   const sidebarFavorites = [
     { id: 'recents', label: 'Récents', glyph: <ClockGlyph />, view: { type: 'special', id: 'recents' } },
@@ -287,7 +303,10 @@ const Finder = ({ openFile, initialFolder }) => {
                   }}
                   onDoubleClick={() => openItem(item)}
                 >
-                  <span className={styles.gridIcon}>{renderIcon(item)}</span>
+                  <span className={styles.gridIcon} title={item.featured ? 'Projet phare' : undefined}>
+                    {renderIcon(item)}
+                    {item.featured && featuredStar(styles.gridStar)}
+                  </span>
                   <span className={styles.gridLabel}>{item.name}</span>
                 </button>
               ))}
@@ -315,6 +334,7 @@ const Finder = ({ openFile, initialFolder }) => {
                     <td>
                       <span className={styles.listIcon}>{renderIcon(item, 17)}</span>
                       {item.name}
+                      {item.featured && featuredStar(styles.listStar)}
                     </td>
                     <td>{item.size || '--'}</td>
                     <td>{TYPE_LABELS[item.type === 'folder' ? 'folder' : item.extension] || 'Document'}</td>
