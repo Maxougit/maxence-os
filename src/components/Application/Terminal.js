@@ -1,5 +1,7 @@
-'use strict';
+'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
+import { useSiteData } from '@/data/SiteDataProvider';
 import styles from './Terminal.module.css';
 import TerminalSnake from './TerminalSnake';
 
@@ -10,18 +12,6 @@ const NEOFETCH_ART = `        .:'
 :_________:
  :_________\`-;
   \`.__.-.__.'`;
-
-const NEOFETCH_INFO = [
-  ['OS', 'Maxence OS 26.0 « Reims »'],
-  ['Host', 'MacBook de Maxence'],
-  ['Kernel', 'Ingénieur CESI (2025)'],
-  ['Uptime', 'dev depuis 2019'],
-  ['Shell', 'zsh (et un peu de café)'],
-  ['CPU', 'GenAI · Micro-services · DevOps'],
-  ['GPU', 'Kubernetes (AKS) · Docker'],
-  ['Memory', 'C# · Python · JS/TS · SQL'],
-  ['Contact', 'contact@maxenceleroux.fr'],
-];
 
 class Terminal extends React.Component {
   constructor(props) {
@@ -67,7 +57,7 @@ class Terminal extends React.Component {
         output: [
           ...prev.output,
           { type: 'command', text: command },
-          { type: 'text', text: `zsh: command not found: ${trimmed} — essayez « help »` },
+          { type: 'text', text: this.props.t('errorNotFound', { cmd: trimmed }) },
         ],
         command: '',
       }));
@@ -85,30 +75,41 @@ class Terminal extends React.Component {
     }));
   };
 
-  whoAmI = () => ({
-    type: 'text',
-    text: "Name: Maxence Leroux\nJob: Ingénieur informatique freelance — Maxadev\nFormation: Diplôme d'ingénieur CESI (2025)",
-  });
+  whoAmI = () => {
+    const { t, cv } = this.props;
+    return {
+      type: 'text',
+      text: [
+        `${t('whoamiName')}: ${cv.profile.name}`,
+        `${t('whoamiJob')}: ${t('whoamiJobValue')}`,
+        `${t('whoamiEducation')}: ${t('whoamiEducationValue')}`,
+      ].join('\n'),
+    };
+  };
 
-  listDirectory = () => ({
-    type: 'text',
-    text: 'CV_Leroux_Maxence.pdf   Projets/   Todo.txt   À propos de moi.txt',
-  });
+  // La liste reprend les noms réels de l'arborescence, donc déjà localisés.
+  listDirectory = () => {
+    const { fs } = this.props;
+    const projectsFolder = fs.FILE_TREE.children[2];
+    return {
+      type: 'text',
+      text: [
+        fs.FILES.cvPdf.name,
+        `${projectsFolder.name}/`,
+        fs.FILES.todo.name,
+        fs.FILES.about.name,
+      ].join('   '),
+    };
+  };
 
-  showHelp = () => ({
-    type: 'text',
-    text: 'Commandes : whoami, ls, about, contact, linkedin, maxadev, neofetch, snake, clear, easter_egg',
-  });
+  showHelp = () => ({ type: 'text', text: this.props.t('help') });
 
-  aboutMe = () => ({
-    type: 'text',
-    text: 'I am Maxence, a software engineer specialized in GenAI, microservices architecture and DevOps. Currently LeadDev AI & DevOps at ArcelorMittal, freelancing via Maxadev.',
-  });
+  aboutMe = () => ({ type: 'text', text: this.props.t('about') });
 
-  easterEgg = () => ({ type: 'text', text: 'You found an easter egg! 🥚 (essayez aussi « snake »)' });
-  contactMe = () => ({ type: 'text', text: 'You can contact me at contact@maxenceleroux.fr' });
+  easterEgg = () => ({ type: 'text', text: this.props.t('easterEgg') });
+  contactMe = () => ({ type: 'text', text: this.props.t('contact') });
   linkedin = () => ({ type: 'text', text: 'https://www.linkedin.com/in/maxence-leroux123/' });
-  maxadev = () => ({ type: 'text', text: 'Freelance & consulting: https://maxadev.fr' });
+  maxadev = () => ({ type: 'text', text: this.props.t('maxadev') });
   neofetch = () => ({ type: 'neofetch' });
 
   clear = () => {
@@ -118,10 +119,7 @@ class Terminal extends React.Component {
 
   startSnake = () => {
     this.setState({ snakeMode: true });
-    return {
-      type: 'text',
-      text: 'Lancement de snake... Flèches ou ZQSD pour se déplacer, Échap pour quitter.',
-    };
+    return { type: 'text', text: this.props.t('snakeStart') };
   };
 
   handleSnakeExit = (score, quit) => {
@@ -131,7 +129,9 @@ class Terminal extends React.Component {
         ...prev.output,
         {
           type: 'text',
-          text: quit ? `Partie quittée — score : ${score}` : `Game over ! Score final : ${score}`,
+          text: quit
+            ? this.props.t('snakeQuit', { score })
+            : this.props.t('snakeGameOver', { score }),
         },
       ],
     }));
@@ -153,6 +153,22 @@ class Terminal extends React.Component {
     </span>
   );
 
+  // Étiquettes façon neofetch (non traduites), valeurs issues du catalogue.
+  neofetchInfo = () => {
+    const { t, fs } = this.props;
+    return [
+      ['OS', t('neofetchOs')],
+      ['Host', fs.FILE_TREE.name],
+      ['Kernel', t('neofetchKernel')],
+      ['Uptime', t('neofetchUptime')],
+      ['Shell', t('neofetchShell')],
+      ['CPU', t('neofetchCpu')],
+      ['GPU', 'Kubernetes (AKS) · Docker'],
+      ['Memory', 'C# · Python · JS/TS · SQL'],
+      ['Contact', 'contact@maxenceleroux.fr'],
+    ];
+  };
+
   renderLine = (line, index) => {
     if (line.type === 'command') {
       return (
@@ -166,7 +182,7 @@ class Terminal extends React.Component {
         <div key={index} className={styles.neofetch}>
           <pre className={styles.neofetchArt}>{NEOFETCH_ART}</pre>
           <div className={styles.neofetchInfo}>
-            {NEOFETCH_INFO.map(([key, value]) => (
+            {this.neofetchInfo().map(([key, value]) => (
               <p key={key}>
                 <span className={styles.neofetchKey}>{key}</span> : {value}
               </p>
@@ -203,7 +219,7 @@ class Terminal extends React.Component {
               onChange={this.handleCommandChange}
               onKeyDown={this.handleKeyDown}
               className={styles.commandInput}
-              aria-label="Ligne de commande"
+              aria-label={this.props.t('ariaCommandLine')}
               autoFocus
               autoComplete="off"
               autoCapitalize="off"
@@ -216,4 +232,12 @@ class Terminal extends React.Component {
   }
 }
 
-export default Terminal;
+// Le composant historique est une classe : l'i18n et les données localisées
+// lui sont injectées par ce wrapper, seul endroit où les hooks sont permis.
+const TerminalApp = (props) => {
+  const t = useTranslations('terminal');
+  const { cv, fs } = useSiteData();
+  return <Terminal {...props} t={t} cv={cv} fs={fs} />;
+};
+
+export default TerminalApp;

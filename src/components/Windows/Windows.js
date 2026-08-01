@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Window.module.css';
 
 const MENUBAR_HEIGHT = 30;
@@ -40,6 +41,7 @@ const Window = ({
   onMinimize,
   onFocus,
 }) => {
+  const t = useTranslations('window');
   const windowRef = useRef(null);
   const dragState = useRef(null);
   const rafId = useRef(null);
@@ -226,7 +228,7 @@ const Window = ({
           <button
             type="button"
             className={`${styles.light} ${styles.lightClose}`}
-            aria-label="Fermer la fenêtre"
+            aria-label={t('ariaClose')}
             onClick={onClose}
           >
             <CloseGlyph />
@@ -234,7 +236,7 @@ const Window = ({
           <button
             type="button"
             className={`${styles.light} ${styles.lightMin}`}
-            aria-label="Réduire la fenêtre"
+            aria-label={t('ariaMinimize')}
             onClick={onMinimize}
           >
             <MinGlyph />
@@ -242,7 +244,7 @@ const Window = ({
           <button
             type="button"
             className={`${styles.light} ${styles.lightMax}`}
-            aria-label="Agrandir la fenêtre"
+            aria-label={t('ariaZoom')}
             onClick={toggleMaximize}
           >
             <MaxGlyph />

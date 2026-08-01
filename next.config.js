@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 
+const createNextIntlPlugin = require('next-intl/plugin')
+
+// Pointe vers la config de requête i18n (langue + messages par locale).
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.js')
+
 const securityHeaders = [
   // SAMEORIGIN (et non DENY) : le viewer interne affiche le PDF dans une iframe
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
@@ -62,4 +67,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig)

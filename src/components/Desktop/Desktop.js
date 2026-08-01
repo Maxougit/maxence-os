@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import styles from './Desktop.module.css';
 
 import MenuBar from '@/components/MenuBar/MenuBar';
@@ -13,9 +14,8 @@ import Spotlight from '@/components/Spotlight/Spotlight';
 import Notification from '@/components/Notification/Notification';
 import ContextMenu from '@/components/ContextMenu/ContextMenu';
 
-import { APPS, appIdForFile, sizeForFile, buildDockItems } from './appRegistry';
-import { FILES, DESKTOP_FILES, allFiles } from '@/data/filesystem';
-import { profile, skillsData } from '@/data/cv';
+import { buildApps, appIdForFile, sizeForFile, buildDockItems } from './appRegistry';
+import { useSiteData } from '@/data/SiteDataProvider';
 import {
   FinderIcon,
   TerminalAppIcon,
@@ -70,6 +70,20 @@ const newFinderWindowId = () =>
   `finder-${globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`}`;
 
 export default function Desktop() {
+  // Données localisées (CV + arborescence Finder) et chaînes d'interface.
+  const { cv, fs } = useSiteData();
+  const { profile, skillsData } = cv;
+  const { FILES, FILE_TREE, DESKTOP_FILES, allFiles } = fs;
+
+  const t = useTranslations(); // racine : passé aux fabriques d'appRegistry
+  const tMenu = useTranslations('menu');
+  const tApp = useTranslations('app');
+  const tDesktop = useTranslations('desktop');
+  const tCtx = useTranslations('ctx');
+  const tNotif = useTranslations('notif');
+  const tSpot = useTranslations('spotlight');
+  const tCommon = useTranslations('common');
+
   const [lockState, setLockState] = useState('locked'); // locked | unlocking | unlocked
   const [windows, setWindows] = useState([]);
   const [theme, setTheme] = useState('dark');
@@ -105,7 +119,7 @@ export default function Desktop() {
     const raf = requestAnimationFrame(() => setBouncingId(dockId));
     bounceTimer.current = setTimeout(() => setBouncingId(null), 900);
     return () => cancelAnimationFrame(raf);
-  }, [windows]);
+  }, [windows, FILES]);
 
   // ------------------------------------------------------------------
   // Thème / responsive
@@ -127,6 +141,11 @@ export default function Desktop() {
   // API fenêtres / apps (identité stable pour les closures des apps)
   // ------------------------------------------------------------------
 
+  // Registre des apps : dépend de la langue (libellés) et du système de
+  // fichiers. `t` et `fs` sont stables pour une langue donnée, donc `api` garde
+  // en pratique une identité stable pour les closures des apps.
+  const apps = useMemo(() => buildApps({ t, fs }), [t, fs]);
+
   const api = useMemo(() => {
     const self = {};
 
@@ -143,7 +162,7 @@ export default function Desktop() {
     self.openSafari = (url) => self.openApp('safari', { url });
 
     self.openApp = (appId, options = {}) => {
-      const app = APPS[appId];
+      const app = apps[appId];
       if (!app) return;
       const instanceId = options.instanceId || appId;
 
@@ -194,7 +213,7 @@ export default function Desktop() {
     };
 
     return self;
-  }, []);
+  }, [apps]);
 
   const closeWindow = useCallback((id) => {
     const closeDeadline = Date.now() + 210;
@@ -383,13 +402,27 @@ export default function Desktop() {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [api, closeWindow, focusedWindow, lock, lockState, minimizeWindow, openNewFinder, windows]);
+  }, [api, closeWindow, focusedWindow, lock, lockState, minimizeWindow, openNewFinder, windows, FILES]);
 
   // ------------------------------------------------------------------
   // Menus de la barre de menus
   // ------------------------------------------------------------------
 
-  const appName = focusedWindow ? APPS[focusedWindow.appId].name : 'Finder';
+  const appName = (focusedWindow ? apps[focusedWindow.appId] : apps.finder).name;
+
+  // Le Finder navigue par NOM de dossier, et ces noms sont traduits : on les
+  // lit dans l'arborescence plutôt que de les écrire en dur.
+  const folderNames = useMemo(() => {
+    const [documents, pictures, projects, publications] = FILE_TREE.children.filter(
+      (node) => node.type === 'folder'
+    );
+    return {
+      documents: documents.name,
+      pictures: pictures.name,
+      projects: projects.name,
+      publications: publications.name,
+    };
+  }, [FILE_TREE]);
 
   const menus = useMemo(() => {
     const noWindow = !focusedWindow;
@@ -398,43 +431,47 @@ export default function Desktop() {
         id: 'apple',
         label: '',
         items: [
-          { label: 'À propos de ce Mac', onSelect: () => api.openApp('about') },
+          { label: tMenu('apple.about'), onSelect: () => api.openApp('about') },
           { divider: true },
-          { label: 'Réglages Système…', onSelect: () => setControlCenterOpen(true) },
-          { label: 'App Store…', disabled: true },
+          { label: tMenu('apple.settings'), onSelect: () => setControlCenterOpen(true) },
+          { label: tMenu('apple.appStore'), disabled: true },
           { divider: true },
-          { label: 'Éléments récents', disabled: true },
+          { label: tMenu('apple.recentItems'), disabled: true },
           { divider: true },
           {
-            label: 'Forcer à quitter…',
+            label: tMenu('apple.forceQuit'),
             shortcut: '⌥⌘⎋',
             disabled: noWindow,
             onSelect: () => focusedWindow && closeWindow(focusedWindow.id),
           },
           { divider: true },
-          { label: 'Suspendre l’activité', disabled: true },
-          { label: 'Redémarrer…', onSelect: () => window.location.reload() },
-          { label: 'Éteindre…', onSelect: lock },
+          { label: tMenu('apple.sleep'), disabled: true },
+          { label: tMenu('apple.restart'), onSelect: () => window.location.reload() },
+          { label: tMenu('apple.shutDown'), onSelect: lock },
           { divider: true },
-          { label: 'Verrouiller l’écran', shortcut: '⌃⌘Q', onSelect: lock },
-          { label: `Fermer la session ${profile.name.split(' ')[0]}…`, shortcut: '⇧⌘Q', onSelect: lock },
+          { label: tMenu('apple.lockScreen'), shortcut: '⌃⌘Q', onSelect: lock },
+          {
+            label: tMenu('apple.logOut', { name: profile.name.split(' ')[0] }),
+            shortcut: '⇧⌘Q',
+            onSelect: lock,
+          },
         ],
       },
       {
         id: 'app',
         label: appName,
         items: [
-          { label: `À propos de ${appName}`, onSelect: () => api.openApp('about') },
+          { label: tMenu('app.about', { app: appName }), onSelect: () => api.openApp('about') },
           { divider: true },
           {
-            label: `Masquer ${appName}`,
+            label: tMenu('app.hide', { app: appName }),
             shortcut: '⌘H',
             disabled: noWindow,
             onSelect: () => focusedWindow && minimizeWindow(focusedWindow.id),
           },
           { divider: true },
           {
-            label: `Quitter ${appName}`,
+            label: tMenu('app.quit', { app: appName }),
             shortcut: '⌘Q',
             disabled: noWindow,
             onSelect: () =>
@@ -447,13 +484,17 @@ export default function Desktop() {
       },
       {
         id: 'file',
-        label: 'Fichier',
+        label: tMenu('file.title'),
         items: [
-          { label: 'Nouvelle fenêtre Finder', shortcut: '⌘N', onSelect: openNewFinder },
-          { label: 'Ouvrir le CV (PDF)', shortcut: '⌘O', onSelect: () => api.openFile(FILES.cvPdf) },
+          { label: tMenu('file.newFinderWindow'), shortcut: '⌘N', onSelect: openNewFinder },
+          {
+            label: tMenu('file.openCv'),
+            shortcut: '⌘O',
+            onSelect: () => api.openFile(FILES.cvPdf),
+          },
           { divider: true },
           {
-            label: 'Fermer la fenêtre',
+            label: tMenu('file.closeWindow'),
             shortcut: '⌘W',
             disabled: noWindow,
             onSelect: () => focusedWindow && closeWindow(focusedWindow.id),
@@ -462,75 +503,88 @@ export default function Desktop() {
       },
       {
         id: 'edit',
-        label: 'Édition',
+        label: tMenu('edit.title'),
         items: [
-          { label: 'Annuler', shortcut: '⌘Z', disabled: true },
-          { label: 'Rétablir', shortcut: '⇧⌘Z', disabled: true },
+          { label: tMenu('edit.undo'), shortcut: '⌘Z', disabled: true },
+          { label: tMenu('edit.redo'), shortcut: '⇧⌘Z', disabled: true },
           { divider: true },
-          { label: 'Couper', shortcut: '⌘X', disabled: true },
-          { label: 'Copier', shortcut: '⌘C', disabled: true },
-          { label: 'Coller', shortcut: '⌘V', disabled: true },
-          { label: 'Tout sélectionner', shortcut: '⌘A', disabled: true },
+          { label: tMenu('edit.cut'), shortcut: '⌘X', disabled: true },
+          { label: tMenu('edit.copy'), shortcut: '⌘C', disabled: true },
+          { label: tMenu('edit.paste'), shortcut: '⌘V', disabled: true },
+          { label: tMenu('edit.selectAll'), shortcut: '⌘A', disabled: true },
         ],
       },
       {
         id: 'view',
-        label: 'Présentation',
+        label: tMenu('view.title'),
         items: [
           {
-            label: widgetsVisible ? 'Masquer les widgets' : 'Afficher les widgets',
+            label: widgetsVisible ? tMenu('view.hideWidgets') : tMenu('view.showWidgets'),
             onSelect: () => setWidgetsVisible((v) => !v),
           },
           {
-            label: 'Modifier le fond d’écran',
+            label: tMenu('view.changeWallpaper'),
             onSelect: () => setWallpaperIndex((i) => (i + 1) % WALLPAPERS.length),
           },
           { divider: true },
           {
-            label: theme === 'dark' ? 'Apparence claire' : 'Apparence sombre',
+            label:
+              theme === 'dark' ? tMenu('view.lightAppearance') : tMenu('view.darkAppearance'),
             onSelect: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
           },
         ],
       },
       {
         id: 'go',
-        label: 'Aller',
+        label: tMenu('go.title'),
         items: [
           {
-            label: 'Documents',
-            onSelect: () => api.openApp('finder', { instanceId: 'finder-Documents', folder: 'Documents' }),
-          },
-          {
-            label: 'Images',
-            onSelect: () => api.openApp('finder', { instanceId: 'finder-Images', folder: 'Images' }),
-          },
-          {
-            label: 'Projets',
-            onSelect: () => api.openApp('finder', { instanceId: 'finder-Projets', folder: 'Projets' }),
-          },
-          {
-            label: 'Publications',
+            label: folderNames.documents,
             onSelect: () =>
               api.openApp('finder', {
-                instanceId: 'finder-Publications',
-                folder: 'Publications',
+                instanceId: 'finder-documents',
+                folder: folderNames.documents,
+              }),
+          },
+          {
+            label: folderNames.pictures,
+            onSelect: () =>
+              api.openApp('finder', {
+                instanceId: 'finder-pictures',
+                folder: folderNames.pictures,
+              }),
+          },
+          {
+            label: folderNames.projects,
+            onSelect: () =>
+              api.openApp('finder', {
+                instanceId: 'finder-projects',
+                folder: folderNames.projects,
+              }),
+          },
+          {
+            label: folderNames.publications,
+            onSelect: () =>
+              api.openApp('finder', {
+                instanceId: 'finder-publications',
+                folder: folderNames.publications,
               }),
           },
         ],
       },
       {
         id: 'window',
-        label: 'Fenêtre',
+        label: tMenu('window.title'),
         showChecks: true,
         items: [
           {
-            label: 'Réduire',
+            label: tMenu('window.minimize'),
             shortcut: '⌘M',
             disabled: noWindow,
             onSelect: () => focusedWindow && minimizeWindow(focusedWindow.id),
           },
           {
-            label: 'Tout ramener au premier plan',
+            label: tMenu('window.bringAllToFront'),
             disabled: windows.length === 0,
             onSelect: () =>
               setWindows((prev) => prev.map((w) => ({ ...w, minimized: false }))),
@@ -545,30 +599,30 @@ export default function Desktop() {
       },
       {
         id: 'help',
-        label: 'Aide',
+        label: tMenu('help.title'),
         items: [
-          { label: 'Aide Maxence OS', onSelect: () => api.openApp('about') },
-          { label: 'Rechercher', shortcut: '⌘K', onSelect: () => setSpotlightOpen(true) },
+          { label: tMenu('help.osHelp'), onSelect: () => api.openApp('about') },
+          { label: tMenu('help.search'), shortcut: '⌘K', onSelect: () => setSpotlightOpen(true) },
           { divider: true },
           {
-            label: 'Voir le CV en version texte',
+            label: tMenu('help.viewCvText'),
             onSelect: () => setCvOpen(true),
           },
           {
-            label: 'Télécharger le CV (PDF)',
-            onSelect: () => api.openLink('/files/CV-Leroux-Maxence-FR.pdf'),
+            label: tMenu('help.downloadCv'),
+            onSelect: () => api.openLink(FILES.cvPdf.path),
           },
         ],
       },
     ];
-  }, [api, appName, focusedWindow, windows, widgetsVisible, theme, lock, closeWindow, minimizeWindow, openNewFinder, restoreWindow]);
+  }, [api, appName, focusedWindow, windows, widgetsVisible, theme, lock, closeWindow, minimizeWindow, openNewFinder, restoreWindow, tMenu, profile, FILES, folderNames]);
 
   // ------------------------------------------------------------------
   // Dock
   // ------------------------------------------------------------------
 
   const dockItems = useMemo(() => {
-    const items = buildDockItems(api);
+    const items = buildDockItems(api, { t, fs, profile });
     const enrichedItems = items.map((item) => {
       if (item.type === 'separator') return item;
       const running = item.windowId
@@ -589,7 +643,7 @@ export default function Desktop() {
     }
 
     return enrichedItems;
-  }, [api, isMobile, windows]);
+  }, [api, isMobile, windows, t, fs, profile]);
 
   // ------------------------------------------------------------------
   // Spotlight
@@ -599,22 +653,22 @@ export default function Desktop() {
     const iconBox = (node) => <span style={{ width: 28, height: 28, display: 'flex' }}>{node}</span>;
     return [
       {
-        category: 'Applications',
+        category: tSpot('categoryApplications'),
         suggested: true,
         items: [
           { id: 'finder', title: 'Finder', icon: iconBox(<FinderIcon />), run: () => api.openApp('finder') },
           { id: 'terminal', title: 'Terminal', icon: iconBox(<TerminalAppIcon />), run: () => api.openApp('terminal') },
-          { id: 'cv', title: 'CV Leroux Maxence.pdf', subtitle: 'Aperçu', icon: iconBox(<PreviewIcon />), run: () => api.openFile(FILES.cvPdf) },
+          { id: 'cv', title: FILES.cvPdf.name, subtitle: tSpot('subtitlePreview'), icon: iconBox(<PreviewIcon />), run: () => api.openFile(FILES.cvPdf) },
           { id: 'notes', title: 'Notes', icon: iconBox(<NotesIcon />), run: () => api.openFile(FILES.about) },
-          { id: 'database', title: 'Base de données', subtitle: 'Compétences', icon: iconBox(<DatabaseIcon />), run: () => api.openApp('database') },
-          { id: 'safari', title: 'Safari', subtitle: 'Navigateur', icon: iconBox(<SafariIcon />), run: () => api.openSafari() },
-          { id: 'rescue', title: 'Server Rescue', subtitle: 'Jeu', icon: iconBox(<GameIcon />), run: () => api.openApp('rescue') },
-          { id: 'settings', title: 'Réglages Système', icon: iconBox(<SettingsIcon />), run: () => setControlCenterOpen(true) },
-          { id: 'trash', title: 'Corbeille', icon: iconBox(<TrashIcon full />), run: () => api.openApp('trash') },
+          { id: 'database', title: tApp('databaseName'), subtitle: tSpot('subtitleSkills'), icon: iconBox(<DatabaseIcon />), run: () => api.openApp('database') },
+          { id: 'safari', title: 'Safari', subtitle: tSpot('subtitleBrowser'), icon: iconBox(<SafariIcon />), run: () => api.openSafari() },
+          { id: 'rescue', title: 'Server Rescue', subtitle: tSpot('subtitleGame'), icon: iconBox(<GameIcon />), run: () => api.openApp('rescue') },
+          { id: 'settings', title: tSpot('itemSystemSettings'), icon: iconBox(<SettingsIcon />), run: () => setControlCenterOpen(true) },
+          { id: 'trash', title: tApp('trashName'), icon: iconBox(<TrashIcon full />), run: () => api.openApp('trash') },
         ],
       },
       {
-        category: 'Fichiers',
+        category: tSpot('categoryFiles'),
         items: allFiles().map((file) => ({
           id: `file-${file.id}`,
           title: file.name,
@@ -624,7 +678,7 @@ export default function Desktop() {
         })),
       },
       {
-        category: 'Compétences',
+        category: tSpot('categorySkills'),
         items: [
           ...skillsData.Programation,
           ...skillsData.Technologies,
@@ -638,7 +692,7 @@ export default function Desktop() {
         })),
       },
       {
-        category: 'Expériences',
+        category: tSpot('categoryExperience'),
         items: skillsData.Experiences.map((exp) => ({
           id: `exp-${exp.Name}`,
           title: exp.Name,
@@ -648,15 +702,15 @@ export default function Desktop() {
         })),
       },
       {
-        category: 'Liens',
+        category: tSpot('categoryLinks'),
         items: [
-          { id: 'mail', title: 'Me contacter', subtitle: profile.email, icon: iconBox(<MailIcon />), run: () => api.openLink(`mailto:${profile.email}`) },
+          { id: 'mail', title: tCommon('contactMe'), subtitle: profile.email, icon: iconBox(<MailIcon />), run: () => api.openLink(`mailto:${profile.email}`) },
           { id: 'linkedin', title: 'LinkedIn', subtitle: 'maxence-leroux123', icon: iconBox(<LinkedInIcon />), run: () => api.openSafari(profile.linkedin) },
-          { id: 'maxadev', title: 'Maxadev', subtitle: 'maxadev.fr — freelance', icon: iconBox(<SafariIcon />), run: () => api.openSafari(profile.website) },
+          { id: 'maxadev', title: 'Maxadev', subtitle: tSpot('subtitleMaxadev'), icon: iconBox(<SafariIcon />), run: () => api.openSafari(profile.website) },
         ],
       },
     ];
-  }, [api]);
+  }, [api, tSpot, tApp, tCommon, FILES, allFiles, skillsData, profile]);
 
   // ------------------------------------------------------------------
   // Bureau (icônes, clic droit, raccourcis widgets)
@@ -671,9 +725,13 @@ export default function Desktop() {
     })),
     {
       id: 'folder-projets',
-      label: 'Projets',
+      label: folderNames.projects,
       icon: <FolderIcon />,
-      open: () => api.openApp('finder', { instanceId: 'finder-Projets', folder: 'Projets' }),
+      open: () =>
+        api.openApp('finder', {
+          instanceId: 'finder-projects',
+          folder: folderNames.projects,
+        }),
     },
   ];
 
@@ -697,23 +755,23 @@ export default function Desktop() {
   };
 
   const contextItems = [
-    { label: 'Nouveau dossier', disabled: true },
-    { label: 'Lire les informations', disabled: true },
+    { label: tCtx('newFolder'), disabled: true },
+    { label: tCtx('getInfo'), disabled: true },
     { divider: true },
     {
-      label: 'Modifier le fond d’écran',
+      label: tCtx('changeWallpaper'),
       onSelect: () => setWallpaperIndex((i) => (i + 1) % WALLPAPERS.length),
     },
     {
-      label: widgetsVisible ? 'Masquer les widgets' : 'Afficher les widgets',
+      label: widgetsVisible ? tCtx('hideWidgets') : tCtx('showWidgets'),
       onSelect: () => setWidgetsVisible((v) => !v),
     },
     { divider: true },
-    { label: 'Ouvrir le Terminal', onSelect: () => api.openApp('terminal') },
-    { label: 'Ouvrir Safari', onSelect: () => api.openSafari() },
-    { label: 'Télécharger le CV (PDF)', onSelect: () => api.openLink('/files/CV-Leroux-Maxence-FR.pdf') },
+    { label: tCtx('openTerminal'), onSelect: () => api.openApp('terminal') },
+    { label: tCtx('openSafari'), onSelect: () => api.openSafari() },
+    { label: tCtx('downloadCv'), onSelect: () => api.openLink(FILES.cvPdf.path) },
     { divider: true },
-    { label: 'Verrouiller l’écran', onSelect: lock },
+    { label: tCtx('lockScreen'), onSelect: lock },
   ];
 
   const handleShortcut = (id) => {
@@ -745,7 +803,7 @@ export default function Desktop() {
             controlCenterOpen={controlCenterOpen}
           />
 
-          <main className={styles.desktopSurface} aria-label="Bureau Maxence OS">
+          <main className={styles.desktopSurface} aria-label={tDesktop('ariaSurface')}>
             {widgetsVisible && <Widgets onShortcut={handleShortcut} />}
 
             <div className={styles.desktopIcons}>
@@ -770,7 +828,7 @@ export default function Desktop() {
               className={styles.scrollHint}
               onClick={() => setCvOpen(true)}
             >
-              Voir le CV en version texte ↓
+              {tDesktop('scrollHint')}
             </button>
           </main>
         </>
@@ -778,7 +836,7 @@ export default function Desktop() {
 
       {cvOpen && (
         <button type="button" className={styles.cvBack} onClick={() => setCvOpen(false)}>
-          ↑ Retour à Maxence OS
+          {tDesktop('cvBack')}
         </button>
       )}
 
@@ -826,8 +884,8 @@ export default function Desktop() {
       {notificationVisible && (
         <Notification
           appName="Maxence OS"
-          title={`Bienvenue sur Maxence OS 👋`}
-          body="CV interactif de Maxence Leroux. Explorez le Dock, ou ⌘K pour rechercher."
+          title={tNotif('welcomeTitle')}
+          body={tNotif('welcomeBody')}
           icon={
             <Image
               src={profile.photo}

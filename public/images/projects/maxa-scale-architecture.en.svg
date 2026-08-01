@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="2400" height="1240" role="img" aria-labelledby="title desc">
+  <title id="title">How Maxa-Scale works</title>
+  <desc id="desc">A personal Docker server hosts the Next.js application, a Node worker and the LLM router; incoming emails are sorted by AI and an agent can drive the CRM through MCP.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#10131d"/>
+      <stop offset="1" stop-color="#171b2a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="18" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="620" rx="30" fill="url(#bg)"/>
+  <circle cx="1075" cy="88" r="150" fill="#0a84ff" opacity=".07"/>
+  <circle cx="95" cy="560" r="185" fill="#30d158" opacity=".05"/>
+
+  <text x="56" y="66" fill="#f7f8fc" font-family="system-ui, sans-serif" font-size="29" font-weight="700">Maxa-Scale — how it works</text>
+  <text x="56" y="97" fill="#99a2b8" font-family="system-ui, sans-serif" font-size="16">Self-hosted CRM: emails sorted by LLM, automatic follow-ups, agent access (MCP)</text>
+
+  <g stroke="#64708a" stroke-width="2" stroke-dasharray="7 8" opacity=".62" fill="none">
+    <path d="M356 181 H420"/>
+    <path d="M356 305 H420"/>
+    <path d="M356 429 H420"/>
+    <path d="M770 181 H844"/>
+    <path d="M770 305 H844"/>
+    <path d="M770 429 H844"/>
+  </g>
+
+  <g font-family="system-ui, sans-serif" filter="url(#shadow)">
+    <!-- Left column: inputs -->
+    <g>
+      <rect x="56" y="127" width="300" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="97" cy="181" r="24" fill="#0a84ff" opacity=".18"/>
+      <path d="M86 173h22v16H86zM86 179h22" stroke="#55aaff" stroke-width="3" fill="none" stroke-linejoin="round"/>
+      <text x="133" y="175" fill="#f7f8fc" font-size="17" font-weight="700">Browser — PWA</text>
+      <text x="133" y="199" fill="#aeb7ca" font-size="13">Kanban, records, quick capture</text>
+    </g>
+    <g>
+      <rect x="56" y="251" width="300" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="97" cy="305" r="24" fill="#bf5af2" opacity=".18"/>
+      <path d="M97 295v20M88 300l18 10M88 310l18-10" stroke="#d88cff" stroke-width="3" stroke-linecap="round"/>
+      <text x="133" y="291" fill="#f7f8fc" font-size="17" font-weight="700">AI agent (MCP)</text>
+      <text x="133" y="315" fill="#aeb7ca" font-size="13">Claude, ChatGPT…</text>
+      <text x="133" y="335" fill="#aeb7ca" font-size="13">OAuth 2.1 + PKCE</text>
+    </g>
+    <g>
+      <rect x="56" y="375" width="300" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="97" cy="429" r="24" fill="#ff9f0a" opacity=".18"/>
+      <path d="M86 422h22v15H86zM86 422l11 8 11-8" stroke="#ffb340" stroke-width="3" fill="none" stroke-linejoin="round"/>
+      <text x="133" y="415" fill="#f7f8fc" font-size="17" font-weight="700">iCloud+ email</text>
+      <text x="133" y="439" fill="#aeb7ca" font-size="13">catch-all inbound (IMAP)</text>
+      <text x="133" y="459" fill="#aeb7ca" font-size="13">sending and follow-ups (SMTP)</text>
+    </g>
+    <g>
+      <rect x="56" y="499" width="300" height="76" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="97" cy="537" r="20" fill="#30d158" opacity=".17"/>
+      <path d="M97 524l11 5v8c0 8-5 13-11 16-6-3-11-8-11-16v-8z" stroke="#5ee27a" stroke-width="3" fill="none"/>
+      <text x="133" y="532" fill="#f7f8fc" font-size="16" font-weight="700">Security</text>
+      <text x="133" y="554" fill="#aeb7ca" font-size="13">2FA TOTP · AES-GCM encryption</text>
+    </g>
+
+    <!-- Center column: the server -->
+    <g>
+      <rect x="420" y="127" width="350" height="448" rx="24" fill="#181e2d" stroke="#343c51"/>
+      <text x="445" y="163" fill="#99a2b8" font-size="13" font-weight="700" letter-spacing="1.5">PERSONAL SERVER — DOCKER</text>
+
+      <rect x="444" y="182" width="302" height="110" rx="15" fill="#202637" stroke="#343c51"/>
+      <circle cx="485" cy="237" r="22" fill="#0a84ff" opacity=".18"/>
+      <path d="M485 226a11 11 0 1 0 0 22 11 11 0 0 0 0-22zM474 237h22M485 226c-4 3-6 7-6 11s2 8 6 11c4-3 6-7 6-11s-2-8-6-11z" stroke="#55aaff" stroke-width="2.4" fill="none"/>
+      <text x="521" y="222" fill="#f7f8fc" font-size="16" font-weight="700">web — Next.js</text>
+      <text x="521" y="246" fill="#aeb7ca" font-size="13">UI · Server Actions (Zod)</text>
+      <text x="521" y="266" fill="#aeb7ca" font-size="13">OAuth 2.1 · MCP server</text>
+
+      <rect x="444" y="307" width="302" height="110" rx="15" fill="#202637" stroke="#343c51"/>
+      <circle cx="485" cy="362" r="22" fill="#bf5af2" opacity=".18"/>
+      <path d="M485 351a11 11 0 1 0 0 22 11 11 0 0 0 0-22zM485 355v7l5 4" stroke="#d88cff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <text x="521" y="347" fill="#f7f8fc" font-size="16" font-weight="700">worker — Node</text>
+      <text x="521" y="371" fill="#aeb7ca" font-size="13">IMAP sync · follow-ups · digest</text>
+      <text x="521" y="391" fill="#aeb7ca" font-size="13">job queue — lock, retry</text>
+
+      <rect x="444" y="432" width="302" height="110" rx="15" fill="#202637" stroke="#343c51"/>
+      <circle cx="485" cy="487" r="22" fill="#64d2ff" opacity=".16"/>
+      <path d="M474 480c11 0 11 7 22 7M474 494c11 0 11-7 22-7M493 483l4 4-4 4" stroke="#8fdcff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      <text x="521" y="472" fill="#f7f8fc" font-size="16" font-weight="700">LLM router</text>
+      <text x="521" y="496" fill="#aeb7ca" font-size="13">classifies every inbound email</text>
+      <text x="521" y="516" fill="#aeb7ca" font-size="13">summaries, follow-up drafts</text>
+    </g>
+
+    <!-- Right column: data and outputs -->
+    <g>
+      <rect x="844" y="127" width="300" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="885" cy="181" r="24" fill="#30d158" opacity=".17"/>
+      <path d="M876 172v14a9 4 0 0 0 18 0v-14" stroke="#5ee27a" stroke-width="3" fill="none"/>
+      <ellipse cx="885" cy="172" rx="9" ry="4" stroke="#5ee27a" stroke-width="3" fill="none"/>
+      <text x="921" y="167" fill="#f7f8fc" font-size="17" font-weight="700">MongoDB</text>
+      <text x="921" y="191" fill="#aeb7ca" font-size="13">contacts · interactions</text>
+      <text x="921" y="211" fill="#aeb7ca" font-size="13">follow-ups · AI log</text>
+    </g>
+    <g>
+      <rect x="844" y="251" width="300" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="885" cy="305" r="24" fill="#64d2ff" opacity=".16"/>
+      <path d="M877 297h16v16h-16zM873 301h4M873 309h4M893 301h4M893 309h4M881 293v4M889 293v4M881 313v4M889 313v4" stroke="#8fdcff" stroke-width="2.6" fill="none"/>
+      <text x="921" y="291" fill="#f7f8fc" font-size="17" font-weight="700">LLM providers</text>
+      <text x="921" y="315" fill="#aeb7ca" font-size="13">ChatGPT / Claude (OAuth)</text>
+      <text x="921" y="335" fill="#aeb7ca" font-size="13">or Ollama, 100 % local</text>
+    </g>
+    <g>
+      <rect x="844" y="375" width="300" height="108" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="885" cy="429" r="24" fill="#ffd60a" opacity=".17"/>
+      <path d="M885 417c6 0 8 5 8 9v4h-16v-4c0-4 2-9 8-9zM882 434c0 3 6 3 6 0" stroke="#ffe14d" stroke-width="2.8" fill="none" stroke-linejoin="round"/>
+      <text x="921" y="415" fill="#f7f8fc" font-size="17" font-weight="700">Notifications</text>
+      <text x="921" y="439" fill="#aeb7ca" font-size="13">web push · daily digest</text>
+      <text x="921" y="459" fill="#aeb7ca" font-size="13">follow-up canceled on reply</text>
+    </g>
+    <g>
+      <rect x="844" y="499" width="300" height="76" rx="19" fill="#202637" stroke="#343c51"/>
+      <circle cx="885" cy="537" r="20" fill="#ff9f0a" opacity=".17"/>
+      <path d="M875 539l10-10 10 10M877 537v10h6v-6h4v6h6v-10" stroke="#ffb340" stroke-width="2.8" fill="none" stroke-linejoin="round"/>
+      <text x="921" y="532" fill="#f7f8fc" font-size="16" font-weight="700">Self-hosted</text>
+      <text x="921" y="554" fill="#aeb7ca" font-size="13">my data stays at home</text>
+    </g>
+  </g>
+</svg>

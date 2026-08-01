@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Notification.module.css';
 
 /**
@@ -7,6 +8,7 @@ import styles from './Notification.module.css';
  * bouton de fermeture au survol et action au clic.
  */
 const Notification = ({ appName, title, body, icon, duration = 8000, onAction, onDismiss }) => {
+  const t = useTranslations('notif');
   const [leaving, setLeaving] = useState(false);
   const dismissTimer = useRef(null);
 
@@ -34,7 +36,7 @@ const Notification = ({ appName, title, body, icon, duration = 8000, onAction, o
       <button
         type="button"
         className={styles.close}
-        aria-label="Fermer la notification"
+        aria-label={t('ariaClose')}
         onClick={(e) => {
           e.stopPropagation();
           dismiss();

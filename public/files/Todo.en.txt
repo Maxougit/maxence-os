@@ -1,0 +1,18 @@
+TODO — Maxence
+================================
+
+Done
+  [x] Computer engineering degree — CESI (2025)
+  [x] Publish a scientific paper — CONFERE 2024, Porto
+  [x] Start Maxadev, my freelance business
+  [x] Build a homelab and run my own LLMs on it
+  [x] Rebuild this CV as a macOS desktop
+
+In progress
+  [ ] Industrialize the GenAI platform at ArcelorMittal
+  [ ] New freelance engagements: generative AI, DevOps, micro-services
+  [ ] Grow the homelab (and resist buying one more server)
+  [ ] Empty the Trash
+
+Got a project in mind? Let's talk:
+  contact@maxenceleroux.fr — maxadev.fr

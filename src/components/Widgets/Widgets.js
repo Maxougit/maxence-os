@@ -1,15 +1,17 @@
 'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Widgets.module.css';
+import { useSiteData } from '@/data/SiteDataProvider';
+import { localeTag } from '@/i18n/config';
 import useNow from '@/utils/useNow';
 
-const WEEKDAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
-
+// Les libellés/variations traduisibles sont résolus au rendu (cf. stockLabels).
 const SKILL_STOCKS = [
-  { ticker: 'GENAI', label: 'IA générative', delta: '+42,0 %', points: [2, 3, 3, 5, 6, 9, 14] },
-  { ticker: 'K8S', label: 'Kubernetes', delta: '+15,2 %', points: [4, 5, 7, 6, 8, 9, 11] },
-  { ticker: 'CSHARP', label: 'C# / .NET', delta: '+12,4 %', points: [6, 7, 6, 8, 9, 9, 10] },
-  { ticker: 'PY', label: 'Python', delta: '+8,2 %', points: [5, 6, 7, 7, 8, 8, 9] },
+  { ticker: 'GENAI', points: [2, 3, 3, 5, 6, 9, 14] },
+  { ticker: 'K8S', points: [4, 5, 7, 6, 8, 9, 11] },
+  { ticker: 'CSHARP', points: [6, 7, 6, 8, 9, 9, 10] },
+  { ticker: 'PY', points: [5, 6, 7, 7, 8, 8, 9] },
 ];
 
 const Sparkline = ({ points }) => {
@@ -41,10 +43,15 @@ const WeatherIcon = () => (
 );
 
 const CalendarWidget = ({ now }) => {
+  const t = useTranslations('widgets');
+  const { locale } = useSiteData();
+  const weekdays = t('weekdays').split(',');
+  // Premier jour de la semaine selon la langue (1 = lundi en FR, 0 = dimanche en EN).
+  const weekStartsOn = Number(t('weekStartsOn'));
   const year = now.getFullYear();
   const month = now.getMonth();
   const today = now.getDate();
-  const firstDay = (new Date(year, month, 1).getDay() + 6) % 7; // lundi = 0
+  const firstDay = (new Date(year, month, 1).getDay() - weekStartsOn + 7) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells = [];
   for (let i = 0; i < firstDay; i += 1) cells.push(null);
@@ -53,10 +60,10 @@ const CalendarWidget = ({ now }) => {
   return (
     <div className={styles.widget}>
       <p className={styles.calendarMonth}>
-        {now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+        {now.toLocaleDateString(localeTag(locale), { month: 'long', year: 'numeric' })}
       </p>
       <div className={styles.calendarGrid}>
-        {WEEKDAYS.map((w, i) => (
+        {weekdays.map((w, i) => (
           <span key={`w-${i}`} className={styles.calendarWeekday}>
             {w}
           </span>
@@ -77,7 +84,6 @@ const CalendarWidget = ({ now }) => {
 const SHORTCUTS = [
   {
     id: 'cv',
-    label: 'CV (PDF)',
     background: 'linear-gradient(135deg,#ff6b5e,#d63a30)',
     glyph: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -87,7 +93,6 @@ const SHORTCUTS = [
   },
   {
     id: 'linkedin',
-    label: 'LinkedIn',
     background: 'linear-gradient(135deg,#1f8ae0,#0a66c2)',
     glyph: (
       <svg viewBox="0 0 24 24" fill="currentColor">
@@ -97,7 +102,6 @@ const SHORTCUTS = [
   },
   {
     id: 'mail',
-    label: 'Me contacter',
     background: 'linear-gradient(135deg,#34c759,#1d9c40)',
     glyph: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -108,7 +112,6 @@ const SHORTCUTS = [
   },
   {
     id: 'maxadev',
-    label: 'maxadev.fr',
     background: 'linear-gradient(135deg,#bf5af2,#8944ab)',
     glyph: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -124,12 +127,34 @@ const SHORTCUTS = [
  * raccourcis de contact.
  */
 const Widgets = ({ onShortcut }) => {
+  const t = useTranslations('widgets');
+  const tCommon = useTranslations('common');
   const now = useNow(60000);
+
+  // Seuls les libellés « parlants » sont traduits ; tickers et noms propres non.
+  const stockLabels = {
+    GENAI: t('stockGenai'),
+    K8S: 'Kubernetes',
+    CSHARP: 'C# / .NET',
+    PY: 'Python',
+  };
+  const stockDeltas = {
+    GENAI: t('stockGenaiDelta'),
+    K8S: t('stockK8sDelta'),
+    CSHARP: t('stockCsharpDelta'),
+    PY: t('stockPyDelta'),
+  };
+  const shortcutLabels = {
+    cv: t('shortcutCv'),
+    linkedin: 'LinkedIn',
+    mail: tCommon('contactMe'),
+    maxadev: 'maxadev.fr',
+  };
 
   if (!now) return null;
 
   return (
-    <aside className={styles.widgets} aria-label="Widgets">
+    <aside className={styles.widgets} aria-label={t('aria')}>
       <CalendarWidget now={now} />
 
       <div className={styles.widget}>
@@ -140,26 +165,26 @@ const Widgets = ({ onShortcut }) => {
           </div>
           <WeatherIcon />
         </div>
-        <p className={styles.weatherDesc}>Partiellement nuageux</p>
-        <p className={styles.weatherRange}>Max. 26° · Min. 14°</p>
+        <p className={styles.weatherDesc}>{t('weatherCondition')}</p>
+        <p className={styles.weatherRange}>{t('weatherRange')}</p>
       </div>
 
       <div className={styles.widget}>
-        <p className={styles.widgetTitle}>Compétences</p>
+        <p className={styles.widgetTitle}>{t('skillsTitle')}</p>
         {SKILL_STOCKS.map((stock) => (
           <div key={stock.ticker} className={styles.stockRow}>
             <div className={styles.stockName}>
               <p className={styles.stockTicker}>{stock.ticker}</p>
-              <p className={styles.stockLabel}>{stock.label}</p>
+              <p className={styles.stockLabel}>{stockLabels[stock.ticker]}</p>
             </div>
             <Sparkline points={stock.points} />
-            <span className={styles.stockDelta}>{stock.delta}</span>
+            <span className={styles.stockDelta}>{stockDeltas[stock.ticker]}</span>
           </div>
         ))}
       </div>
 
       <div className={styles.widget}>
-        <p className={styles.widgetTitle}>Liens rapides</p>
+        <p className={styles.widgetTitle}>{t('shortcutsTitle')}</p>
         <div className={styles.shortcutsGrid}>
           {SHORTCUTS.map((shortcut) => (
             <button
@@ -170,7 +195,7 @@ const Widgets = ({ onShortcut }) => {
               onClick={() => onShortcut(shortcut.id)}
             >
               {shortcut.glyph}
-              {shortcut.label}
+              {shortcutLabels[shortcut.id]}
             </button>
           ))}
         </div>

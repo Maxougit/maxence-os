@@ -92,6 +92,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Horloge 12 h (« 01:30 PM ») : 3 caractères de plus, donc police réduite. */
+.timeWide {
+  font-size: clamp(58px, 6.6vw, 96px);
+  white-space: nowrap;
+}
+
 .userPanel {
   position: absolute;
   z-index: 2;
@@ -246,6 +252,10 @@
     font-size: clamp(70px, 23vw, 92px);
   }
 
+  .timeWide {
+    font-size: clamp(44px, 14vw, 60px);
+  }
+
   .userPanel {
     top: 61%;
   }
@@ -276,6 +286,10 @@
 
   .time {
     font-size: clamp(70px, 10vw, 100px);
+  }
+
+  .timeWide {
+    font-size: clamp(46px, 7vw, 72px);
   }
 
   .userPanel {

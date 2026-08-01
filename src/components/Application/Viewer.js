@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { useTranslations } from 'next-intl';
 import styles from './Viewer.module.css';
 
 const textStyle = {
@@ -24,6 +25,7 @@ const textStyle = {
  * téléchargement. Viewer est chargé côté client (ssr:false).
  */
 const PdfViewer = ({ file }) => {
+  const t = useTranslations('viewer');
   const [inlineBlocked] = useState(() => {
     if (typeof navigator === 'undefined') return false;
     const ua = navigator.userAgent;
@@ -39,9 +41,7 @@ const PdfViewer = ({ file }) => {
       <div className={styles.pdfFallback}>
         <span className={styles.pdfBadge}>PDF</span>
         <p className={styles.pdfName}>{file.name}</p>
-        <p className={styles.pdfHint}>
-          Ce navigateur n’affiche pas les PDF intégrés. Ouvrez-le dans un onglet ou téléchargez-le.
-        </p>
+        <p className={styles.pdfHint}>{t('pdfHint')}</p>
         <div className={styles.pdfActions}>
           <a
             className={styles.pdfPrimary}
@@ -49,10 +49,10 @@ const PdfViewer = ({ file }) => {
             target="_blank"
             rel="noreferrer"
           >
-            Ouvrir le PDF ↗
+            {t('pdfOpen')}
           </a>
           <a className={styles.pdfGhost} href={file.path} download>
-            Télécharger
+            {t('pdfDownload')}
           </a>
         </div>
       </div>
@@ -65,7 +65,7 @@ const PdfViewer = ({ file }) => {
     <div className={styles.pdfFrameWrap}>
       <iframe className={styles.pdfFrame} src={file.path} title={file.name} />
       <a className={styles.pdfOpenFloat} href={file.path} target="_blank" rel="noreferrer">
-        Ouvrir ↗
+        {t('pdfOpenFloat')}
       </a>
     </div>
   );
@@ -82,6 +82,7 @@ const ZOOM_STEP = 1.4;
  * réel par rapport à la taille native (100 % = 1:1).
  */
 const ImageLightbox = ({ image, onClose }) => {
+  const t = useTranslations('viewer');
   const stageRef = useRef(null);
   const imgRef = useRef(null);
   const [fitWidth, setFitWidth] = useState(0);
@@ -156,7 +157,7 @@ const ImageLightbox = ({ image, onClose }) => {
       className={styles.imageLightbox}
       role="dialog"
       aria-modal="true"
-      aria-label={image.alt || 'Illustration agrandie'}
+      aria-label={image.alt || t('lightboxAria')}
       onClick={onClose}
     >
       <div className={styles.lightboxBar} onClick={(event) => event.stopPropagation()}>
@@ -165,35 +166,35 @@ const ImageLightbox = ({ image, onClose }) => {
           className={styles.lightboxTool}
           onClick={() => zoomBy(1 / ZOOM_STEP)}
           disabled={zoom <= ZOOM_MIN}
-          aria-label="Réduire"
+          aria-label={t('lightboxZoomOut')}
         >
           −
         </button>
-        <span className={styles.lightboxZoomValue}>{percent} %</span>
+        <span className={styles.lightboxZoomValue}>{t('lightboxZoomValue', { percent })}</span>
         <button
           type="button"
           className={styles.lightboxTool}
           onClick={() => zoomBy(ZOOM_STEP)}
           disabled={zoom >= ZOOM_MAX}
-          aria-label="Agrandir"
+          aria-label={t('lightboxZoomIn')}
         >
           +
         </button>
         <button type="button" className={styles.lightboxTool} onClick={() => setZoom(1)}>
-          Ajusté
+          {t('lightboxFit')}
         </button>
         <button
           type="button"
           className={styles.lightboxTool}
           onClick={() => fitWidth && setZoom(naturalWidth / fitWidth)}
         >
-          1:1
+          {t('lightboxActualSize')}
         </button>
         <button
           type="button"
           className={`${styles.lightboxTool} ${styles.lightboxCloseTool}`}
           onClick={onClose}
-          aria-label="Fermer l’illustration"
+          aria-label={t('lightboxClose')}
         >
           ×
         </button>
@@ -223,6 +224,7 @@ const ImageLightbox = ({ image, onClose }) => {
  * Aperçu : PDF, images, vidéos et texte/markdown.
  */
 const FileViewer = ({ file }) => {
+  const t = useTranslations('viewer');
   const [loadedDocument, setLoadedDocument] = useState({ path: null, content: '' });
   const [zoomedImage, setZoomedImage] = useState(null);
 
@@ -239,12 +241,9 @@ const FileViewer = ({ file }) => {
           if (!cancelled) setLoadedDocument({ path: file.path, content: text });
         })
         .catch(() => {
-          if (!cancelled) {
-            setLoadedDocument({
-              path: file.path,
-              content: 'Impossible de charger ce document.',
-            });
-          }
+          // Le message d'erreur est traduit au rendu : l'effet ne dépend donc
+          // pas du catalogue i18n et ne relance pas la requête.
+          if (!cancelled) setLoadedDocument({ path: file.path, content: '', failed: true });
         });
 
       return () => {
@@ -253,9 +252,9 @@ const FileViewer = ({ file }) => {
     }
   }, [file]);
 
+  const loadedText = loadedDocument.failed ? t('errorLoadDocument') : loadedDocument.content;
   const textContent =
-    file.content ||
-    (loadedDocument.path === file.path ? loadedDocument.content : 'Chargement…');
+    file.content || (loadedDocument.path === file.path ? loadedText : t('loading'));
 
   if (file.extension === 'pdf') {
     return <PdfViewer file={file} />;
@@ -303,10 +302,10 @@ const FileViewer = ({ file }) => {
             controls
             playsInline
             preload="metadata"
-            aria-label={`Lecteur vidéo — ${file.title || file.name}`}
+            aria-label={t('videoAria', { title: file.title || file.name })}
           >
             <source src={file.path} type="video/mp4" />
-            Votre navigateur ne prend pas en charge la lecture de cette vidéo.
+            {t('videoUnsupported')}
           </video>
         </div>
         <div className={styles.videoMeta}>
@@ -343,7 +342,7 @@ const FileViewer = ({ file }) => {
                   type="button"
                   className={styles.markdownImageButton}
                   onClick={() => setZoomedImage({ src, alt: alt || '', title })}
-                  aria-label={`Agrandir l’illustration : ${alt || 'image'}`}
+                  aria-label={t('imageZoomAria', { alt: alt || t('imageAltFallback') })}
                 >
                   {/* Les dimensions des illustrations Markdown sont définies par leur fichier. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -356,7 +355,7 @@ const FileViewer = ({ file }) => {
                     decoding="async"
                   />
                   <span className={styles.zoomHint} aria-hidden="true">
-                    Agrandir
+                    {t('imageZoomHint')}
                   </span>
                 </button>
               ),
@@ -377,7 +376,7 @@ const FileViewer = ({ file }) => {
     return <pre style={textStyle}>{textContent}</pre>;
   }
 
-  return <div style={{ padding: 24 }}>Type de fichier non pris en charge</div>;
+  return <div style={{ padding: 24 }}>{t('unsupportedType')}</div>;
 };
 
 export default FileViewer;

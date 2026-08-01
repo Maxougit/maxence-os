@@ -148,6 +148,37 @@ Fenêtres draggables, Dock avec magnification, Spotlight,
 Control Center, terminal avec easter eggs (essayez « snake »).`,
   },
   {
+    slug: 'maxadev',
+    name: 'Maxadev — site & blog technique.md',
+    title: 'Maxadev — le site de mon activité freelance',
+    website: 'https://maxadev.fr',
+    content: `# Maxadev — le site de mon activité freelance
+
+Le site vitrine et le blog technique de Maxadev, ma marque de freelance :
+présentation des offres, articles de fond et prise de contact directe.
+C'est aussi le site qui s'affiche dans l'app Safari de ce CV.
+
+## Ce qu'il fait
+- Présentation des prestations et des projets réalisés
+- **Blog technique** : les articles sont rédigés puis publiés depuis un
+  éditeur intégré, sans passer par un CMS externe
+- Formulaire de contact et questionnaire de cadrage, avec notification
+  instantanée à la réception d'une demande
+- **Site bilingue** français / anglais, avec sélecteur de langue
+- Bandeau de consentement pour la mesure d'audience (RGPD)
+
+## Choix techniques
+Les articles sont stockés dans une **base SQLite embarquée** : pas de
+service de base de données à héberger ni à maintenir pour un site de
+cette taille, et les sauvegardes se résument à un fichier. Le Markdown
+des articles est converti puis **assaini côté serveur** avant rendu.
+
+## Stack
+- Next.js (App Router) + TypeScript + Tailwind CSS
+- SQLite embarqué, rendu Markdown assaini
+- Auto-hébergé et conteneurisé, derrière un reverse proxy`,
+  },
+  {
     slug: 'octopus',
     name: 'Octopus — chatbot commercial.md',
     title: 'Octopus — agent commercial IA (Maxadev)',

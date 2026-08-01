@@ -1,8 +1,10 @@
 'use client';
 import React, { useEffect } from 'react';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import styles from './LockScreen.module.css';
-import { profile } from '@/data/cv';
+import { useSiteData } from '@/data/SiteDataProvider';
+import { localeTag } from '@/i18n/config';
 import useNow from '@/utils/useNow';
 
 const WifiGlyph = () => (
@@ -28,7 +30,15 @@ const ArrowGlyph = () => (
 
 /** Écran de connexion reprenant la composition sobre de macOS. */
 const LockScreen = ({ wallpaperStyle, unlocking, onUnlock }) => {
+  const t = useTranslations('lock');
+  const { locale, cv } = useSiteData();
+  const { profile } = cv;
   const now = useNow(1000);
+  const time = now
+    ? now.toLocaleTimeString(localeTag(locale), { hour: '2-digit', minute: '2-digit' })
+    : ' ';
+  // En 12 h l'heure gagne « AM/PM » : on rétrécit la police pour ne pas déborder.
+  const wideTime = time.trim().length > 5;
 
   useEffect(() => {
     const handleKey = (e) => {
@@ -45,9 +55,9 @@ const LockScreen = ({ wallpaperStyle, unlocking, onUnlock }) => {
       <div className={styles.background} style={wallpaperStyle} />
       <div className={styles.scrim} />
 
-      <header className={styles.systemBar} aria-label="État du système">
+      <header className={styles.systemBar} aria-label={t('ariaSystemStatus')}>
         <span className={styles.systemStatus}>
-          <span>FR</span>
+          <span>{t('keyboardLayout')}</span>
           <WifiGlyph />
           <BatteryGlyph />
         </span>
@@ -56,17 +66,18 @@ const LockScreen = ({ wallpaperStyle, unlocking, onUnlock }) => {
       <div className={styles.clockBlock}>
         <p className={styles.date} suppressHydrationWarning>
           {now
-            ? now.toLocaleDateString('fr-FR', {
+            ? now.toLocaleDateString(localeTag(locale), {
                 weekday: 'long',
                 day: 'numeric',
                 month: 'long',
               })
             : ' '}
         </p>
-        <p className={styles.time} suppressHydrationWarning>
-          {now
-            ? now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-            : ' '}
+        <p
+          className={`${styles.time} ${wideTime ? styles.timeWide : ''}`}
+          suppressHydrationWarning
+        >
+          {time}
         </p>
       </div>
 
@@ -74,7 +85,7 @@ const LockScreen = ({ wallpaperStyle, unlocking, onUnlock }) => {
         <div className={styles.avatarFrame}>
           <Image
             src={profile.photo}
-            alt={`Photo de ${profile.name}`}
+            alt={t('avatarAlt', { name: profile.name })}
             width={104}
             height={104}
             className={styles.avatar}
@@ -89,17 +100,15 @@ const LockScreen = ({ wallpaperStyle, unlocking, onUnlock }) => {
           type="button"
           className={styles.unlockButton}
           onClick={onUnlock}
-          aria-label="Déverrouiller Maxence OS"
+          aria-label={t('ariaUnlock')}
         >
-          <span>Ouvrir la session</span>
+          <span>{t('signIn')}</span>
           <span className={styles.arrow}>
             <ArrowGlyph />
           </span>
         </button>
 
-        <p className={styles.keyboardHint}>
-          Appuyez sur Entrée pour ouvrir la session
-        </p>
+        <p className={styles.keyboardHint}>{t('keyboardHint')}</p>
       </section>
     </div>
   );

@@ -1,7 +1,5 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
-import { FILES } from '@/data/filesystem';
-import { profile } from '@/data/cv';
 import {
   FinderIcon,
   LaunchpadIcon,
@@ -56,24 +54,30 @@ const Safari = lazyApp(() => import('@/components/Application/Safari'));
 // ---------------------------------------------------------------------------
 // Applications : une entrée par « app » au sens macOS (nom dans la barre de
 // menus, fenêtre, indicateur dans le Dock).
+//
+// Ce module n'est pas un composant React : il ne peut pas appeler de hook.
+// Les libellés traduits arrivent donc par une fabrique, à qui l'appelant passe
+// le traducteur RACINE de next-intl (`useTranslations()`, clés complètes) et le
+// système de fichiers déjà localisé. L'API `render(api, options)` est inchangée.
 // ---------------------------------------------------------------------------
 
-export const APPS = {
+export const buildApps = ({ t, fs }) => ({
   finder: {
     name: 'Finder',
     defaultSize: { width: 780, height: 500 },
-    title: (options) => options?.folder || 'MacBook de Maxence',
+    // Le nom de la racine (« MacBook de Maxence ») vient du système de fichiers.
+    title: (options) => options?.folder || fs.FILE_TREE.name,
     render: (api, options) => <Finder openFile={api.openFile} initialFolder={options?.folder} />,
   },
   terminal: {
     name: 'Terminal',
     defaultSize: { width: 660, height: 430 },
     darkChrome: true,
-    title: () => 'maxence — -zsh — 96×24',
+    title: () => t('app.terminalWindowTitle'),
     render: () => <Terminal />,
   },
   preview: {
-    name: 'Aperçu',
+    name: t('app.previewName'),
     defaultSize: { width: 540, height: 720 },
     title: (options) => options.file.name,
     render: (api, options) => <Viewer file={options.file} />,
@@ -85,7 +89,7 @@ export const APPS = {
     render: (api, options) => <Viewer file={options.file} />,
   },
   database: {
-    name: 'Base de données',
+    name: t('app.databaseName'),
     defaultSize: { width: 700, height: 580 },
     darkChrome: true,
     title: () => 'MAXENCE.DB — Neural Skill Core',
@@ -106,18 +110,18 @@ export const APPS = {
     ),
   },
   about: {
-    name: 'À propos',
+    name: t('app.aboutName'),
     defaultSize: { width: 470, height: 480 },
-    title: () => 'À propos de ce Mac',
-    render: (api) => <AboutMac onOpenCv={() => api.openFile(FILES.cvPdf)} />,
+    title: () => t('app.aboutWindowTitle'),
+    render: (api) => <AboutMac onOpenCv={() => api.openFile(fs.FILES.cvPdf)} />,
   },
   trash: {
-    name: 'Corbeille',
+    name: t('app.trashName'),
     defaultSize: { width: 480, height: 380 },
-    title: () => 'Corbeille',
+    title: () => t('app.trashWindowTitle'),
     render: () => <Trash />,
   },
-};
+});
 
 export const appIdForFile = (file) =>
   ['txt', 'md'].includes(file.extension) ? 'notes' : 'preview';
@@ -136,7 +140,9 @@ export const sizeForFile = (file) => {
 // Dock
 // ---------------------------------------------------------------------------
 
-export const buildDockItems = (api) => [
+// Même contrat que buildApps : `t` est le traducteur racine, `fs` et `profile`
+// viennent du contexte de données localisées.
+export const buildDockItems = (api, { t, fs, profile }) => [
   {
     id: 'finder',
     name: 'Finder',
@@ -159,21 +165,21 @@ export const buildDockItems = (api) => [
   },
   {
     id: 'cv',
-    name: 'CV — Aperçu',
+    name: t('dock.cv'),
     icon: <PreviewIcon />,
-    windowId: `file-${FILES.cvPdf.id}`,
-    onClick: () => api.openFile(FILES.cvPdf),
+    windowId: `file-${fs.FILES.cvPdf.id}`,
+    onClick: () => api.openFile(fs.FILES.cvPdf),
   },
   {
     id: 'notes',
     name: 'Notes',
     icon: <NotesIcon />,
     appId: 'notes',
-    onClick: () => api.openFile(FILES.about),
+    onClick: () => api.openFile(fs.FILES.about),
   },
   {
     id: 'database',
-    name: 'Base de données',
+    name: t('dock.database'),
     icon: <DatabaseIcon />,
     appId: 'database',
     onClick: () => api.openApp('database'),
@@ -188,7 +194,7 @@ export const buildDockItems = (api) => [
   { type: 'separator' },
   {
     id: 'mail',
-    name: 'Me contacter',
+    name: t('common.contactMe'),
     icon: <MailIcon />,
     badge: '1',
     onClick: () => api.openLink(`mailto:${profile.email}`),
@@ -209,7 +215,7 @@ export const buildDockItems = (api) => [
   { type: 'separator' },
   {
     id: 'trash',
-    name: 'Corbeille',
+    name: t('dock.trash'),
     icon: <TrashIcon full />,
     appId: 'trash',
     onClick: () => api.openApp('trash'),

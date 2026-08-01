@@ -1,7 +1,8 @@
 'use client';
 import React, { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Finder.module.css';
-import { FILE_TREE, DESKTOP_FILES, allFiles, findFolder } from '@/data/filesystem';
+import { useSiteData } from '@/data/SiteDataProvider';
 import { FolderIcon, FileIcon } from '@/components/Icons/AppIcons';
 
 /* eslint-disable @next/next/no-img-element */
@@ -76,18 +77,44 @@ const SearchGlyph = () => (
   </svg>
 );
 
+// Vues spéciales : libellé traduit + source des éléments dans l'arborescence.
 const SPECIAL_VIEWS = {
-  recents: { name: 'Récents', items: () => allFiles() },
-  desktop: { name: 'Bureau', items: () => DESKTOP_FILES },
+  recents: { labelKey: 'sidebarRecents', items: (fs) => fs.allFiles() },
+  desktop: { labelKey: 'sidebarDesktop', items: (fs) => fs.DESKTOP_FILES },
 };
 
-const TYPE_LABELS = {
-  pdf: 'Document PDF',
-  txt: 'Texte',
-  md: 'Document Markdown',
-  jpg: 'Image JPEG',
-  mp4: 'Vidéo MPEG-4',
-  folder: 'Dossier',
+// Clés de traduction de la colonne « Type », indexées par extension.
+const KIND_KEYS = {
+  pdf: 'kindPdf',
+  txt: 'kindTxt',
+  md: 'kindMd',
+  jpg: 'kindJpg',
+  mp4: 'kindMp4',
+  folder: 'kindFolder',
+};
+
+// Les dossiers racine sont désignés par leur nom, qui change selon la langue :
+// on les résout par position dans FILE_TREE.children plutôt qu'en dur.
+const ROOT_FOLDER_INDEX = { documents: 0, images: 1, projects: 2, publications: 3 };
+const rootFolderName = (fs, key) => fs.FILE_TREE.children[ROOT_FOLDER_INDEX[key]].name;
+
+// Alias acceptés pour `initialFolder` : les identifiants neutres, mais aussi les
+// noms de dossiers (FR comme EN) que les appelants historiques passent encore.
+const FOLDER_ALIASES = {
+  documents: 'documents',
+  images: 'images',
+  pictures: 'images',
+  projets: 'projects',
+  projects: 'projects',
+  publications: 'publications',
+};
+
+// Résout `initialFolder` en un nom présent dans l'arborescence courante ; ce qui
+// n'est pas reconnu passe tel quel (findFolder retombe alors sur la racine).
+const resolveFolderName = (fs, value) => {
+  if (!value) return undefined;
+  const key = FOLDER_ALIASES[String(value).toLowerCase()];
+  return typeof ROOT_FOLDER_INDEX[key] === 'number' ? rootFolderName(fs, key) : value;
 };
 
 /**
@@ -95,9 +122,14 @@ const TYPE_LABELS = {
  * recherche dans le dossier courant, barre d'état.
  */
 const Finder = ({ openFile, initialFolder }) => {
-  const initialView = initialFolder
-    ? { type: 'folder', name: initialFolder }
-    : { type: 'folder', name: FILE_TREE.name };
+  const t = useTranslations('finder');
+  const { fs } = useSiteData();
+  // `initialFolder` accepte un identifiant neutre ('projects'…) ou un nom de
+  // dossier localisé ; findFolder retombe sur la racine si le nom est inconnu.
+  const initialFolderName = resolveFolderName(fs, initialFolder);
+  const initialView = initialFolderName
+    ? { type: 'folder', name: initialFolderName }
+    : { type: 'folder', name: fs.FILE_TREE.name };
   const [history, setHistory] = useState([initialView]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [viewMode, setViewMode] = useState('grid');
@@ -117,9 +149,9 @@ const Finder = ({ openFile, initialFolder }) => {
   const items = useMemo(() => {
     let list;
     if (current.type === 'special') {
-      list = SPECIAL_VIEWS[current.id].items();
+      list = SPECIAL_VIEWS[current.id].items(fs);
     } else {
-      list = findFolder(current.name).children;
+      list = fs.findFolder(current.name).children;
     }
     if (query.trim()) {
       const q = query.trim().toLowerCase();
@@ -129,9 +161,10 @@ const Finder = ({ openFile, initialFolder }) => {
     return [...list].sort(
       (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
     );
-  }, [current, query]);
+  }, [current, query, fs]);
 
-  const currentName = current.type === 'special' ? SPECIAL_VIEWS[current.id].name : current.name;
+  const currentName =
+    current.type === 'special' ? t(SPECIAL_VIEWS[current.id].labelKey) : current.name;
 
   const openItem = (item) => {
     if (item.type === 'folder') navigate({ type: 'folder', name: item.name });
@@ -166,19 +199,33 @@ const Finder = ({ openFile, initialFolder }) => {
     </svg>
   );
 
+  // Les entrées « dossier » portent le nom localisé issu de l'arborescence :
+  // c'est ce nom qui sert de clé de navigation.
+  const folderEntry = (key) => ({
+    id: key,
+    label: rootFolderName(fs, key),
+    glyph: <FolderGlyph />,
+    view: { type: 'folder', name: rootFolderName(fs, key) },
+  });
+
   const sidebarFavorites = [
-    { id: 'recents', label: 'Récents', glyph: <ClockGlyph />, view: { type: 'special', id: 'recents' } },
-    { id: 'airdrop', label: 'AirDrop', glyph: <AirdropGlyph />, disabled: true },
-    { id: 'desktop', label: 'Bureau', glyph: <DesktopGlyph />, view: { type: 'special', id: 'desktop' } },
-    { id: 'documents', label: 'Documents', glyph: <FolderGlyph />, view: { type: 'folder', name: 'Documents' } },
-    { id: 'images', label: 'Images', glyph: <FolderGlyph />, view: { type: 'folder', name: 'Images' } },
-    { id: 'projets', label: 'Projets', glyph: <FolderGlyph />, view: { type: 'folder', name: 'Projets' } },
     {
-      id: 'publications',
-      label: 'Publications',
-      glyph: <FolderGlyph />,
-      view: { type: 'folder', name: 'Publications' },
+      id: 'recents',
+      label: t('sidebarRecents'),
+      glyph: <ClockGlyph />,
+      view: { type: 'special', id: 'recents' },
     },
+    { id: 'airdrop', label: t('sidebarAirdrop'), glyph: <AirdropGlyph />, disabled: true },
+    {
+      id: 'desktop',
+      label: t('sidebarDesktop'),
+      glyph: <DesktopGlyph />,
+      view: { type: 'special', id: 'desktop' },
+    },
+    folderEntry('documents'),
+    folderEntry('images'),
+    folderEntry('projects'),
+    folderEntry('publications'),
   ];
 
   const isActive = (entry) =>
@@ -189,7 +236,7 @@ const Finder = ({ openFile, initialFolder }) => {
   return (
     <div className={styles.finder}>
       <aside className={styles.sidebar}>
-        <p className={styles.sidebarSection}>Favoris</p>
+        <p className={styles.sidebarSection}>{t('sidebarFavorites')}</p>
         {sidebarFavorites.map((entry) => (
           <button
             key={entry.id}
@@ -202,31 +249,31 @@ const Finder = ({ openFile, initialFolder }) => {
             {entry.label}
           </button>
         ))}
-        <p className={styles.sidebarSection}>Emplacements</p>
+        <p className={styles.sidebarSection}>{t('sidebarLocations')}</p>
         <button
           type="button"
           className={`${styles.sidebarItem} ${
-            current.type === 'folder' && current.name === FILE_TREE.name ? styles.active : ''
+            current.type === 'folder' && current.name === fs.FILE_TREE.name ? styles.active : ''
           }`}
-          onClick={() => navigate({ type: 'folder', name: FILE_TREE.name })}
+          onClick={() => navigate({ type: 'folder', name: fs.FILE_TREE.name })}
         >
           <DesktopGlyph />
-          MacBook de Maxence
+          {fs.FILE_TREE.name}
         </button>
         <button type="button" className={styles.sidebarItem} disabled>
           <CloudGlyph />
-          iCloud Drive
+          {t('sidebarIcloud')}
         </button>
-        <p className={styles.sidebarSection}>Tags</p>
+        <p className={styles.sidebarSection}>{t('sidebarTags')}</p>
         {[
-          ['#ff453a', 'Urgent'],
-          ['#ff9f0a', 'Freelance'],
-          ['#30d158', 'Perso'],
-          ['#0a84ff', 'CV'],
-        ].map(([color, label]) => (
-          <button key={label} type="button" className={styles.sidebarItem} disabled>
+          ['#ff453a', 'tagUrgent'],
+          ['#ff9f0a', 'tagFreelance'],
+          ['#30d158', 'tagPersonal'],
+          ['#0a84ff', 'tagCv'],
+        ].map(([color, key]) => (
+          <button key={key} type="button" className={styles.sidebarItem} disabled>
             <span className={styles.tagDot} style={{ background: color }} />
-            {label}
+            {t(key)}
           </button>
         ))}
       </aside>
@@ -237,7 +284,7 @@ const Finder = ({ openFile, initialFolder }) => {
             <button
               type="button"
               className={styles.toolButton}
-              aria-label="Précédent"
+              aria-label={t('ariaBack')}
               disabled={historyIndex === 0}
               onClick={() => {
                 setHistoryIndex(historyIndex - 1);
@@ -249,7 +296,7 @@ const Finder = ({ openFile, initialFolder }) => {
             <button
               type="button"
               className={styles.toolButton}
-              aria-label="Suivant"
+              aria-label={t('ariaForward')}
               disabled={historyIndex >= history.length - 1}
               onClick={() => {
                 setHistoryIndex(historyIndex + 1);
@@ -263,7 +310,7 @@ const Finder = ({ openFile, initialFolder }) => {
           <button
             type="button"
             className={`${styles.toolButton} ${viewMode === 'grid' ? styles.activeView : ''}`}
-            aria-label="Vue en icônes"
+            aria-label={t('ariaIconView')}
             onClick={() => setViewMode('grid')}
           >
             <GridGlyph />
@@ -271,7 +318,7 @@ const Finder = ({ openFile, initialFolder }) => {
           <button
             type="button"
             className={`${styles.toolButton} ${viewMode === 'list' ? styles.activeView : ''}`}
-            aria-label="Vue en liste"
+            aria-label={t('ariaListView')}
             onClick={() => setViewMode('list')}
           >
             <ListGlyph />
@@ -279,7 +326,7 @@ const Finder = ({ openFile, initialFolder }) => {
           <label className={styles.search}>
             <SearchGlyph />
             <input
-              placeholder="Rechercher"
+              placeholder={t('searchPlaceholder')}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               spellCheck={false}
@@ -289,7 +336,7 @@ const Finder = ({ openFile, initialFolder }) => {
 
         <div className={styles.content} onClick={() => setSelected(null)}>
           {items.length === 0 ? (
-            <p className={styles.empty}>Aucun élément</p>
+            <p className={styles.empty}>{t('empty')}</p>
           ) : viewMode === 'grid' ? (
             <div className={styles.grid}>
               {items.map((item) => (
@@ -303,7 +350,7 @@ const Finder = ({ openFile, initialFolder }) => {
                   }}
                   onDoubleClick={() => openItem(item)}
                 >
-                  <span className={styles.gridIcon} title={item.featured ? 'Projet phare' : undefined}>
+                  <span className={styles.gridIcon} title={item.featured ? t('featured') : undefined}>
                     {renderIcon(item)}
                     {item.featured && featuredStar(styles.gridStar)}
                   </span>
@@ -315,9 +362,9 @@ const Finder = ({ openFile, initialFolder }) => {
             <table className={styles.list}>
               <thead>
                 <tr>
-                  <th>Nom</th>
-                  <th>Taille</th>
-                  <th>Type</th>
+                  <th>{t('columnName')}</th>
+                  <th>{t('columnSize')}</th>
+                  <th>{t('columnKind')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -337,7 +384,7 @@ const Finder = ({ openFile, initialFolder }) => {
                       {item.featured && featuredStar(styles.listStar)}
                     </td>
                     <td>{item.size || '--'}</td>
-                    <td>{TYPE_LABELS[item.type === 'folder' ? 'folder' : item.extension] || 'Document'}</td>
+                    <td>{t(KIND_KEYS[item.type === 'folder' ? 'folder' : item.extension] || 'kindDefault')}</td>
                   </tr>
                 ))}
               </tbody>
@@ -347,10 +394,10 @@ const Finder = ({ openFile, initialFolder }) => {
 
         <div className={styles.statusBar}>
           <span>
-            {items.length} élément{items.length > 1 ? 's' : ''}
-            {selected ? `, 1 sélectionné` : ''}
+            {t('statusItems', { n: items.length })}
+            {selected ? t('statusSelected') : ''}
           </span>
-          <span>214,3 Go disponibles</span>
+          <span>{t('statusAvailable')}</span>
         </div>
       </div>
     </div>

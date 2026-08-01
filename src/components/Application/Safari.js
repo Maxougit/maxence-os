@@ -1,11 +1,11 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Safari.module.css';
-import { profile, skillsData } from '@/data/cv';
+import { useSiteData } from '@/data/SiteDataProvider';
 
 /* eslint-disable @next/next/no-img-element */
 
-const HOME = 'about:accueil';
 const MAXADEV_URL = 'https://www.maxadev.fr';
 // Origines depuis lesquelles on accepte le beacon « prêt » de maxadev
 // (prod + www + dev local sur 3001).
@@ -16,8 +16,6 @@ const MAXADEV_ORIGINS = [
 ];
 const REIMS_MAP =
   'https://www.openstreetmap.org/export/embed.html?bbox=3.98%2C49.22%2C4.09%2C49.28&layer=mapnik&marker=49.2583%2C4.0317';
-const CV_PDF = '/files/CV-Leroux-Maxence-FR.pdf';
-
 // Domaines connus pour autoriser l'affichage en iframe : pas de bandeau d'avertissement.
 const EMBEDDABLE = ['openstreetmap.org'];
 
@@ -64,11 +62,11 @@ const Lock = () => (
 );
 
 // --- favoris de la page de démarrage ----------------------------------------
-const FAVORITES = [
+// Apparence figée (indépendante de la langue) ; libellés et URL sont assemblés
+// au rendu depuis le catalogue i18n et les données du CV.
+const FAVORITE_VISUALS = [
   {
     id: 'maxadev',
-    label: 'Maxadev',
-    url: MAXADEV_URL,
     bg: 'linear-gradient(135deg,#bf5af2,#7b3fe4)',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -79,8 +77,6 @@ const FAVORITES = [
   },
   {
     id: 'linkedin',
-    label: 'LinkedIn',
-    url: profile.linkedin,
     bg: 'linear-gradient(135deg,#0a78d0,#0a66c2)',
     icon: (
       <svg viewBox="0 0 24 24" fill="currentColor">
@@ -90,8 +86,6 @@ const FAVORITES = [
   },
   {
     id: 'reims',
-    label: 'Reims — Plan',
-    url: REIMS_MAP,
     bg: 'linear-gradient(135deg,#34c759,#0f9d58)',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
@@ -102,8 +96,6 @@ const FAVORITES = [
   },
   {
     id: 'cv',
-    label: 'CV (PDF)',
-    url: CV_PDF,
     bg: 'linear-gradient(135deg,#ff6b5e,#d63a30)',
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
@@ -113,16 +105,18 @@ const FAVORITES = [
   },
 ];
 
-const kindOf = (url) => {
-  if (!url || url === HOME) return 'home';
+// `home` et `cvPdf` dépendent de la langue : ils sont passés par l'appelant
+// plutôt que lus depuis une constante de module.
+const kindOf = (url, home) => {
+  if (!url || url === home) return 'home';
   if (url.includes('linkedin.com')) return 'linkedin';
   if (url.includes('maxadev')) return 'maxadev';
   return 'iframe';
 };
 
-const prettyUrl = (url) => {
-  if (!url || url === HOME) return '';
-  if (url === CV_PDF) return 'maxence-os › CV Leroux Maxence.pdf';
+const prettyUrl = (url, home, cvPdfPath, cvPdfLabel) => {
+  if (!url || url === home) return '';
+  if (url === cvPdfPath) return cvPdfLabel;
   if (url.includes('openstreetmap')) return 'openstreetmap.org › Reims';
   try {
     return new URL(url).hostname.replace(/^www\./, '');
@@ -137,6 +131,14 @@ const prettyUrl = (url) => {
  * et carte LinkedIn intégrée (LinkedIn interdit le framing).
  */
 const Safari = ({ initialUrl, navRef, openExternal }) => {
+  const t = useTranslations('safari');
+  const { fs } = useSiteData();
+  // URL interne de la page de démarrage : traduite (« about:accueil » /
+  // « about:start ») pour rester saisissable dans la barre d'adresse. Toutes
+  // les comparaisons passent par cette même valeur.
+  const HOME = t('homeUrl');
+  const CV_PDF = fs.FILES.cvPdf.path;
+
   const [history, setHistory] = useState([initialUrl || HOME]);
   const [pointer, setPointer] = useState(0);
   const [draft, setDraft] = useState('');
@@ -161,7 +163,7 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
     return () => {
       if (navRef.current) navRef.current = null;
     };
-  }, [navRef, go]);
+  }, [navRef, go, HOME]);
 
   const back = () => pointer > 0 && setPointer((p) => p - 1);
   const forward = () => pointer < history.length - 1 && setPointer((p) => p + 1);
@@ -177,20 +179,21 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
     go(value);
   };
 
-  const kind = kindOf(current);
+  const kind = kindOf(current, HOME);
+  const address = prettyUrl(current, HOME, CV_PDF, t('urlCvPdf'));
 
   return (
     <div className={styles.safari}>
       <div className={styles.toolbar}>
         <div className={styles.navGroup}>
-          <button className={styles.iconBtn} onClick={back} disabled={pointer === 0} aria-label="Précédent">
+          <button className={styles.iconBtn} onClick={back} disabled={pointer === 0} aria-label={t('ariaBack')}>
             <Back />
           </button>
           <button
             className={styles.iconBtn}
             onClick={forward}
             disabled={pointer >= history.length - 1}
-            aria-label="Suivant"
+            aria-label={t('ariaForward')}
           >
             <Forward />
           </button>
@@ -200,8 +203,8 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
           className={`${styles.iconBtn} ${styles.homeBtn}`}
           onClick={() => go(HOME)}
           disabled={kind === 'home'}
-          aria-label="Accueil"
-          title="Accueil"
+          aria-label={t('ariaHome')}
+          title={t('ariaHome')}
         >
           <Home />
           <span>Home</span>
@@ -215,8 +218,8 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
           )}
           <input
             className={styles.addressInput}
-            value={editing ? draft : prettyUrl(current)}
-            placeholder="Rechercher ou saisir une adresse"
+            value={editing ? draft : address}
+            placeholder={t('addressPlaceholder')}
             onFocus={() => {}}
             onFocusCapture={() => {
               setEditing(true);
@@ -228,14 +231,14 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
           />
         </form>
 
-        <button className={styles.iconBtn} onClick={reload} aria-label="Recharger">
+        <button className={styles.iconBtn} onClick={reload} aria-label={t('ariaReload')}>
           <Reload />
         </button>
         {kind !== 'home' && (
           <button
             className={styles.iconBtn}
             onClick={() => openExternal?.(current === CV_PDF ? CV_PDF : current)}
-            aria-label="Ouvrir dans un onglet"
+            aria-label={t('ariaOpenInTab')}
           >
             <OpenExt />
           </button>
@@ -257,14 +260,14 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
               key={reloadKey}
               className={styles.frame}
               src={current}
-              title={prettyUrl(current)}
+              title={address}
               sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-popups-to-escape-sandbox"
             />
             {!current.startsWith('/') &&
               !EMBEDDABLE.some((domain) => current.includes(domain)) && (
                 <div className={styles.blockedHint}>
-                  <span>Page blanche ? Le site bloque peut-être l’affichage intégré.</span>
-                  <button onClick={() => openExternal?.(current)}>Ouvrir</button>
+                  <span>{t('blockedHint')}</span>
+                  <button onClick={() => openExternal?.(current)}>{t('blockedOpen')}</button>
                 </div>
               )}
           </>
@@ -274,23 +277,44 @@ const Safari = ({ initialUrl, navRef, openExternal }) => {
   );
 };
 
-const StartPage = ({ onOpen }) => (
-  <div className={styles.startPage}>
-    <p className={styles.startTitle}>Favoris</p>
-    <div className={styles.favorites}>
-      {FAVORITES.map((fav) => (
-        <button key={fav.id} type="button" className={styles.favorite} onClick={() => onOpen(fav.url)}>
-          <span className={styles.favIcon} style={{ background: fav.bg }}>
-            {fav.icon}
-          </span>
-          <span className={styles.favLabel}>{fav.label}</span>
-        </button>
-      ))}
+const StartPage = ({ onOpen }) => {
+  const t = useTranslations('safari');
+  const { cv, fs } = useSiteData();
+
+  // Libellés/URL par identifiant de favori, fusionnés avec l'apparence figée.
+  const content = {
+    maxadev: { label: 'Maxadev', url: MAXADEV_URL },
+    linkedin: { label: 'LinkedIn', url: cv.profile.linkedin },
+    reims: { label: t('favReims'), url: REIMS_MAP },
+    cv: { label: t('favCv'), url: fs.FILES.cvPdf.path },
+  };
+
+  return (
+    <div className={styles.startPage}>
+      <p className={styles.startTitle}>{t('startFavorites')}</p>
+      <div className={styles.favorites}>
+        {FAVORITE_VISUALS.map((fav) => (
+          <button
+            key={fav.id}
+            type="button"
+            className={styles.favorite}
+            onClick={() => onOpen(content[fav.id].url)}
+          >
+            <span className={styles.favIcon} style={{ background: fav.bg }}>
+              {fav.icon}
+            </span>
+            <span className={styles.favLabel}>{content[fav.id].label}</span>
+          </button>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const LinkedInView = ({ openExternal }) => {
+  const t = useTranslations('safari');
+  const { cv } = useSiteData();
+  const { profile, skillsData } = cv;
   const experiences = skillsData.Experiences.slice(0, 3);
   const skills = [
     ...skillsData.Technologies.slice(0, 5).map((s) => s.Name),
@@ -310,15 +334,15 @@ const LinkedInView = ({ openExternal }) => {
         </p>
         <div className={styles.liActions}>
           <button className={styles.liPrimary} onClick={() => openExternal?.(profile.linkedin)}>
-            Voir sur LinkedIn ↗
+            {t('liViewProfile')}
           </button>
           <button className={styles.liSecondary} onClick={() => openExternal?.(`mailto:${profile.email}`)}>
-            Message
+            {t('liMessage')}
           </button>
         </div>
 
         <div className={styles.liSection}>
-          <h3 className={styles.liSectionTitle}>Expérience</h3>
+          <h3 className={styles.liSectionTitle}>{t('liExperience')}</h3>
           {experiences.map((exp) => (
             <div key={exp.Name} className={styles.liExp}>
               <span className={styles.liExpLogo}>{exp.Name.charAt(0)}</span>
@@ -331,7 +355,7 @@ const LinkedInView = ({ openExternal }) => {
         </div>
 
         <div className={styles.liSection}>
-          <h3 className={styles.liSectionTitle}>Compétences</h3>
+          <h3 className={styles.liSectionTitle}>{t('liSkills')}</h3>
           <div className={styles.liChips}>
             {skills.map((skill) => (
               <span key={skill} className={styles.liChip}>
@@ -352,6 +376,7 @@ const LinkedInView = ({ openExternal }) => {
  * s'affiche vraiment. Sans message dans le délai → le framing a échoué → repli.
  */
 const MaxadevFrame = ({ url, openExternal }) => {
+  const t = useTranslations('safari');
   const [status, setStatus] = useState('loading'); // loading | ready | failed
   const [retry, setRetry] = useState(0);
 
@@ -384,20 +409,18 @@ const MaxadevFrame = ({ url, openExternal }) => {
       {status === 'loading' && (
         <div className={styles.frameOverlay}>
           <span className={styles.spinner} />
-          <p>Chargement de maxadev.fr…</p>
+          <p>{t('frameLoading')}</p>
         </div>
       )}
 
       {status === 'failed' && (
         <div className={styles.frameFallback}>
           <span className={styles.siteMonogram}>M</span>
-          <p className={styles.fallbackTitle}>maxadev.fr ne s’affiche pas ici</p>
-          <p className={styles.fallbackText}>
-            Le site n’a pas confirmé son affichage intégré (framing bloqué ou site indisponible).
-          </p>
+          <p className={styles.fallbackTitle}>{t('frameFailedTitle')}</p>
+          <p className={styles.fallbackText}>{t('frameFailedText')}</p>
           <div className={styles.fallbackActions}>
             <button className={styles.fallbackPrimary} onClick={() => openExternal?.(MAXADEV_URL)}>
-              Ouvrir maxadev.fr ↗
+              {t('frameOpenExternal')}
             </button>
             <button
               className={styles.fallbackGhost}
@@ -406,7 +429,7 @@ const MaxadevFrame = ({ url, openExternal }) => {
                 setRetry((n) => n + 1);
               }}
             >
-              Réessayer
+              {t('frameRetry')}
             </button>
           </div>
         </div>

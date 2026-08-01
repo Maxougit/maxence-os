@@ -307,3 +307,12 @@
     font-size: 12px;
   }
 }
+
+/* Sélecteur de langue : même gabarit que les icônes de statut, en texte. */
+.localeSwitch {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: inherit;
+}

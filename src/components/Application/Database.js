@@ -1,24 +1,28 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import SkillsHologram from './SkillsHologram';
 import styles from './Database.module.css';
-import { skillsData } from '@/data/cv';
+import { useSiteData } from '@/data/SiteDataProvider';
 
-const TABS = ['Schema', ...Object.keys(skillsData)];
-
-const TAB_LABELS = {
-  Schema: 'Schema',
-  Programation: 'Langages',
-  Technologies: 'Technos',
-  Concepts: 'Concepts',
-  Experiences: 'Parcours',
+// Les clés de skillsData restent identiques d'une langue à l'autre : seules
+// les valeurs sont traduites, on peut donc y adosser les libellés d'onglets.
+const TAB_LABEL_KEYS = {
+  Schema: 'tabSchema',
+  Programation: 'tabLanguages',
+  Technologies: 'tabTechnologies',
+  Concepts: 'tabConcepts',
+  Experiences: 'tabExperiences',
 };
 
-const totalSkills = Object.values(skillsData).reduce((sum, arr) => sum + arr.length, 0);
-
 const Database = () => {
+  const t = useTranslations('db');
+  const { cv } = useSiteData();
+  const { skillsData } = cv;
   const [tab, setTab] = useState('Schema');
   const [hovered, setHovered] = useState(null);
+
+  const TABS = ['Schema', ...Object.keys(skillsData)];
 
   return (
     <div className={styles.console}>
@@ -41,14 +45,14 @@ const Database = () => {
             className={`${styles.tab} ${tab === name ? styles.active : ''}`}
             onClick={() => setTab(name)}
           >
-            {TAB_LABELS[name] || name}
+            {TAB_LABEL_KEYS[name] ? t(TAB_LABEL_KEYS[name]) : name}
           </button>
         ))}
       </div>
 
       <div className={styles.stage}>
         {tab === 'Schema' ? (
-          <SchemaView hovered={hovered} onHover={setHovered} />
+          <SchemaView skillsData={skillsData} hovered={hovered} onHover={setHovered} />
         ) : (
           <QueryConsole key={tab} category={tab} rows={skillsData[tab]} />
         )}
@@ -57,49 +61,54 @@ const Database = () => {
   );
 };
 
-const SchemaView = ({ hovered, onHover }) => (
-  <>
-    <div className={styles.canvasWrap}>
-      <SkillsHologram skillsData={skillsData} onHover={onHover} />
-    </div>
+const SchemaView = ({ skillsData, hovered, onHover }) => {
+  const t = useTranslations('db');
+  const totalSkills = Object.values(skillsData).reduce((sum, arr) => sum + arr.length, 0);
 
-    <span className={`${styles.corner} ${styles.cornerTL}`} />
-    <span className={`${styles.corner} ${styles.cornerTR}`} />
-    <span className={`${styles.corner} ${styles.cornerBL}`} />
-    <span className={`${styles.corner} ${styles.cornerBR}`} />
-    <span className={styles.reticle} />
+  return (
+    <>
+      <div className={styles.canvasWrap}>
+        <SkillsHologram skillsData={skillsData} onHover={onHover} />
+      </div>
 
-    <div className={styles.hudStats}>
-      <div>
-        NODES <b>{totalSkills}</b>
-      </div>
-      <div>
-        CLUSTERS <b>{Object.keys(skillsData).length}</b>
-      </div>
-      <div>
-        MODE <b>ORBIT</b>
-      </div>
-    </div>
+      <span className={`${styles.corner} ${styles.cornerTL}`} />
+      <span className={`${styles.corner} ${styles.cornerTR}`} />
+      <span className={`${styles.corner} ${styles.cornerBL}`} />
+      <span className={`${styles.corner} ${styles.cornerBR}`} />
+      <span className={styles.reticle} />
 
-    <div className={styles.readout}>
-      {hovered ? (
-        <>
-          <span className={styles.readoutCat}>
-            {hovered.type === 'category' ? 'CLUSTER' : hovered.category}
-          </span>
-          <div className={styles.readoutName}>{hovered.name}</div>
-          <div className={styles.readoutDetails}>
-            {hovered.type === 'category'
-              ? `${hovered.count} compétences indexées`
-              : hovered.details}
-          </div>
-        </>
-      ) : (
-        <div className={styles.readoutHint}>‹ survolez un nœud pour l’inspecter ›</div>
-      )}
-    </div>
-  </>
-);
+      <div className={styles.hudStats}>
+        <div>
+          NODES <b>{totalSkills}</b>
+        </div>
+        <div>
+          CLUSTERS <b>{Object.keys(skillsData).length}</b>
+        </div>
+        <div>
+          MODE <b>ORBIT</b>
+        </div>
+      </div>
+
+      <div className={styles.readout}>
+        {hovered ? (
+          <>
+            <span className={styles.readoutCat}>
+              {hovered.type === 'category' ? 'CLUSTER' : hovered.category}
+            </span>
+            <div className={styles.readoutName}>{hovered.name}</div>
+            <div className={styles.readoutDetails}>
+              {hovered.type === 'category'
+                ? t('readoutIndexedSkills', { count: hovered.count })
+                : hovered.details}
+            </div>
+          </>
+        ) : (
+          <div className={styles.readoutHint}>{t('readoutHint')}</div>
+        )}
+      </div>
+    </>
+  );
+};
 
 const QueryConsole = ({ category, rows }) => {
   const query = `SELECT name, details FROM ${category}\nWHERE owner = 'maxence' ORDER BY level DESC;`;

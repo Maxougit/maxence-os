@@ -1,71 +1,14 @@
 import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { hasLocale } from 'next-intl';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Desktop from '@/components/Desktop/Desktop';
-import {
-  profile,
-  skillsData,
-  education,
-  certifications,
-  languages,
-  publications,
-  projects,
-  SITE_URL,
-} from '@/data/cv';
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'ProfilePage',
-  mainEntity: {
-    '@type': 'Person',
-    name: profile.name,
-    jobTitle: profile.jobTitle,
-    description: profile.description,
-    email: `mailto:${profile.email}`,
-    image: `${SITE_URL}${profile.photo}`,
-    url: SITE_URL,
-    sameAs: [profile.linkedin, profile.website],
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: 'Reims',
-      addressCountry: 'FR',
-    },
-    alumniOf: {
-      '@type': 'CollegeOrUniversity',
-      name: 'CESI',
-    },
-    worksFor: [
-      { '@type': 'Organization', name: 'Maxadev', url: profile.website },
-      { '@type': 'Organization', name: 'ArcelorMittal Distribution Solutions' },
-    ],
-    knowsLanguage: languages.map((l) => l.name),
-    knowsAbout: [
-      ...skillsData.Programation.map((s) => s.Name),
-      ...skillsData.Technologies.map((s) => s.Name),
-    ],
-  },
-};
-
-// Les publications sont modélisées à part : en schema.org, c'est l'article qui
-// porte ses auteurs (CreativeWork.author), pas l'inverse.
-const publicationsJsonLd = publications.map((publication) => ({
-  '@context': 'https://schema.org',
-  '@type': 'ScholarlyArticle',
-  headline: publication.title,
-  name: publication.title,
-  inLanguage: 'en',
-  datePublished: publication.date,
-  abstract: publication.abstract,
-  keywords: publication.keywords,
-  url: publication.url,
-  sameAs: publication.url,
-  author: publication.authors.map((name) => ({ '@type': 'Person', name })),
-  publisher: { '@type': 'Organization', name: 'HAL — Archives ouvertes' },
-  isPartOf: {
-    '@type': 'PublicationEvent',
-    name: publication.venueLong,
-    startDate: publication.date,
-    location: { '@type': 'Place', name: publication.location },
-  },
-}));
+import { SiteDataProvider } from '@/data/SiteDataProvider';
+import { buildFileSystem } from '@/data/filesystem';
+import { routing } from '@/i18n/routing';
+import { localeTag } from '@/i18n/config';
+import { SITE_URL } from '@/data/cv';
+import { getCvData } from '@/data/getCv';
 
 // Résumé d'un projet pour la version texte : le premier paragraphe de sa fiche
 // Markdown (après le titre), nettoyé de la syntaxe Markdown résiduelle.
@@ -84,18 +27,95 @@ const projectSummary = (project) => {
   return paragraph.join(' ').replace(/\*\*/g, '').replace(/[_`]/g, '');
 };
 
-// Projets phares (étoile dans le Finder) en tête, ordre stable pour le reste.
-const orderedProjects = [...projects].sort(
-  (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
-);
+export default async function Home({ params }) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) notFound();
+  setRequestLocale(locale);
 
-const skillSections = [
-  { id: 'langages', title: 'Langages de programmation', items: skillsData.Programation },
-  { id: 'technologies', title: 'Technologies & outils', items: skillsData.Technologies },
-  { id: 'concepts', title: 'Concepts', items: skillsData.Concepts },
-];
+  const t = await getTranslations({ locale, namespace: 'cvPage' });
+  const cv = getCvData(locale);
+  const {
+    profile,
+    skillsData,
+    education,
+    certifications,
+    languages,
+    publications,
+    projects,
+  } = cv;
 
-export default function Home() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    inLanguage: localeTag(locale),
+    mainEntity: {
+      '@type': 'Person',
+      name: profile.name,
+      jobTitle: profile.jobTitle,
+      description: profile.description,
+      email: `mailto:${profile.email}`,
+      image: `${SITE_URL}${profile.photo}`,
+      url: SITE_URL,
+      sameAs: [profile.linkedin, profile.website],
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Reims',
+        addressCountry: 'FR',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'CESI',
+      },
+      worksFor: [
+        { '@type': 'Organization', name: 'Maxadev', url: profile.website },
+        { '@type': 'Organization', name: 'ArcelorMittal Distribution Solutions' },
+      ],
+      knowsLanguage: languages.map((l) => l.name),
+      knowsAbout: [
+        ...skillsData.Programation.map((s) => s.Name),
+        ...skillsData.Technologies.map((s) => s.Name),
+      ],
+    },
+  };
+
+  // Les publications sont modélisées à part : en schema.org, c'est l'article
+  // qui porte ses auteurs (CreativeWork.author), pas l'inverse.
+  const publicationsJsonLd = publications.map((publication) => ({
+    '@context': 'https://schema.org',
+    '@type': 'ScholarlyArticle',
+    headline: publication.title,
+    name: publication.title,
+    inLanguage: 'en',
+    datePublished: publication.date,
+    abstract: publication.abstract,
+    keywords: publication.keywords,
+    url: publication.url,
+    sameAs: publication.url,
+    author: publication.authors.map((name) => ({ '@type': 'Person', name })),
+    publisher: { '@type': 'Organization', name: 'HAL — Archives ouvertes' },
+    isPartOf: {
+      '@type': 'PublicationEvent',
+      name: publication.venueLong,
+      startDate: publication.date,
+      location: { '@type': 'Place', name: publication.location },
+    },
+  }));
+
+  // Le CV PDF existe dans les deux langues : on prend celui de l'arborescence.
+  const { FILES } = buildFileSystem(cv, locale);
+  const cvPdfPath = FILES.cvPdf.path;
+
+  // Projets phares (étoile dans le Finder) en tête, ordre stable pour le reste.
+  const orderedProjects = [...projects].sort(
+    (a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured))
+  );
+
+  const skillSections = [
+    { id: 'langages', title: t('skillsLanguages'), items: skillsData.Programation },
+    { id: 'technologies', title: t('skillsTechnologies'), items: skillsData.Technologies },
+    { id: 'concepts', title: t('skillsConcepts'), items: skillsData.Concepts },
+  ];
+
   return (
     <>
       <script
@@ -109,13 +129,15 @@ export default function Home() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(article) }}
         />
       ))}
-      <Desktop />
+      <SiteDataProvider locale={locale} cv={cv}>
+        <Desktop />
+      </SiteDataProvider>
       <section id="cv" className="select-text bg-neutral-950 text-neutral-100">
         <div className="mx-auto max-w-3xl px-6 py-16">
           <header className="flex flex-col items-center gap-6 text-center sm:flex-row sm:text-left">
             <Image
               src={profile.photo}
-              alt={`Photo de ${profile.name}`}
+              alt={t('photoAlt', { name: profile.name })}
               width={112}
               height={112}
               className="rounded-full object-cover"
@@ -132,7 +154,7 @@ export default function Home() {
           </header>
 
           <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
-            Expériences professionnelles
+            {t('experiences')}
           </h2>
           <ul className="mt-6 space-y-6">
             {skillsData.Experiences.map((exp) => (
@@ -148,7 +170,7 @@ export default function Home() {
           </ul>
 
           <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
-            Formation
+            {t('education')}
           </h2>
           <ul className="mt-6 space-y-4">
             {education.map((diploma) => (
@@ -162,7 +184,7 @@ export default function Home() {
           </ul>
 
           <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
-            Publications scientifiques
+            {t('publications')}
           </h2>
           <ul className="mt-6 space-y-6">
             {publications.map((publication) => (
@@ -192,13 +214,13 @@ export default function Home() {
                   {publication.abstract}
                 </p>
                 <p className="mt-2 text-sm text-neutral-400">
-                  Contribution : {publication.contribution} —{' '}
+                  {t('contribution')} {publication.contribution} —{' '}
                   <a
                     href={publication.repository}
                     rel="noopener"
                     className="text-blue-400 hover:underline"
                   >
-                    dépôt GitHub
+                    {t('githubRepo')}
                   </a>
                 </p>
                 <p className="mt-1 text-sm text-neutral-500">
@@ -209,7 +231,7 @@ export default function Home() {
           </ul>
 
           <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
-            Projets
+            {t('projects')}
           </h2>
           <ul className="mt-6 space-y-5">
             {orderedProjects.map((project) => (
@@ -226,7 +248,7 @@ export default function Home() {
                         rel="noopener"
                         className="text-blue-400 hover:underline"
                       >
-                        Code source
+                        {t('sourceCode')}
                       </a>
                     )}
                     {project.repository && project.website && (
@@ -238,7 +260,7 @@ export default function Home() {
                         rel="noopener"
                         className="text-blue-400 hover:underline"
                       >
-                        Site en ligne
+                        {t('liveSite')}
                       </a>
                     )}
                   </p>
@@ -264,11 +286,11 @@ export default function Home() {
           ))}
 
           <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
-            Certifications & langues
+            {t('certificationsAndLanguages')}
           </h2>
           <ul className="mt-6 space-y-2 text-sm">
             {certifications.map((certification) => (
-              <li key={certification}>Certification : {certification}</li>
+              <li key={certification}>{t('certification', { name: certification })}</li>
             ))}
             {languages.map((language) => (
               <li key={language.name}>
@@ -278,17 +300,17 @@ export default function Home() {
           </ul>
 
           <h2 className="mt-14 border-b border-neutral-700 pb-2 text-2xl font-semibold">
-            Contact
+            {t('contact')}
           </h2>
           <ul className="mt-6 space-y-2 text-sm">
             <li>
-              Email :{' '}
+              {t('emailLabel')}{' '}
               <a href={`mailto:${profile.email}`} className="text-blue-400 hover:underline">
                 {profile.email}
               </a>
             </li>
             <li>
-              LinkedIn :{' '}
+              {t('linkedinLabel')}{' '}
               <a
                 href={profile.linkedin}
                 rel="me noopener"
@@ -298,18 +320,18 @@ export default function Home() {
               </a>
             </li>
             <li>
-              Freelance :{' '}
+              {t('freelanceLabel')}{' '}
               <a href={profile.website} rel="me noopener" className="text-blue-400 hover:underline">
                 maxadev.fr
               </a>
             </li>
             <li>
-              CV PDF :{' '}
+              {t('cvPdfLabel')}{' '}
               <a
-                href="/files/CV-Leroux-Maxence-FR.pdf"
+                href={cvPdfPath}
                 className="text-blue-400 hover:underline"
               >
-                télécharger le CV (PDF)
+                {t('downloadCv')}
               </a>
             </li>
           </ul>

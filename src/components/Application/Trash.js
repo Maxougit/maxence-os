@@ -1,12 +1,15 @@
 'use client';
 import React, { useState } from 'react';
-import { TRASH_FILES } from '@/data/filesystem';
+import { useTranslations } from 'next-intl';
+import { useSiteData } from '@/data/SiteDataProvider';
 import { FileIcon } from '@/components/Icons/AppIcons';
 
 /**
  * La Corbeille — easter egg. On peut la vider, évidemment.
  */
 const Trash = () => {
+  const t = useTranslations('trash');
+  const { fs } = useSiteData();
   const [emptied, setEmptied] = useState(false);
 
   return (
@@ -21,12 +24,12 @@ const Trash = () => {
               marginTop: '60px',
             }}
           >
-            La corbeille est vide.
+            {t('emptyState')}
             <br />
-            Comme mon backlog un vendredi soir.
+            {t('emptyJoke')}
           </p>
         ) : (
-          TRASH_FILES.map((file) => (
+          fs.TRASH_FILES.map((file) => (
             <div
               key={file.id}
               style={{
@@ -60,7 +63,7 @@ const Trash = () => {
           color: 'var(--mac-text-secondary)',
         }}
       >
-        <span>{emptied ? '0 élément' : `${TRASH_FILES.length} éléments`}</span>
+        <span>{t('count', { n: emptied ? 0 : fs.TRASH_FILES.length })}</span>
         {!emptied && (
           <button
             type="button"
@@ -76,7 +79,7 @@ const Trash = () => {
               cursor: 'default',
             }}
           >
-            Vider la corbeille
+            {t('emptyButton')}
           </button>
         )}
       </div>

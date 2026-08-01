@@ -1,5 +1,6 @@
 'use client';
 import React, { useRef, useCallback, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Dock.module.css';
 
 // Magnification façon macOS. Réglages : amplitude, rayon d'influence,
@@ -14,6 +15,7 @@ const LIFT = 3; // px : le scale depuis la base assure déjà l'essentiel de la 
  * wobble), les icônes débordent au-dessus de la barre, tooltips + indicateurs.
  */
 const Dock = ({ items, bouncingId }) => {
+  const t = useTranslations('dock');
   const dockRef = useRef(null);
   const itemRefs = useRef(new Map());
   const baseCenters = useRef(null);
@@ -92,7 +94,7 @@ const Dock = ({ items, bouncingId }) => {
         ref={dockRef}
         className={styles.dock}
         role="toolbar"
-        aria-label="Dock"
+        aria-label={t('aria')}
         onMouseEnter={handleMouseEnter}
         onMouseMove={handleMouseMove}
         onMouseLeave={resetMagnification}

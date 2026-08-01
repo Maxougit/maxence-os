@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { mdiKubernetes } from '@mdi/js';
 import {
   TICK_MS,
@@ -35,6 +36,7 @@ const KubernetesIcon = ({ className }) => (
 );
 
 const ServerRescue = () => {
+  const t = useTranslations('rescue');
   const [game, setGame] = useState(() => initialGame());
   const [best, setBest] = useState(() =>
     typeof window === 'undefined'
@@ -96,17 +98,14 @@ const ServerRescue = () => {
       {game.phase === 'idle' && (
         <div className="flex flex-col items-center justify-center flex-grow text-center gap-4 py-8">
           <KubernetesIcon className="h-16 w-16 text-blue-400" />
-          <p className="font-bold text-lg">🚨 Le cluster de prod part en vrille !</p>
+          <p className="font-bold text-lg">{t('idleTitle')}</p>
           <p className="text-sm text-gray-400 max-w-md">
-            Des pods crashent de plus en plus vite. Clique sur les pods en{' '}
-            <span className="text-red-400">CrashLoopBackOff</span>{' '}
-            pour les redémarrer avant que la santé du cluster n&apos;atteigne
-            0%.
+            {t('idleDescBefore')}
+            <span className="text-red-400">CrashLoopBackOff</span>
+            {t('idleDescAfter')}
           </p>
           {best > 0 && (
-            <p className="text-sm text-gray-400">
-              Record : {best} pods redémarrés
-            </p>
+            <p className="text-sm text-gray-400">{t('best', { n: best })}</p>
           )}
           <button
             className="btn btn-success font-mono"
@@ -121,17 +120,16 @@ const ServerRescue = () => {
         <div className="flex flex-col items-center justify-center flex-grow text-center gap-4 py-8">
           <p className="font-bold text-2xl text-red-500">☠️ CLUSTER DOWN</p>
           <p className="text-sm text-gray-400">
-            L&apos;astreinte va sonner... Uptime : {formatUptime(game.ticks)} —{' '}
-            {game.fixed} pods redémarrés
+            {t('gameoverText', { uptime: formatUptime(game.ticks), n: game.fixed })}
           </p>
           <p className="text-sm text-gray-400">
-            Record : {Math.max(best, game.fixed)} pods redémarrés
+            {t('best', { n: Math.max(best, game.fixed) })}
           </p>
           <button
             className="btn btn-success font-mono"
             onClick={startGame}
           >
-            ↻ Rollback & réessayer
+            {t('retry')}
           </button>
         </div>
       )}
@@ -141,7 +139,7 @@ const ServerRescue = () => {
           <div className="flex items-center gap-4 mb-3 text-sm">
             <div className="flex-grow">
               <div className="flex justify-between text-xs mb-1">
-                <span>Santé du cluster</span>
+                <span>{t('health')}</span>
                 <span>{Math.ceil(game.health)}%</span>
               </div>
               <div className="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
@@ -153,7 +151,7 @@ const ServerRescue = () => {
             </div>
             <div className="text-right text-xs whitespace-nowrap">
               <p>⏱ {formatUptime(game.ticks)}</p>
-              <p>🔧 {game.fixed} pods</p>
+              <p>{t('podsFixed', { n: game.fixed })}</p>
             </div>
           </div>
 

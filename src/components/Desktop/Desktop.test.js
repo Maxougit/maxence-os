@@ -1,13 +1,25 @@
 import React from 'react';
 import { act, createEvent, fireEvent, render, screen, within } from '@testing-library/react';
+import { NextIntlClientProvider } from 'next-intl';
 import Desktop from './Desktop';
+import { SiteDataProvider } from '@/data/SiteDataProvider';
+import { getCvData } from '@/data/getCv';
+import messages from '../../../messages/fr.json';
 
 jest.mock('../Application/SkillsHologram', () => function MockSkillsHologram() {
   return <div data-testid="skills-hologram" />;
 });
 
+// Le bureau vit sous les providers i18n et données : on reproduit le même
+// enveloppement que la page pour tester dans les conditions réelles (ici en FR).
 const unlockDesktop = () => {
-  render(<Desktop />);
+  render(
+    <NextIntlClientProvider locale="fr" messages={messages}>
+      <SiteDataProvider locale="fr" cv={getCvData('fr')}>
+        <Desktop />
+      </SiteDataProvider>
+    </NextIntlClientProvider>
+  );
   fireEvent.click(screen.getByRole('button', { name: 'Déverrouiller Maxence OS' }));
   act(() => jest.advanceTimersByTime(560));
 };

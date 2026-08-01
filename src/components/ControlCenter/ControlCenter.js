@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './ControlCenter.module.css';
 
 const WifiSvg = () => (
@@ -40,6 +41,7 @@ const SunSvg = () => (
  * sont réellement fonctionnels ; le reste est décoratif mais interactif.
  */
 const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange }) => {
+  const t = useTranslations('cc');
   const [wifi, setWifi] = useState(true);
   const [bluetooth, setBluetooth] = useState(true);
   const [airdrop, setAirdrop] = useState(false);
@@ -50,7 +52,7 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
     {
       id: 'wifi',
       name: 'Wi-Fi',
-      state: wifi ? 'Maxadev_5G' : 'Désactivé',
+      state: wifi ? 'Maxadev_5G' : t('stateOff'),
       active: wifi,
       icon: <WifiSvg />,
       toggle: () => setWifi(!wifi),
@@ -58,7 +60,7 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
     {
       id: 'bluetooth',
       name: 'Bluetooth',
-      state: bluetooth ? 'Activé' : 'Désactivé',
+      state: bluetooth ? t('stateOn') : t('stateOff'),
       active: bluetooth,
       icon: <BluetoothSvg />,
       toggle: () => setBluetooth(!bluetooth),
@@ -66,15 +68,15 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
     {
       id: 'airdrop',
       name: 'AirDrop',
-      state: airdrop ? 'Contacts uniquement' : 'Réception désactivée',
+      state: airdrop ? t('airdropContactsOnly') : t('airdropReceivingOff'),
       active: airdrop,
       icon: <AirdropSvg />,
       toggle: () => setAirdrop(!airdrop),
     },
     {
       id: 'focus',
-      name: 'Concentration',
-      state: focus ? 'Ne pas déranger' : 'Désactivé',
+      name: t('focusName'),
+      state: focus ? t('focusDnd') : t('stateOff'),
       active: focus,
       icon: <MoonSvg />,
       toggle: () => setFocus(!focus),
@@ -82,7 +84,7 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
   ];
 
   return (
-    <div className={styles.panel} role="dialog" aria-label="Centre de contrôle">
+    <div className={styles.panel} role="dialog" aria-label={t('ariaPanel')}>
       <div className={styles.card}>
         <div className={styles.togglesGrid}>
           {toggles.map((item) => (
@@ -101,7 +103,7 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
       </div>
 
       <div className={styles.card}>
-        <p className={styles.cardTitle}>Apparence</p>
+        <p className={styles.cardTitle}>{t('appearanceTitle')}</p>
         <div className={styles.appearanceRow}>
           <button
             type="button"
@@ -109,7 +111,7 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
             onClick={() => onThemeChange('light')}
           >
             <SunSvg />
-            Clair
+            {t('appearanceLight')}
           </button>
           <button
             type="button"
@@ -117,13 +119,13 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
             onClick={() => onThemeChange('dark')}
           >
             <MoonSvg />
-            Sombre
+            {t('appearanceDark')}
           </button>
         </div>
       </div>
 
       <div className={styles.card}>
-        <p className={styles.cardTitle}>Luminosité</p>
+        <p className={styles.cardTitle}>{t('brightnessTitle')}</p>
         <div className={styles.sliderRow}>
           <input
             type="range"
@@ -132,13 +134,13 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
             max="100"
             value={brightness}
             onChange={(e) => onBrightnessChange(Number(e.target.value))}
-            aria-label="Luminosité"
+            aria-label={t('ariaBrightness')}
           />
         </div>
       </div>
 
       <div className={styles.card}>
-        <p className={styles.cardTitle}>Son</p>
+        <p className={styles.cardTitle}>{t('soundTitle')}</p>
         <div className={styles.sliderRow}>
           <input
             type="range"
@@ -147,16 +149,16 @@ const ControlCenter = ({ theme, onThemeChange, brightness, onBrightnessChange })
             max="100"
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
-            aria-label="Volume"
+            aria-label={t('ariaVolume')}
           />
         </div>
       </div>
 
       <div className={`${styles.card} ${styles.batteryRow}`}>
         <span>
-          Batterie <span className={styles.batteryDetail}>87 %</span>
+          {t('batteryLabel')} <span className={styles.batteryDetail}>{t('batteryLevel')}</span>
         </span>
-        <span className={styles.batteryDetail}>Alimenté par le café ☕</span>
+        <span className={styles.batteryDetail}>{t('batteryCaption')}</span>
       </div>
     </div>
   );

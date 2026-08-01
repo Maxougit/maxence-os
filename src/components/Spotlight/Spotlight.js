@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import styles from './Spotlight.module.css';
 
 const normalize = (text) =>
@@ -13,6 +14,7 @@ const normalize = (text) =>
  * Navigation clavier : ↑↓ pour choisir, ⏎ pour ouvrir, Échap pour fermer.
  */
 const Spotlight = ({ sources, onClose }) => {
+  const t = useTranslations('spotlight');
   const [query, setQuery] = useState('');
   // La sélection mémorise la requête associée : nouvelle requête → index 0,
   // sans effet de synchronisation.
@@ -88,7 +90,7 @@ const Spotlight = ({ sources, onClose }) => {
       <div
         className={styles.spotlight}
         role="dialog"
-        aria-label="Recherche Spotlight"
+        aria-label={t('ariaDialog')}
         onPointerDown={(e) => e.stopPropagation()}
       >
         <div className={styles.searchRow}>
@@ -99,7 +101,7 @@ const Spotlight = ({ sources, onClose }) => {
           <input
             ref={inputRef}
             className={styles.input}
-            placeholder="Recherche Spotlight"
+            placeholder={t('placeholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -141,13 +143,13 @@ const Spotlight = ({ sources, onClose }) => {
             ))}
           </div>
         ) : (
-          <div className={styles.empty}>Aucun résultat pour « {query} »</div>
+          <div className={styles.empty}>{t('empty', { query })}</div>
         )}
 
         <div className={styles.footer}>
-          <span>↑↓ naviguer</span>
-          <span>⏎ ouvrir</span>
-          <span>esc fermer</span>
+          <span>{t('footerNavigate')}</span>
+          <span>{t('footerOpen')}</span>
+          <span>{t('footerClose')}</span>
         </div>
       </div>
     </div>

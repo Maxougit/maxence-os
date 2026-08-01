@@ -1,6 +1,10 @@
 'use client';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
+import Link from 'next/link';
 import styles from './MenuBar.module.css';
+import { useSiteData } from '@/data/SiteDataProvider';
+import { localeTag, localeHref } from '@/i18n/config';
 import useNow from '@/utils/useNow';
 
 const AppleLogo = () => (
@@ -42,22 +46,27 @@ const BatteryGlyph = ({ level = 0.87 }) => (
   </svg>
 );
 
-const formatClock = (date) => {
+const formatClock = (date, tag) => {
   const day = date
-    .toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+    .toLocaleDateString(tag, { weekday: 'short', day: 'numeric', month: 'short' })
     .replace('.', '');
-  const time = date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const time = date.toLocaleTimeString(tag, { hour: '2-digit', minute: '2-digit' });
   return `${day}  ${time.replace(':', ':')}`;
 };
 
-const formatMobileClock = (date) =>
-  date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+const formatMobileClock = (date, tag) =>
+  date.toLocaleTimeString(tag, { hour: '2-digit', minute: '2-digit' });
 
 /**
  * Barre de menus macOS : menu Apple + menus de l'app active (data-driven),
  * zone de statut (Wi-Fi, batterie, Spotlight, Control Center, horloge).
  */
 const MenuBar = ({ menus, onOpenSpotlight, onToggleControlCenter, controlCenterOpen }) => {
+  const t = useTranslations('menu');
+  const tCommon = useTranslations('common');
+  const { locale } = useSiteData();
+  const tag = localeTag(locale);
+  const otherLocale = locale === 'fr' ? 'en' : 'fr';
   const [openMenu, setOpenMenu] = useState(null);
   const now = useNow(10000);
   const barRef = useRef(null);
@@ -113,7 +122,7 @@ const MenuBar = ({ menus, onOpenSpotlight, onToggleControlCenter, controlCenterO
   );
 
   return (
-    <nav className={styles.menuBar} ref={barRef} aria-label="Barre de menus">
+    <nav className={styles.menuBar} ref={barRef} aria-label={t('ariaMenuBar')}>
       <div className={styles.left}>
         {menus.map((menu, index) => {
           const isApple = menu.id === 'apple';
@@ -142,18 +151,30 @@ const MenuBar = ({ menus, onOpenSpotlight, onToggleControlCenter, controlCenterO
       </div>
 
       <div className={styles.right}>
-        <div className={`${styles.statusButton} ${styles.hideOnMobile}`} title="Wi-Fi : Maxadev_5G">
+        {/* Sélecteur de langue, à la place de l'indicateur de saisie macOS :
+            un lien (et non un bouton) pour rester crawlable et ouvrable en
+            nouvel onglet. */}
+        <Link
+          href={localeHref(otherLocale)}
+          className={`${styles.statusButton} ${styles.localeSwitch}`}
+          aria-label={tCommon('switchLocale')}
+          title={tCommon('switchLocale')}
+          hrefLang={otherLocale}
+        >
+          {tCommon('switchLocaleShort')}
+        </Link>
+        <div className={`${styles.statusButton} ${styles.hideOnMobile}`} title={t('status.wifiTitle')}>
           <WifiGlyph />
         </div>
-        <div className={`${styles.battery} ${styles.statusButton} ${styles.hideOnMobile}`} title="Batterie : 87 %">
-          <span>87 %</span>
+        <div className={`${styles.battery} ${styles.statusButton} ${styles.hideOnMobile}`} title={t('status.batteryTitle')}>
+          <span>{t('status.batteryLevel')}</span>
           <BatteryGlyph level={0.87} />
         </div>
         <button
           type="button"
           className={styles.statusButton}
-          aria-label="Spotlight (⌘K)"
-          title="Spotlight (⌘K)"
+          aria-label={t('status.spotlight')}
+          title={t('status.spotlight')}
           onClick={() => {
             closeMenus();
             onOpenSpotlight();
@@ -164,8 +185,8 @@ const MenuBar = ({ menus, onOpenSpotlight, onToggleControlCenter, controlCenterO
         <button
           type="button"
           className={`${styles.statusButton} ${controlCenterOpen ? styles.open : ''}`}
-          aria-label="Centre de contrôle"
-          title="Centre de contrôle"
+          aria-label={t('status.controlCenter')}
+          title={t('status.controlCenter')}
           onClick={() => {
             closeMenus();
             onToggleControlCenter();
@@ -174,10 +195,10 @@ const MenuBar = ({ menus, onOpenSpotlight, onToggleControlCenter, controlCenterO
           <ControlCenterGlyph />
         </button>
         <span className={`${styles.clock} ${styles.desktopClock}`} suppressHydrationWarning>
-          {now ? formatClock(now) : ''}
+          {now ? formatClock(now, tag) : ''}
         </span>
         <span className={`${styles.clock} ${styles.mobileClock}`} suppressHydrationWarning>
-          {now ? formatMobileClock(now) : ''}
+          {now ? formatMobileClock(now, tag) : ''}
         </span>
       </div>
     </nav>

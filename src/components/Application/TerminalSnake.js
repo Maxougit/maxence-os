@@ -1,5 +1,6 @@
-'use strict';
+'use client';
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { isMobileDevice } from '@/utils/device';
 
 const COLS = 24;
@@ -157,6 +158,7 @@ class TerminalSnake extends React.Component {
   };
 
   render() {
+    const { t } = this.props;
     const { score, gameOver, showTouchControls } = this.state;
     const touchButtonStyle = {
       background: 'transparent',
@@ -169,11 +171,9 @@ class TerminalSnake extends React.Component {
 
     return (
       <div>
-        <p>{gameOver ? `GAME OVER — score : ${score}` : `SNAKE — score : ${score}`}</p>
+        <p>{gameOver ? t('hudGameOver', { score }) : t('hudPlaying', { score })}</p>
         <pre style={{ lineHeight: 1.05, margin: 0 }}>{this.renderGrid()}</pre>
-        <p style={{ opacity: 0.7 }}>
-          Flèches ou ZQSD pour se déplacer — Échap pour quitter
-        </p>
+        <p style={{ opacity: 0.7 }}>{t('hint')}</p>
         {showTouchControls && (
           <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
             <button
@@ -213,4 +213,10 @@ class TerminalSnake extends React.Component {
   }
 }
 
-export default TerminalSnake;
+// Wrapper hooks : la classe reçoit ses traductions en props.
+const TerminalSnakeApp = (props) => {
+  const t = useTranslations('snake');
+  return <TerminalSnake {...props} t={t} />;
+};
+
+export default TerminalSnakeApp;

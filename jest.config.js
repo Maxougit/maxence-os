@@ -11,4 +11,13 @@ const customJestConfig = {
   modulePathIgnorePatterns: ['<rootDir>/.next/'],
 };
 
-module.exports = createJestConfig(customJestConfig);
+// next/jest impose ses propres `transformIgnorePatterns` : on les réécrit après
+// coup pour laisser passer next-intl et ses dépendances, distribués en ESM.
+module.exports = async () => {
+  const config = await createJestConfig(customJestConfig)();
+  config.transformIgnorePatterns = [
+    '/node_modules/(?!(next-intl|use-intl|@formatjs|intl-messageformat)/)',
+    '^.+\\.module\\.(css|sass|scss)$',
+  ];
+  return config;
+};
