@@ -4,8 +4,9 @@ import { routing } from './i18n/routing';
 export default createMiddleware(routing);
 
 export const config = {
-  // Uniquement la racine et les chemins localisés : les assets (/files,
-  // /images, /videos, /_next…), sitemap, robots et la redirection /offres
-  // ne passent pas par le middleware.
-  matcher: ['/', '/(fr|en)/:path*'],
+  // Tout sauf les routes internes, l'API et les fichiers (tout ce qui contient
+  // un point : /files/*.pdf, /images/*.svg, sitemap.xml, robots.txt…).
+  // NB : un matcher listant « / » explicitement provoquait une boucle de
+  // redirection sur la racine en build standalone.
+  matcher: '/((?!api|_next|_vercel|.*\\..*).*)',
 };

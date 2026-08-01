@@ -9,8 +9,8 @@ export const LOCALE_LABELS = {
   en: 'English',
 };
 
-// Chemin racine d'une langue (la langue par défaut n'a pas de préfixe).
-export const localeHref = (locale) => (locale === DEFAULT_LOCALE ? '/' : `/${locale}`);
+// Chemin racine d'une langue (chaque langue a son préfixe).
+export const localeHref = (locale) => `/${locale}`;
 
 // Code BCP 47 utilisé pour les formats de date/heure.
 export const localeTag = (locale) => (locale === 'fr' ? 'fr-FR' : 'en-US');

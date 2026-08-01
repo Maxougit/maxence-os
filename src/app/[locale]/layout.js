@@ -35,9 +35,9 @@ export async function generateMetadata({ params }) {
     alternates: {
       canonical: localeHref(locale),
       languages: {
-        fr: '/',
+        fr: '/fr',
         en: '/en',
-        'x-default': '/',
+        'x-default': '/fr',
       },
     },
     keywords: [

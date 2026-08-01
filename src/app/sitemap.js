@@ -3,12 +3,12 @@ import { SITE_URL } from '@/data/cv'
 export default function sitemap() {
   const lastModified = new Date()
   const languages = {
-    fr: SITE_URL,
+    fr: `${SITE_URL}/fr`,
     en: `${SITE_URL}/en`,
   }
   return [
     {
-      url: SITE_URL,
+      url: `${SITE_URL}/fr`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 1,
