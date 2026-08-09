@@ -13,7 +13,7 @@ const FS_STRINGS = {
     folderPublications: 'Publications',
     cvPdfName: 'CV Leroux Maxence.pdf',
     cvPdfPath: '/files/CV-Leroux-Maxence-FR.pdf',
-    cvPdfSize: '274 Ko',
+    cvPdfKb: 274,
     todoName: 'Todo.txt',
     todoPath: '/files/Todo.txt',
     aboutName: 'À propos de moi.txt',
@@ -48,7 +48,7 @@ const FS_STRINGS = {
     folderPublications: 'Publications',
     cvPdfName: 'CV Maxence Leroux.pdf',
     cvPdfPath: '/files/CV-Maxence-Leroux-EN.pdf',
-    cvPdfSize: '272 KB',
+    cvPdfKb: 272,
     todoName: 'Todo.txt',
     todoPath: '/files/Todo.en.txt',
     aboutName: 'About me.txt',
@@ -74,6 +74,17 @@ const FS_STRINGS = {
     pubReadOnHal: 'Read the paper on HAL ↗',
     trashPasswords: 'passwords.txt (empty, promise)',
   },
+};
+
+// Tailles de fichiers : la valeur est la même dans les deux langues, seuls
+// l'unité et le séparateur décimal changent (274 Ko / 274 KB, 14,8 Mo /
+// 14.8 MB).
+const sizeFormatter = (locale) => {
+  const units = locale === 'en' ? { k: 'KB', m: 'MB' } : { k: 'Ko', m: 'Mo' };
+  return (value, unit = 'k') => {
+    const number = locale === 'en' ? String(value) : String(value).replace('.', ',');
+    return `${number} ${units[unit]}`;
+  };
 };
 
 // Ajoute une section « Liens » homogène aux fiches projet qui en déclarent.
@@ -120,6 +131,7 @@ ${publication.keywords.join(' · ')}
 export const buildFileSystem = (cv, locale = 'fr') => {
   const s = FS_STRINGS[locale] || FS_STRINGS.fr;
   const tag = localeTag(locale);
+  const size = sizeFormatter(locale);
   const { projects, publications, aboutText } = cv;
 
   const FILES = {
@@ -129,7 +141,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
       extension: 'pdf',
       name: s.cvPdfName,
       path: s.cvPdfPath,
-      size: s.cvPdfSize,
+      size: size(s.cvPdfKb),
     },
     portrait: {
       id: 104,
@@ -137,7 +149,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
       extension: 'jpg',
       name: 'portrait.jpg',
       path: '/images/portrait.jpg',
-      size: '112 Ko',
+      size: size(112),
     },
     todo: {
       id: 103,
@@ -145,7 +157,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
       extension: 'txt',
       name: s.todoName,
       path: s.todoPath,
-      size: '1 Ko',
+      size: size(1),
     },
     about: {
       id: 105,
@@ -153,7 +165,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
       extension: 'txt',
       name: s.aboutName,
       content: aboutText,
-      size: '2 Ko',
+      size: size(2),
     },
     posterPa1llama: {
       id: 107,
@@ -163,7 +175,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
       title: s.posterTitle,
       description: s.posterDescription,
       path: '/files/poster-pa1llama.pdf',
-      size: '898 Ko',
+      size: size(898),
     },
     chatbotCommercialVideo: {
       id: 106,
@@ -174,7 +186,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
       title: s.videoTitle,
       description: s.videoDescription,
       path: '/videos/maxadev-promo.mp4',
-      size: '14,8 Mo',
+      size: size(14.8, 'm'),
     },
     ...Object.fromEntries(
       projects.map((project, index) => [
@@ -186,7 +198,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
           featured: Boolean(project.featured),
           name: project.name,
           content: withProjectLinks(project, s),
-          size: '3 Ko',
+          size: size(3),
         },
       ])
     ),
@@ -202,7 +214,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
             extension: 'md',
             name: `${publication.venue} — ${s.referenceSuffix}.md`,
             content: publicationMarkdown(publication, s, tag),
-            size: '4 Ko',
+            size: size(4),
           },
         ],
         [
@@ -213,7 +225,7 @@ export const buildFileSystem = (cv, locale = 'fr') => {
             extension: 'md',
             name: `${publication.title.split(':')[0].trim()} — ${s.fullTextSuffix}.md`,
             path: publication.fullTextPath,
-            size: '26 Ko',
+            size: size(26),
           },
         ],
       ])
@@ -255,14 +267,14 @@ export const buildFileSystem = (cv, locale = 'fr') => {
   const DESKTOP_FILES = [FILES.cvPdf, FILES.about];
 
   const TRASH_FILES = [
-    { id: 901, type: 'file', extension: 'zip', name: 'php4_legacy.zip', size: '666 Ko' },
-    { id: 902, type: 'file', extension: 'css', name: 'ie11_support.css', size: '13 Ko' },
+    { id: 901, type: 'file', extension: 'zip', name: 'php4_legacy.zip', size: size(666) },
+    { id: 902, type: 'file', extension: 'css', name: 'ie11_support.css', size: size(13) },
     {
       id: 903,
       type: 'file',
       extension: 'txt',
       name: s.trashPasswords,
-      size: '0 Ko',
+      size: size(0),
     },
   ];
 
