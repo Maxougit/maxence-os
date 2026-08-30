@@ -1,7 +1,15 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   maxence-os:
     build:
       context: .
       dockerfile: Dockerfile
+    restart: unless-stopped
+    logging: *default-logging
     ports:
       - "3001:3000"
