@@ -7,6 +7,7 @@ import { routing } from '@/i18n/routing'
 import { localeHref } from '@/i18n/config'
 import { SITE_URL } from '@/data/cv'
 import { getCvData } from '@/data/getCv'
+import MaxaAnalytics from '@/components/MaxaAnalytics'
 import '../globals.css'
 
 const poppins = Poppins({
@@ -93,6 +94,7 @@ export default async function RootLayout({ children, params }) {
             gtag('config', 'G-0PT1GT03VC');
           `}
         </Script>
+        <MaxaAnalytics />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

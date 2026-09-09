@@ -7,6 +7,12 @@ COPY package*.json ./
 RUN npm ci --ignore-scripts
 
 COPY . .
+
+# Les pages pré-rendues ont besoin de ces variables publiques pendant le build.
+ARG NEXT_PUBLIC_MAXA_ANALYTICS_HOST=""
+ARG NEXT_PUBLIC_MAXA_ANALYTICS_SITE_ID=""
+ENV NEXT_PUBLIC_MAXA_ANALYTICS_HOST=$NEXT_PUBLIC_MAXA_ANALYTICS_HOST
+ENV NEXT_PUBLIC_MAXA_ANALYTICS_SITE_ID=$NEXT_PUBLIC_MAXA_ANALYTICS_SITE_ID
 RUN npm run build
 
 # Étape 2: Exécuter l'application (build standalone : serveur autonome, sans node_modules complet)

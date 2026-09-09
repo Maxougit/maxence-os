@@ -2,6 +2,16 @@
 
 const createNextIntlPlugin = require('next-intl/plugin')
 
+// Une seule origine alimente script-src et connect-src ; vide, le tracker ne modifie pas la CSP.
+const MAXA_ANALYTICS_ORIGIN = process.env.NEXT_PUBLIC_MAXA_ANALYTICS_HOST
+  ? new URL(process.env.NEXT_PUBLIC_MAXA_ANALYTICS_HOST).origin
+  : ''
+const MAXA_ANALYTICS_CSP_SOURCES = MAXA_ANALYTICS_ORIGIN
+  ? ` ${MAXA_ANALYTICS_ORIGIN}${
+      process.env.NODE_ENV === 'development' ? ' http://localhost:3004' : ''
+    }`
+  : ''
+
 // Pointe vers la config de requête i18n (langue + messages par locale).
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.js')
 
@@ -22,8 +32,8 @@ const securityHeaders = [
       // 'unsafe-eval' en dev uniquement : requis par React pour le debugging (jamais utilisé en prod)
       `script-src 'self' 'unsafe-inline'${
         process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''
-      } https://www.googletagmanager.com`,
-      "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
+      } https://www.googletagmanager.com${MAXA_ANALYTICS_CSP_SOURCES}`,
+      `connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com${MAXA_ANALYTICS_CSP_SOURCES}`,
       "img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self' data:",

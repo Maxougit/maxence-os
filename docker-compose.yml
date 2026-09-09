@@ -9,6 +9,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      # Les pages sont pré-rendues : Compose transmet au build les valeurs du .env du projet.
+      args:
+        NEXT_PUBLIC_MAXA_ANALYTICS_HOST: ${MAXA_ANALYTICS_HOST:-}
+        NEXT_PUBLIC_MAXA_ANALYTICS_SITE_ID: ${MAXA_ANALYTICS_SITE_ID:-}
     restart: unless-stopped
     init: true
     logging: *default-logging
