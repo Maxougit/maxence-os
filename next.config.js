@@ -54,6 +54,9 @@ const nextConfig = {
   experimental: {
     cpus: 1,
     staticGenerationMaxConcurrency: 1,
+    // Contenir le pic de compilation sur le VPS de 2 Go, y compris avec next-intl.
+    webpackBuildWorker: true,
+    webpackMemoryOptimizations: true,
   },
   async redirects() {
     return [
