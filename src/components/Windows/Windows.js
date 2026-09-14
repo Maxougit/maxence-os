@@ -68,11 +68,6 @@ const Window = ({
     return { position: { x, y }, size: { width, height } };
   });
   const { position, size } = geometry;
-  const setPosition = useCallback(
-    (position) => setGeometry((g) => ({ ...g, position })),
-    []
-  );
-  const setSize = useCallback((size) => setGeometry((g) => ({ ...g, size })), []);
 
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -109,11 +104,23 @@ const Window = ({
     };
   }, [minimized]);
 
+  const flushInteraction = useCallback(() => {
+    if (rafId.current !== null) cancelAnimationFrame(rafId.current);
+    rafId.current = null;
+    const state = dragState.current;
+    if (!state?.pending) return;
+    const field = state.type === 'drag' ? 'position' : 'size';
+    const value = state.pending;
+    state.pending = null;
+    setGeometry((current) => ({ ...current, [field]: value }));
+  }, []);
+
   const stopInteractions = useCallback(() => {
+    flushInteraction();
     dragState.current = null;
     setIsDragging(false);
     setIsResizing(false);
-  }, []);
+  }, [flushInteraction]);
 
   const handlePointerMove = useCallback((e) => {
     const state = dragState.current;
@@ -121,22 +128,16 @@ const Window = ({
     e.preventDefault();
     const dx = e.clientX - state.startX;
     const dy = e.clientY - state.startY;
-    if (rafId.current) return;
-    rafId.current = requestAnimationFrame(() => {
-      rafId.current = null;
-      if (state.type === 'drag') {
-        setPosition({
-          x: state.origin.x + dx,
-          y: Math.max(MENUBAR_HEIGHT, state.origin.y + dy),
-        });
-      } else {
-        setSize({
-          width: Math.max(340, state.origin.width + dx),
-          height: Math.max(220, state.origin.height + dy),
-        });
-      }
-    });
-  }, [setPosition, setSize]);
+    // Plusieurs événements arrivent entre deux frames : garder le plus récent.
+    state.pending = state.type === 'drag'
+      ? { x: state.origin.x + dx, y: Math.max(MENUBAR_HEIGHT, state.origin.y + dy) }
+      : { width: Math.max(340, state.origin.width + dx), height: Math.max(220, state.origin.height + dy) };
+    if (rafId.current === null) rafId.current = requestAnimationFrame(flushInteraction);
+  }, [flushInteraction]);
+
+  useEffect(() => () => {
+    if (rafId.current !== null) cancelAnimationFrame(rafId.current);
+  }, []);
 
   useEffect(() => {
     if (!isDragging && !isResizing) return;

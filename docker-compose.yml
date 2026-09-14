@@ -24,11 +24,11 @@ services:
     cap_drop:
       - ALL
     ports:
-      - "192.168.1.224:3001:3000"
+      - "${WEB_BIND:-192.168.1.224}:${WEB_PORT:-3001}:3000"
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=64m
-      - /app/.next/cache:rw,noexec,nosuid,size=64m
+      - /app/.next/cache:rw,noexec,nosuid,size=64m,mode=1777
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"]
       interval: 30s

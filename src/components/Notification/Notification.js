@@ -11,16 +11,21 @@ const Notification = ({ appName, title, body, icon, duration = 8000, onAction, o
   const t = useTranslations('notif');
   const [leaving, setLeaving] = useState(false);
   const dismissTimer = useRef(null);
+  const finishTimer = useRef(null);
 
   const dismiss = () => {
-    if (leaving) return;
+    if (finishTimer.current !== null) return;
+    clearTimeout(dismissTimer.current);
     setLeaving(true);
-    setTimeout(onDismiss, 350);
+    finishTimer.current = setTimeout(onDismiss, 350);
   };
 
   useEffect(() => {
     dismissTimer.current = setTimeout(dismiss, duration);
-    return () => clearTimeout(dismissTimer.current);
+    return () => {
+      clearTimeout(dismissTimer.current);
+      clearTimeout(finishTimer.current);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -366,12 +366,15 @@ const SkillsHologram = ({ skillsData, onHover }) => {
     };
 
     // -------- Boucle --------
-    let raf;
+    let raf = null;
+    let disposed = false;
+    let isIntersecting = true;
     const clock = new THREE.Clock();
     const tmp = new THREE.Vector3();
 
     const animate = () => {
-      raf = requestAnimationFrame(animate);
+      raf = null;
+      if (disposed || document.hidden || !isIntersecting) return;
       const t = clock.getElapsedTime();
 
       coreSphere.rotation.y += 0.01;
@@ -407,8 +410,36 @@ const SkillsHologram = ({ skillsData, onHover }) => {
 
       controls.update();
       renderer.render(scene, camera);
+      raf = requestAnimationFrame(animate);
     };
-    animate();
+
+    const stopAnimation = () => {
+      if (raf !== null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    };
+    const startAnimation = () => {
+      if (!disposed && !document.hidden && isIntersecting && raf === null) {
+        raf = requestAnimationFrame(animate);
+      }
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) stopAnimation();
+      else startAnimation();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    let intersectionObserver;
+    if ('IntersectionObserver' in window) {
+      intersectionObserver = new IntersectionObserver(([entry]) => {
+        isIntersecting = entry.isIntersecting;
+        if (isIntersecting) startAnimation();
+        else stopAnimation();
+      });
+      intersectionObserver.observe(mount);
+    }
+    startAnimation();
 
     // -------- Redimensionnement --------
     const resize = () => {
@@ -423,7 +454,10 @@ const SkillsHologram = ({ skillsData, onHover }) => {
 
     // -------- Nettoyage --------
     return () => {
-      cancelAnimationFrame(raf);
+      disposed = true;
+      stopAnimation();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      intersectionObserver?.disconnect();
       ro.disconnect();
       renderer.domElement.removeEventListener('pointermove', onPointerMove);
       renderer.domElement.removeEventListener('pointerleave', onPointerLeave);

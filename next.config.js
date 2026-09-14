@@ -51,6 +51,10 @@ const securityHeaders = [
 const nextConfig = {
   poweredByHeader: false,
   output: 'standalone',
+  experimental: {
+    cpus: 1,
+    staticGenerationMaxConcurrency: 1,
+  },
   async redirects() {
     return [
       {

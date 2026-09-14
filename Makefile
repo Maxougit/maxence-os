@@ -26,10 +26,10 @@ test: ## Lance les tests Jest
 check: lint test ## Lint + tests (à lancer avant de committer)
 
 docker-build: ## Build l'image Docker
-	docker compose build
+	sh scripts/build-low-memory.sh compose
 
 docker-up: ## Lance le conteneur (http://localhost:3001)
-	docker compose up -d
+	docker compose up -d --no-build
 
 docker-down: ## Arrête le conteneur
 	docker compose down
@@ -39,3 +39,7 @@ docker-logs: ## Affiche les logs du conteneur
 
 clean: ## Supprime les artefacts de build
 	rm -rf .next out coverage
+
+.PHONY: update
+update: docker-build ## Construit puis attend la santé du nouveau conteneur
+	docker compose up -d --no-build --wait --wait-timeout 120
