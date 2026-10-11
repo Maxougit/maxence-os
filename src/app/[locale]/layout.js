@@ -17,6 +17,12 @@ const poppins = Poppins({
   display: 'swap',
 })
 
+// Seules les locales ci-dessous existent : toute autre valeur de segment (/x.php, /.env…
+// sondés par les scanners, qui contournent le middleware car ils contiennent un point)
+// répond 404 directement, sans rendu ni tentative d'écriture du cache de prérendu
+// (« Failed to update prerender cache »).
+export const dynamicParams = false
+
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }))
 }
